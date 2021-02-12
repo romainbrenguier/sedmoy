@@ -1,6 +1,5 @@
 package com.github.romainbrenguier.sedmoy;
 
-import com.sun.istack.internal.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
