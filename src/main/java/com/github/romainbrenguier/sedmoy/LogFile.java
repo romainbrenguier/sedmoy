@@ -12,11 +12,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class LogFile {
-  final static String DEFAULT_FORMAT = "%3d.%02ds %s";
+  final static String DEFAULT_FORMAT = "%03dms %s";
   final static String LN = "\n";
 
   static class TimedLine {
-
+    final static String DEFAULT_PATTERN = "HH:mm:ss.SSS";
     final LocalTime time;
     final String content;
 
@@ -26,22 +26,42 @@ public class LogFile {
     }
 
     public String toString() {
-      return time.format(DateTimeFormatter.ISO_DATE_TIME) + content;
+      return time.format(DateTimeFormatter.ISO_TIME) + " " + content;
     }
 
     public String diffString(@Nullable LocalTime previous) {
-      if (time == null) {
+      if (time == null || previous == null) {
         return "NA      " + content;
       }
       Duration diff = Duration.between(previous, time);
-      long hundredthOfSeconds = diff.toMillis() / 10;
-      return String.format(DEFAULT_FORMAT, hundredthOfSeconds, content);
+      long milliSeconds = diff.toMillis();
+      return String.format(DEFAULT_FORMAT, milliSeconds, content);
+    }
+
+
+    public static TimedLine ofString(String line, String separator) {
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_PATTERN);
+      String[] lineSplit = line.split(separator, 2);
+      String timePart = lineSplit[0];
+      String messagePart = lineSplit.length > 1 ? lineSplit[1] : "";
+      LocalTime newTime = parseLocalTime(formatter, timePart);
+      return new TimedLine(newTime, messagePart);
+    }
+
+    private static LocalTime parseLocalTime(DateTimeFormatter formatter, String timeString) {
+      LocalTime newTime = null;
+      try {
+        newTime = LocalTime.parse(timeString, formatter);
+      } catch (DateTimeParseException ignored){
+        System.err.println("Parsing exception " + ignored);
+      }
+      return newTime;
     }
   }
 
   List<TimedLine> timedLines = new ArrayList<>();
 
-  private List<String> readAllLines(Path path) {
+  private static List<String> readAllLines(Path path) {
     try {
       return Files.readAllLines(path);
     } catch (IOException e) {
@@ -49,21 +69,12 @@ public class LogFile {
     }
   }
 
-  public LogFile(Path path, String separator) {
-    List<String> lines = readAllLines(path);
-    String[] split = lines.get(0).split(separator, 2);
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
-    for (String line : lines) {
-      String[] lineSplit = line.split(separator, 2);
-      String timePart = lineSplit[0];
-      String messagePart = lineSplit.length > 1 ? lineSplit[1] : "";
-      LocalTime newTime = null;
-      try {
-        LocalTime.parse(timePart, formatter);
-      } catch (DateTimeParseException ignored){
-      }
-      timedLines.add(new TimedLine(newTime, messagePart));
-    }
+  public LogFile(List<String> lines, String separator) {
+    lines.forEach(line -> timedLines.add(TimedLine.ofString(line, separator)));
+  }
+
+  public static LogFile readFrom(Path path, String separator) {
+    return new LogFile(readAllLines(path), separator);
   }
 
   public String toString(String format) {

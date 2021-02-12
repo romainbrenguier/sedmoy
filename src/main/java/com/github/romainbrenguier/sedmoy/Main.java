@@ -10,7 +10,7 @@ import java.nio.file.StandardOpenOption;
 public class Main {
   public static void main(String[] args) {
     if (args[0].equals("log")) {
-      System.out.println(new LogFile(Paths.get(args[1]), " ").toString());
+      System.out.println(LogFile.readFrom(Paths.get(args[1]), " ").toString());
       return;
     }
     Path path = Paths.get(args[0]);
