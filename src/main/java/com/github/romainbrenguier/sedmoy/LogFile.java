@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class LogFile {
-  final static String DEFAULT_FORMAT = "%03dms %s";
+  final static String DEFAULT_FORMAT = "%9dms %s";
   final static String LN = "\n";
 
   static class TimedLine {
@@ -31,7 +31,7 @@ public class LogFile {
 
     public String diffString(@Nullable LocalTime previous) {
       if (time == null || previous == null) {
-        return "NA      " + content;
+        return "NA          " + content;
       }
       Duration diff = Duration.between(previous, time);
       long milliSeconds = diff.toMillis();
