@@ -8,10 +8,12 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LogFile {
   final static String DEFAULT_FORMAT = "%3d.%02ds %s";
+  final static String LN = "\n";
 
   static class TimedLine {
 
@@ -37,14 +39,20 @@ public class LogFile {
     }
   }
 
-  LocalTime startTime;
   List<TimedLine> timedLines = new ArrayList<>();
 
-  public LogFile(Path path, String separator) throws IOException {
-    List<String> lines = Files.readAllLines(path);
+  private List<String> readAllLines(Path path) {
+    try {
+      return Files.readAllLines(path);
+    } catch (IOException e) {
+      return Collections.emptyList();
+    }
+  }
+
+  public LogFile(Path path, String separator) {
+    List<String> lines = readAllLines(path);
     String[] split = lines.get(0).split(separator, 2);
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
-    startTime = LocalTime.parse(split[0], formatter);
     for (String line : lines) {
       String[] lineSplit = line.split(separator, 2);
       String timePart = lineSplit[0];
@@ -60,11 +68,15 @@ public class LogFile {
 
   public String toString(String format) {
     StringBuilder builder = new StringBuilder();
-    LocalTime previousTime = startTime;
+    LocalTime previousTime = null;
     for (TimedLine line : timedLines) {
-      builder.append(line.diffString(previousTime));
+      builder.append(line.diffString(previousTime)).append(LN);
       previousTime = line.time;
     }
     return builder.toString();
+  }
+
+  public String toString() {
+    return toString(DEFAULT_FORMAT);
   }
 }

@@ -8,7 +8,11 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 public class Main {
-  public static void main(String []args) {
+  public static void main(String[] args) {
+    if (args[0].equals("log")) {
+      System.out.println(new LogFile(Paths.get(args[1]), " ").toString());
+      return;
+    }
     Path path = Paths.get(args[0]);
     MainConfig config = new MainConfig().withPath(path);
     run(config);
