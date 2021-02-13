@@ -1,19 +1,14 @@
 package com.github.romainbrenguier.sedmoy;
 
-import com.github.romainbrenguier.sedmoy.fitting.Incremental;
-import com.github.romainbrenguier.sedmoy.fitting.WordFitting;
 import com.github.romainbrenguier.sedmoy.structure.BucketMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class SortedData {
-  public static final int DISCARD_AFTER_RANK = 1000;
-
   private final BucketMap<Row> data = new BucketMap<>(new RowComparator());
   private int maxIndex = 0;
   private final List<Row> discarded = new ArrayList<>();
-  private WordFitting.Provider fittingProvider = Incremental::new;
 
   public SortedData() {
   }
