@@ -16,7 +16,7 @@ class MainTest {
     MainConfig config = new MainConfig().withPath(example).withLimit(1000);
 
     // Act
-    CsvData data = Main.sort(config);
+    CsvData data = Main.read(config);
 
     // Assert
     assertFalse(data.getLines().isEmpty());

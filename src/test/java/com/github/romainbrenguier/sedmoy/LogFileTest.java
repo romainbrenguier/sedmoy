@@ -9,40 +9,33 @@ import org.junit.jupiter.api.Test;
 public class LogFileTest {
 
   @Test
-  public void testConstructor() {
+  public void testDiffString() {
     // Arrange
-    ArrayList<String> stringList = new ArrayList<String>();
-    stringList.add("12:34:56.789 foo");
-    stringList.add("12:35:43.210 bar baz");
+    LogFile logFile = new LogFile();
+    LocalTime previous = LocalTime.of(1, 1);
 
-    // Act
-    LogFile actualLogFile = new LogFile(stringList, " ");
-
-    // Assert
-    assertEquals("NA      foo\n46421ms bar baz\n", actualLogFile.toString());
+    // Act and Assert
+    assertEquals("        0ms", logFile.diffString(previous, LocalTime.of(1, 1)));
   }
 
   @Test
-  public void testTimedLineToString() {
+  public void testDiffString2() {
     // Arrange
-    LogFile.TimedLine file = new LogFile.TimedLine(
-        LocalTime.of(1, 1), "Not all who wander are lost");
-    // Act
-    String actual = file.toString();
+    LogFile logFile = new LogFile();
 
-    // Assert
-    assertEquals("01:01:00 Not all who wander are lost", actual);
+    // Act and Assert
+    assertEquals("NA", logFile.diffString(null, LocalTime.of(1, 1)));
   }
 
   @Test
-  public void testTimedLineOfString() {
-    // Arrange and Act
-    LogFile.TimedLine actualOfStringResult =
-        LogFile.TimedLine.ofString("12:34:56.789 foo", " ");
+  public void testDiffString3() {
+    // Arrange
+    LogFile logFile = new LogFile();
 
-    // Assert
-    assertEquals("foo", actualOfStringResult.content);
-    assertEquals("12:34:56.789", actualOfStringResult.time.toString());
+    // Act and Assert
+    assertEquals("NA", logFile.diffString(LocalTime.of(1, 1), null));
   }
+
+
 }
 

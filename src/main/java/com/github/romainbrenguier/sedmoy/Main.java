@@ -9,23 +9,17 @@ import java.nio.file.StandardOpenOption;
 
 public class Main {
   public static void main(String[] args) {
-    if (args[0].equals("log")) {
-      System.out.println(LogFile.readFrom(Paths.get(args[1]), " ").toString());
-      return;
-    }
     Path path = Paths.get(args[0]);
     MainConfig config = new MainConfig().withPath(path);
     run(config);
   }
 
-  public static CsvData sort(MainConfig config) throws IOException {
+  public static CsvData read(MainConfig config) throws IOException {
     CsvData data = CsvData.parseLines(Files.readAllLines(config.path));
     if (config.limit != null) {
       data = data.limit(config.limit);
     }
-    SortedData sortedData = SortedData.ofCsv(data);
-    sortedData.printStats();
-    return sortedData.toCsv();
+    return data;
   }
 
   public static File writeAsCsv(CsvData data, MainConfig config) throws IOException {
@@ -56,13 +50,21 @@ public class Main {
     return tmpMobi;
   }
 
+  private static CsvData sort(CsvData data) {
+    SortedData sortedData = SortedData.ofCsv(data);
+    sortedData.printStats();
+    return sortedData.toCsv();
+  }
+
   public static void run(MainConfig config) {
     try {
-      CsvData sorted = sort(config);
-      System.out.println(sorted.toString());
-      File asCsv = writeAsCsv(sorted, config);
+      CsvData data = read(config);
+      CsvData transformed =
+          config.log() ? data.transform(new LogFile()) : sort(data);
+      System.out.println(transformed.toString());
+      File asCsv = writeAsCsv(transformed, config);
       System.out.println("wrote " + asCsv.toString());
-      File asHtml = writeAsHtml(sorted, config);
+      File asHtml = writeAsHtml(transformed, config);
       System.out.println("wrote " + asHtml.toString());
       if (config.writeMobi) {
         File asMobi = writeAsMobi(asHtml, config);

@@ -11,6 +11,8 @@ public class MainConfig {
 
   boolean writeMobi = false;
 
+  boolean log = false;
+
   public MainConfig withPath(Path path) {
     this.path = path;
     return this;
@@ -24,6 +26,15 @@ public class MainConfig {
   public MainConfig writeMobi() {
     this.writeMobi = true;
     return this;
+  }
+
+  public MainConfig log(boolean log) {
+    this.log = log;
+    return this;
+  }
+
+  public boolean log() {
+    return log;
   }
 }
 

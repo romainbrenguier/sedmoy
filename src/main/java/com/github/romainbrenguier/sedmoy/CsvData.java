@@ -1,5 +1,7 @@
 package com.github.romainbrenguier.sedmoy;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,5 +62,17 @@ public class CsvData {
   @Override
   public String toString() {
     return toString(SEPARATOR);
+  }
+
+  public CsvData transform(RowTransform transform) {
+    CsvData result = new CsvData();
+    lines.forEach(result::addLine);
+    return result;
+  }
+
+  public CsvData sort() {
+    SortedData sortedData = SortedData.ofCsv(this);
+    sortedData.printStats();
+    return sortedData.toCsv();
   }
 }
