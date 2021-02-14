@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 
 public class CsvData {
 
-  public List<String[]> getLines() {
+  public List<Row> getLines() {
     return lines;
   }
 
-  private final List<String[]> lines;
+  private final List<Row> lines;
 
   private static String SEPARATOR = ",";
 
@@ -18,18 +18,18 @@ public class CsvData {
     lines = new ArrayList<>();
   }
 
-  public void addLine(String[] line) {
-    lines.add(line);
+  public void addLine(Row row) {
+    lines.add(row);
   }
 
   public static CsvData parseLines(List<String> lines) {
     return new CsvData(lines.stream()
         .map(line -> line.replace("\"", ""))
-        .map(line -> line.split(SEPARATOR))
+        .map(line -> Row.split(line, SEPARATOR))
         .collect(Collectors.toList()));
   }
 
-  public CsvData(List<String[]> lines) {
+  public CsvData(List<Row> lines) {
     this.lines = lines;
   }
 
@@ -39,7 +39,7 @@ public class CsvData {
 
   public List<String> toStrings(String separator) {
     return lines.stream()
-        .map(line -> String.join(separator, line))
+        .map(row -> row.toString(separator))
         .collect(Collectors.toList());
   }
 
@@ -50,9 +50,8 @@ public class CsvData {
   public List<String> toHtml() {
     List<String> output = new ArrayList<>();
     output.add("<html><head></head><body><ul>");
-    for (String[] line : lines) {
-      output.add(
-          String.format("<li>%s</li>", String.join(" : ", line)));
+    for (Row row : lines) {
+      output.add(String.format("<li>%s</li>", row.toString(":")));
     }
     output.add("</ul></body></html>");
     return output;

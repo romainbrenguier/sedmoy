@@ -79,7 +79,7 @@ public class SortedDataTest {
     ArrayList<String> stringList = new ArrayList<String>();
     stringList.add("foo");
     CsvData parseLinesResult = CsvData.parseLines(stringList);
-    parseLinesResult.addLine(new String[]{"Line"});
+    parseLinesResult.addLine(new Row(new String[]{"Line"}));
 
     // Act
     CsvData actualToCsvResult = SortedData.ofCsv(parseLinesResult).toCsv();

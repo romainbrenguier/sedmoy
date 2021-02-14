@@ -24,8 +24,8 @@ public class SortedData {
 
   public static SortedData ofCsv(CsvData csv) {
     SortedData sortedData = new SortedData();
-    for (String[] line : csv.getLines()) {
-      sortedData.add(new Row(line));
+    for (Row line : csv.getLines()) {
+      sortedData.add(line);
     }
     return sortedData;
   }
@@ -44,7 +44,7 @@ public class SortedData {
       Set<Row> bucket = this.data.get(i);
       int index = 0;
       for (Row row : bucket) {
-        result.addLine(row.addLeft(i * 10 + index++).toCsvLine(10));
+        result.addLine(row.addLeft(i * 10 + index++).limit(10));
       }
     }
     return result;

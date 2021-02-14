@@ -7,6 +7,10 @@ public class Row {
     this.data = data;
   }
 
+  public static Row split(String line, String separator) {
+    return new Row(line.split(separator));
+  }
+
   public Row addLeft(Object content) {
     String[] result = new String[data.length + 1];
     result[0] = content.toString();
@@ -31,5 +35,9 @@ public class Row {
 
   String[] toCsvLine(Integer dataLimit) {
     return limit(dataLimit).data;
+  }
+
+  String toString(String separator) {
+    return String.join(separator, data);
   }
 }
