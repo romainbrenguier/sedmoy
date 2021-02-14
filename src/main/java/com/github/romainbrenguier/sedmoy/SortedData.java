@@ -24,9 +24,8 @@ public class SortedData {
 
   public static SortedData ofCsv(CsvData csv) {
     SortedData sortedData = new SortedData();
-    int rank = 1;
     for (String[] line : csv.getLines()) {
-      sortedData.add(Row.ofCsvLine(line, rank++));
+      sortedData.add(Row.ofCsvLine(line));
     }
     return sortedData;
   }

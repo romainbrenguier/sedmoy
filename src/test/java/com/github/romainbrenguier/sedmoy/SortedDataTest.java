@@ -24,10 +24,10 @@ public class SortedDataTest {
   @Test
   public void testAdd() {
     // Arrange
-    SortedData ofCsvResult = SortedData.ofCsv(CsvData.parseLines(new ArrayList<String>()));
+    SortedData ofCsvResult = SortedData.ofCsv(CsvData.parseLines(new ArrayList<>()));
 
     // Act
-    ofCsvResult.add(Row.ofCsvLine(new String[]{"foo", "foo", "foo"}, 1));
+    ofCsvResult.add(Row.ofCsvLine(new String[]{"foo", "foo", "foo"}));
   }
 
   @Test

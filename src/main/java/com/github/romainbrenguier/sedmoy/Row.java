@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Row {
-  Integer rank;
   String key;
   String[] data;
   Integer index = null;
 
-  static Row ofCsvLine(String[] line, Integer rank) {
+  static Row ofCsvLine(String[] line) {
     assert line.length > 0;
     Row result = new Row();
     result.key = line[0];
@@ -17,7 +16,6 @@ public class Row {
     for (int i = 0; i < result.data.length; ++i) {
       result.data[i] = line[i+1];
     }
-    result.rank = rank;
     return result;
   }
 
