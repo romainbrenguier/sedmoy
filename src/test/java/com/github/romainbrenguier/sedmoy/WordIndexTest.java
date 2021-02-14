@@ -9,10 +9,10 @@ public class WordIndexTest {
   @Test
   public void testOf() {
     // Arrange, Act and Assert
-    assertEquals(109, WordIndex.of("ца"));
-    assertEquals(44, WordIndex.of("ю"));
+    assertEquals(100, WordIndex.of("ца"));
+    assertEquals(540, WordIndex.of("ю"));
     assertEquals(23, WordIndex.of("а"));
-    assertEquals(1, WordIndex.of("те"));
+    assertEquals(110, WordIndex.of("те"));
     assertEquals(1050, WordIndex.of("Здравствуй"));
   }
 
