@@ -1,27 +1,17 @@
 package com.github.romainbrenguier.sedmoy;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Row {
-  String key;
   String[] data;
-  Integer index = null;
 
-  static Row ofCsvLine(String[] line) {
-    assert line.length > 0;
-    Row result = new Row();
-    result.key = line[0];
-    result.data = new String[line.length - 1];
-    for (int i = 0; i < result.data.length; ++i) {
-      result.data[i] = line[i+1];
-    }
-    return result;
+  public Row(String[] data) {
+    this.data = data;
   }
 
-  public Row withIndex(Integer index) {
-    this.index = index;
-    return this;
+  public Row addLeft(Object content) {
+    String[] result = new String[data.length + 1];
+    result[0] = content.toString();
+    System.arraycopy(data, 0, result, 1, data.length);
+    return new Row(result);
   }
 
   static int lengthOfFirstWord(String s) {
@@ -29,19 +19,17 @@ public class Row {
     return firstSpace == -1 ? s.length() : firstSpace;
   }
 
-  int lengthOfFirstWord() {
-    return lengthOfFirstWord(key);
+  public String column(int index) {
+    return index < data.length ? data[index] : "";
+  }
+
+  Row limit(int nbColumns) {
+    String[] result = new String[nbColumns];
+    System.arraycopy(data, 0, result, 0, nbColumns);
+    return new Row(result);
   }
 
   String[] toCsvLine(Integer dataLimit) {
-    List<String> list = new ArrayList<>();
-    if (index != null) {
-      list.add(index.toString());
-    }
-    list.add(key);
-    for (int i = 0; i < data.length && i < dataLimit; ++i) {
-      list.add(data[i]);
-    }
-    return list.toArray(new String[0]);
+    return limit(dataLimit).data;
   }
 }

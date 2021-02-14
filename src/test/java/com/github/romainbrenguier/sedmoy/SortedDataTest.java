@@ -27,7 +27,7 @@ public class SortedDataTest {
     SortedData ofCsvResult = SortedData.ofCsv(CsvData.parseLines(new ArrayList<>()));
 
     // Act
-    ofCsvResult.add(Row.ofCsvLine(new String[]{"foo", "foo", "foo"}));
+    ofCsvResult.add(new Row(new String[]{"foo", "foo", "foo"}));
   }
 
   @Test

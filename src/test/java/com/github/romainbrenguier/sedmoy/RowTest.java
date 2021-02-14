@@ -10,56 +10,41 @@ public class RowTest {
   @Test
   public void testOfCsvLine() {
     // Arrange and Act
-    Row actualOfCsvLineResult = Row.ofCsvLine(new String[]{"Line"});
+    Row actualOfCsvLineResult = new Row(new String[]{"Line"});
 
     // Assert
-    assertEquals(0, actualOfCsvLineResult.data.length);
-    assertEquals("Line", actualOfCsvLineResult.key);
-    assertNull(actualOfCsvLineResult.index);
+    assertEquals("Line", actualOfCsvLineResult.column(0));
+    assertEquals("", actualOfCsvLineResult.column(1));
   }
 
   @Test
   public void testOfCsvLine2() {
     // Arrange and Act
-    Row actualOfCsvLineResult = Row.ofCsvLine(new String[]{"Line", "Line"});
+    Row actualOfCsvLineResult = new Row(new String[]{"foo", "bar"});
 
     // Assert
-    assertEquals(1, actualOfCsvLineResult.data.length);
-    assertEquals("Line", actualOfCsvLineResult.key);
-    assertNull(actualOfCsvLineResult.index);
+    assertEquals("foo", actualOfCsvLineResult.column(0));
+    assertEquals("bar", actualOfCsvLineResult.column(1));
+    assertEquals("", actualOfCsvLineResult.column(2));
   }
 
   @Test
   public void testWithIndex() {
-    // Arrange, Act and Assert
-    assertEquals(1,
-        Row.ofCsvLine(new String[]{"foo", "foo", "foo"}).withIndex(1).index.intValue());
+    // Arrange
+    Row row = new Row(new String[]{"foo", "foo", "foo"});
+
+    // Act
+    Row result = row.addLeft(1);
+
+    // Assert
+    assertEquals("1", result.column(0));
   }
 
   @Test
   public void testLengthOfFirstWord() {
     // Arrange, Act and Assert
-    assertEquals(3, Row.ofCsvLine(new String[]{"foo", "foo", "foo"}).lengthOfFirstWord());
+    assertEquals(3, Row.lengthOfFirstWord("foo bar"));
     assertEquals(1, Row.lengthOfFirstWord("S"));
-  }
-
-  @Test
-  public void testLengthOfFirstWord2() {
-    // Arrange
-    Row ofCsvLineResult = Row.ofCsvLine(new String[]{"foo", "foo", "foo"});
-    ofCsvLineResult.withIndex(1);
-
-    // Act and Assert
-    assertEquals(3, ofCsvLineResult.lengthOfFirstWord());
-  }
-
-  @Test
-  public void testToCsvLine() {
-    // Arrange, Act and Assert
-    assertEquals(2, Row.ofCsvLine(new String[]{"foo", "foo", "foo"}).toCsvLine(1).length);
-    assertEquals(1, Row.ofCsvLine(new String[]{null}).toCsvLine(1).length);
-    assertEquals(1, Row.ofCsvLine(new String[]{"foo", "foo", "foo"}).toCsvLine(0).length);
-    assertEquals(3, Row.ofCsvLine(new String[]{"foo", "foo", "foo"}).toCsvLine(2).length);
   }
 }
 

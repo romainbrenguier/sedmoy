@@ -14,7 +14,7 @@ public class SortedData {
   }
 
   public void add(Row row) {
-    int i = WordIndex.of(row.key);
+    int i = WordIndex.of(row.column(0));
     this.maxIndex = Math.max(i, this.maxIndex);
     boolean added = data.put(i, row);
     if (!added) {
@@ -25,7 +25,7 @@ public class SortedData {
   public static SortedData ofCsv(CsvData csv) {
     SortedData sortedData = new SortedData();
     for (String[] line : csv.getLines()) {
-      sortedData.add(Row.ofCsvLine(line));
+      sortedData.add(new Row(line));
     }
     return sortedData;
   }
@@ -44,7 +44,7 @@ public class SortedData {
       Set<Row> bucket = this.data.get(i);
       int index = 0;
       for (Row row : bucket) {
-        result.addLine(row.withIndex(i * 10 + index++).toCsvLine(10));
+        result.addLine(row.addLeft(i * 10 + index++).toCsvLine(10));
       }
     }
     return result;
