@@ -33,10 +33,6 @@ public class Row {
     return new Row(result);
   }
 
-  String[] toCsvLine(Integer dataLimit) {
-    return limit(dataLimit).data;
-  }
-
   String toString(String separator) {
     return String.join(separator, data);
   }

@@ -44,7 +44,6 @@ public class WordIndex {
 
   static int VOWEL_INDEX = 300;
 
-
   /** Replace letters that represent double sounds by equivalents */
   static String replaceLetters(String input) {
     return input
@@ -54,6 +53,10 @@ public class WordIndex {
         .replace("я", "ya")
         .replace("ё", "yo")
         .replace("ч", "tш");
+  }
+
+  static int forChar(char c) {
+    return indices.getOrDefault(c, -1);
   }
 
   static boolean isVowel(char c) {
