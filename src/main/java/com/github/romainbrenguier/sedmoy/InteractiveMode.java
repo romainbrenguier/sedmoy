@@ -16,6 +16,7 @@ public class InteractiveMode {
   final InputStream inputStream = System.in;
   final PrintStream printStream = System.out;
   final Scanner scanner;
+  final List<Operation> operations = new ArrayList<>();
 
   public InteractiveMode(List<String> inputData) {
     this.inputData = inputData;
@@ -38,10 +39,15 @@ public class InteractiveMode {
     return new Operation(method, parameters);
   }
 
-  public int run() {
+  /** return true for continue and false to stop */
+  public boolean step() {
     printStream.println("Input data:");
     inputData.stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
+    printStream.println("Current output:");
+    applyOperations().stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
     printStream.println("Choices:");
+    printStream.println("q to stop");
+    printStream.println("b to cancel last operation");
     final List<Method> methods = choices();
     final List<String> choiceNames =
         methods.stream().map(Method::getName).distinct().collect(Collectors.toList());
@@ -49,17 +55,39 @@ public class InteractiveMode {
       printStream.println(i + " " + choiceNames.get(i));
     }
     final String line = scanner.nextLine();
+    if (line.startsWith("q")) {
+      return false;
+    }
+    if (line.startsWith("b")) {
+      operations.remove(operations.size() - 1);
+      return true;
+    }
     int choice = Integer.parseInt(line);
     printStream.println("You chose: " + choice);
     List<Method> matchingChoice = methods.stream()
         .filter(method -> method.getName().equals(choiceNames.get(choice)))
         .collect(Collectors.toList());
     final Operation operation = inputOperation(matchingChoice.get(0));
-    final List<Object> result =
-        inputData.stream().map(operation::apply).collect(Collectors.toList());
+    operations.add(operation);
+    List<Object> result = applyOperations();
     printStream.println("Result: ");
     result.forEach(printStream::println);
-    return choice;
+    return true;
   }
 
+  private List<Object> applyOperations() {
+    List<Object> result = new ArrayList<>(inputData);
+    for (Operation value : operations) {
+      result = result.stream().map(value::apply).collect(Collectors.toList());
+    }
+    return result;
+  }
+
+  public int run() {
+    boolean stop = false;
+    while (!stop) {
+      stop = !step();
+    }
+    return 0;
+  }
 }
