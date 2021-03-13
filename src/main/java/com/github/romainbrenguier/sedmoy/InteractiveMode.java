@@ -26,7 +26,7 @@ public class InteractiveMode {
     return Arrays.asList(String.class.getDeclaredMethods());
   }
 
-  private List<Object> apply(Method method, List<String> input) {
+  private Operation inputOperation(Method method) {
     printStream.println("For method " + method.getName());
     final Class<?>[] parameterTypes = method.getParameterTypes();
     final Object[] parameters = new Object[parameterTypes.length];
@@ -35,15 +35,7 @@ public class InteractiveMode {
       final String line = scanner.nextLine();
       parameters[i] = line;
     }
-    List<Object> result = new ArrayList<>();
-    for (String line : input) {
-       try {
-         result.add(method.invoke(line, parameters));
-       } catch (IllegalAccessException | InvocationTargetException e) {
-         result.add(e);
-       }
-    }
-    return result;
+    return new Operation(method, parameters);
   }
 
   public int run() {
@@ -62,7 +54,9 @@ public class InteractiveMode {
     List<Method> matchingChoice = methods.stream()
         .filter(method -> method.getName().equals(choiceNames.get(choice)))
         .collect(Collectors.toList());
-    final List<Object> result = apply(matchingChoice.get(0), inputData);
+    final Operation operation = inputOperation(matchingChoice.get(0));
+    final List<Object> result =
+        inputData.stream().map(operation::apply).collect(Collectors.toList());
     printStream.println("Result: ");
     result.forEach(printStream::println);
     return choice;
