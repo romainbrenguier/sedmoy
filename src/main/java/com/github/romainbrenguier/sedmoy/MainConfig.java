@@ -13,6 +13,8 @@ public class MainConfig {
 
   boolean log = false;
 
+  boolean interactive = true;
+
   public MainConfig withPath(Path path) {
     this.path = path;
     return this;
@@ -35,6 +37,10 @@ public class MainConfig {
 
   public boolean log() {
     return log;
+  }
+
+  public boolean isInteractive() {
+    return interactive;
   }
 }
 

@@ -60,6 +60,10 @@ public class Main {
   public static void run(MainConfig config) {
     try {
       CsvData data = read(config);
+      if (config.isInteractive()) {
+        new InteractiveMode(data.toStrings(" ")).run();
+        return;
+      }
       CsvData transformed =
           config.log() ? data.transform(new LogFile()) : sort(data);
       System.out.println(transformed.toString());
