@@ -1,7 +1,6 @@
 package com.github.romainbrenguier.sedmoy;
 
-import java.io.IOException;
-import java.nio.file.Files;
+import com.github.romainbrenguier.sedmoy.sort.SortedData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

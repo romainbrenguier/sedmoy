@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.sedmoy;
+package com.github.romainbrenguier.sedmoy.sort;
 
 import java.util.HashMap;
 import java.util.HashSet;

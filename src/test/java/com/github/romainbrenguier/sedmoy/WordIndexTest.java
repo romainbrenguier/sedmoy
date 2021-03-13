@@ -2,6 +2,7 @@ package com.github.romainbrenguier.sedmoy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.github.romainbrenguier.sedmoy.sort.WordIndex;
 import org.junit.jupiter.api.Test;
 
 public class WordIndexTest {

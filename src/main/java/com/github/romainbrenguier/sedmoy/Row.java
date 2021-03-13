@@ -31,7 +31,7 @@ public class Row {
     data[index] = content.toString();
   }
 
-  Row limit(int nbColumns) {
+  public Row limit(int nbColumns) {
     String[] result = new String[nbColumns];
     System.arraycopy(data, 0, result, 0, nbColumns);
     return new Row(result);

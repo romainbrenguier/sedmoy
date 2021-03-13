@@ -1,5 +1,6 @@
 package com.github.romainbrenguier.sedmoy;
 
+import com.github.romainbrenguier.sedmoy.sort.SortedData;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
