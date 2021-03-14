@@ -2,7 +2,6 @@ package com.github.romainbrenguier.sedmoy;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,35 +38,65 @@ public class InteractiveMode {
     return new Operation(method, parameters);
   }
 
+  final static String choiceCodes =
+      ":<0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  final static int QUIT = -2;
+  final static int CANCEL = -1;
+
+  /**
+   * @return -2 for quit, -1 to cancel last operation, index of the method otherwise
+   */
+  int chooseOperation(List<String> choices) {
+    printStream.println("Choices:");
+    printStream.println("q to stop");
+    printStream.println("b to cancel last operation");
+    for (int i = 0; i < choices.size(); ++i) {
+      printStream.println(choiceCodes.charAt(i + 2) + " " + choices.get(i));
+    }
+    final String line = scanner.nextLine();
+    return choiceCodes.indexOf(line.charAt(0)) - 2;
+  }
+
+  /**
+   * @return -2 for quit, -1 to cancel last operation, index of the method otherwise
+   */
+  Method chooseMethodWithName(List<Method> methods, String name) {
+    List<Method> matchingChoice = methods.stream()
+        .filter(method -> method.getName().equals(name))
+        .collect(Collectors.toList());
+    if (matchingChoice.size() == 1) {
+      return matchingChoice.get(0);
+    }
+    printStream.println("Choices:");
+    for (int i = 0; i < matchingChoice.size(); ++i) {
+      printStream.println(choiceCodes.charAt(i + 2) + " " + Arrays
+          .toString(matchingChoice.get(i).getParameterTypes()));
+    }
+    final String line = scanner.nextLine();
+    return matchingChoice.get(choiceCodes.indexOf(line.charAt(0)) - 2);
+  }
+
   /** return true for continue and false to stop */
   public boolean step() {
     printStream.println("Input data:");
     inputData.stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
     printStream.println("Current output:");
     applyOperations().stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
-    printStream.println("Choices:");
-    printStream.println("q to stop");
-    printStream.println("b to cancel last operation");
     final List<Method> methods = choices();
     final List<String> choiceNames =
         methods.stream().map(Method::getName).distinct().collect(Collectors.toList());
-    for (int i = 0; i < choiceNames.size(); ++i) {
-      printStream.println(i + " " + choiceNames.get(i));
-    }
-    final String line = scanner.nextLine();
-    if (line.startsWith("q")) {
+    int choice = chooseOperation(choiceNames);
+    if (choice == QUIT) {
       return false;
     }
-    if (line.startsWith("b")) {
+    if (choice == CANCEL) {
       operations.remove(operations.size() - 1);
       return true;
     }
-    int choice = Integer.parseInt(line);
-    printStream.println("You chose: " + choice);
-    List<Method> matchingChoice = methods.stream()
-        .filter(method -> method.getName().equals(choiceNames.get(choice)))
-        .collect(Collectors.toList());
-    final Operation operation = inputOperation(matchingChoice.get(0));
+    String choiceName = choiceNames.get(choice);
+    printStream.println("You chose: " + choiceName);
+    Method method = chooseMethodWithName(methods, choiceName);
+    final Operation operation = inputOperation(method);
     operations.add(operation);
     List<Object> result = applyOperations();
     printStream.println("Result: ");
