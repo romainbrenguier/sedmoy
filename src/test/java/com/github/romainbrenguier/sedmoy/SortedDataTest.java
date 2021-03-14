@@ -70,7 +70,7 @@ public class SortedDataTest {
     CsvData actualToCsvResult = SortedData.ofCsv(CsvData.parseLines(stringList)).toCsv();
 
     // Assert
-    assertEquals("100,foo", actualToCsvResult.toString());
+    assertEquals("300,foo", actualToCsvResult.toString());
     assertEquals(1, actualToCsvResult.getLines().size());
   }
 
@@ -86,7 +86,7 @@ public class SortedDataTest {
     CsvData actualToCsvResult = SortedData.ofCsv(parseLinesResult).toCsv();
 
     // Assert
-    assertEquals("100,Line\n100,foo", actualToCsvResult.toString());
+    assertEquals("0,Line\n300,foo", actualToCsvResult.toString());
     assertEquals(2, actualToCsvResult.getLines().size());
   }
 }

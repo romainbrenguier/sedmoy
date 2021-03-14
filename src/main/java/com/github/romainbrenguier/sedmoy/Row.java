@@ -32,6 +32,9 @@ public class Row {
   }
 
   public Row limit(int nbColumns) {
+    if (nbColumns >= data.length) {
+      return this;
+    }
     String[] result = new String[nbColumns];
     System.arraycopy(data, 0, result, 0, nbColumns);
     return new Row(result);

@@ -2,6 +2,7 @@ package com.github.romainbrenguier.sedmoy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
@@ -45,6 +46,14 @@ public class RowTest {
     // Arrange, Act and Assert
     assertEquals(3, Row.lengthOfFirstWord("foo bar"));
     assertEquals(1, Row.lengthOfFirstWord("S"));
+  }
+
+  @Test
+  public void testLimit() {
+    // Arrange, Act and Assert
+    assertEquals(1, Row.split("foo bar", " ").limit(1).data.length);
+    assertEquals(2, Row.split("foo bar", " ").limit(10).data.length);
+    assertThrows(NegativeArraySizeException.class, () -> Row.split("Line", "Separator").limit(-1));
   }
 }
 
