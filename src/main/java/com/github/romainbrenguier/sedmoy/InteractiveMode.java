@@ -43,6 +43,14 @@ public class InteractiveMode {
   final static int QUIT = -2;
   final static int CANCEL = -1;
 
+  String stretchString(String s, int length) {
+    StringBuilder builder = new StringBuilder(s);
+    for (int i = s.length(); i < length; ++i) {
+      builder.append(" ");
+    }
+    return builder.toString();
+  }
+
   /**
    * @return -2 for quit, -1 to cancel last operation, index of the method otherwise
    */
@@ -51,7 +59,9 @@ public class InteractiveMode {
     printStream.println(": stop");
     printStream.println("< cancel last operation");
     for (int i = 0; i < choices.size(); ++i) {
-      printStream.println(choiceCodes.charAt(i + 2) + " " + choices.get(i));
+      printStream.print(choiceCodes.charAt(i + 2) + " " +
+          stretchString(choices.get(i), 15));
+      printStream.print((i % 5 == 4 || i == choices.size() - 1) ? "\n" : "\t\t");
     }
     final String line = scanner.nextLine();
     return choiceCodes.indexOf(line.charAt(0)) - 2;
