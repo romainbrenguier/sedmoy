@@ -76,17 +76,34 @@ public class InteractiveMode {
     return matchingChoice.get(choiceCodes.indexOf(line.charAt(0)) - 2);
   }
 
+  private void highlight(String message) {
+    printStream.println("===== " + message + " =====");
+  }
+
+  private static String objectToString(Object object) {
+    if (object.getClass().isArray()) {
+      Object[] array = (Object[]) object;
+      return String.format("[%s]",
+          Arrays.stream(array).map(InteractiveMode::objectToString)
+              .collect(Collectors.joining(", ")));
+    }
+    return object.toString();
+  }
+
   /** return true for continue and false to stop */
   public boolean step() {
-    printStream.println("Input data:");
+    highlight("Input data:");
     inputData.stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
-    printStream.println("Current output:");
+    highlight("Current output:");
     applyOperations().stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
     final List<Method> methods = choices();
     final List<String> choiceNames =
         methods.stream().map(Method::getName).distinct().collect(Collectors.toList());
     int choice = chooseOperation(choiceNames);
     if (choice == QUIT) {
+      List<Object> result = applyOperations();
+      highlight("Result: ");
+      result.stream().map(InteractiveMode::objectToString).forEach(printStream::println);
       return false;
     }
     if (choice == CANCEL) {
@@ -98,9 +115,6 @@ public class InteractiveMode {
     Method method = chooseMethodWithName(methods, choiceName);
     final Operation operation = inputOperation(method);
     operations.add(operation);
-    List<Object> result = applyOperations();
-    printStream.println("Result: ");
-    result.forEach(printStream::println);
     return true;
   }
 
