@@ -48,8 +48,8 @@ public class InteractiveMode {
    */
   int chooseOperation(List<String> choices) {
     printStream.println("Choices:");
-    printStream.println("q to stop");
-    printStream.println("b to cancel last operation");
+    printStream.println(": stop");
+    printStream.println("< cancel last operation");
     for (int i = 0; i < choices.size(); ++i) {
       printStream.println(choiceCodes.charAt(i + 2) + " " + choices.get(i));
     }
