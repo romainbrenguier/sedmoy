@@ -95,7 +95,9 @@ public class InteractiveMode {
     highlight("Input data:");
     inputData.stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
     highlight("Current output:");
-    applyOperations().stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
+    applyOperations().stream().limit(INPUT_PREVIEW_LENGTH)
+        .map(InteractiveMode::objectToString)
+        .forEach(printStream::println);
     final List<Method> methods = choices();
     final List<String> choiceNames =
         methods.stream().map(Method::getName).distinct().collect(Collectors.toList());
