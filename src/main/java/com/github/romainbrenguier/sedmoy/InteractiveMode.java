@@ -100,12 +100,15 @@ public class InteractiveMode {
     return object.toString();
   }
 
-  /** return true for continue and false to stop */
+  /**
+   * One step of the main loop.
+   * Return true for continue and false to stop
+   */
   public boolean step() {
     highlight("Input data:");
     inputData.stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
     highlight("Current output:");
-    applyOperations().stream().limit(INPUT_PREVIEW_LENGTH)
+    applyOperations(INPUT_PREVIEW_LENGTH).stream().limit(INPUT_PREVIEW_LENGTH)
         .map(InteractiveMode::objectToString)
         .forEach(printStream::println);
     final List<Method> methods = choices();
@@ -113,7 +116,7 @@ public class InteractiveMode {
         methods.stream().map(Method::getName).distinct().collect(Collectors.toList());
     int choice = chooseOperation(choiceNames);
     if (choice == QUIT) {
-      List<Object> result = applyOperations();
+      List<Object> result = applyOperations(INPUT_PREVIEW_LENGTH);
       highlight("Result: ");
       result.stream().map(InteractiveMode::objectToString).forEach(printStream::println);
       return false;
@@ -130,8 +133,8 @@ public class InteractiveMode {
     return true;
   }
 
-  private List<Object> applyOperations() {
-    List<Object> result = new ArrayList<>(inputData);
+  private List<Object> applyOperations(int limit) {
+    List<Object> result = inputData.stream().limit(limit).collect(Collectors.toList());
     for (Operation value : operations) {
       result = result.stream().map(value::apply).collect(Collectors.toList());
     }
