@@ -15,15 +15,15 @@ public class InteractiveMode {
   final InputStream inputStream = System.in;
   final PrintStream printStream = System.out;
   final Scanner scanner;
-  final List<Operation> operations = new ArrayList<>();
+  final Operations operations = new Operations();
 
   public InteractiveMode(List<String> inputData) {
     this.inputData = inputData;
     this.scanner = new Scanner(inputStream);
   }
 
-  private List<Method> choices() {
-    return Arrays.asList(String.class.getDeclaredMethods());
+  public List<Method> choices(Class<?> forClass) {
+    return Arrays.asList(forClass.getDeclaredMethods());
   }
 
   private Operation inputOperation(Method method) {
@@ -108,21 +108,26 @@ public class InteractiveMode {
     highlight("Input data:");
     inputData.stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
     highlight("Current output:");
-    applyOperations(INPUT_PREVIEW_LENGTH).stream().limit(INPUT_PREVIEW_LENGTH)
+    final List<Object> currentOutput = operations
+        .apply(
+            inputData.stream().limit(INPUT_PREVIEW_LENGTH).collect(Collectors.toList()));
+    currentOutput.stream()
         .map(InteractiveMode::objectToString)
         .forEach(printStream::println);
-    final List<Method> methods = choices();
+    final Class<?> classOfFirstResult = currentOutput.get(0).getClass();
+    final List<Method> methods = choices(classOfFirstResult);
     final List<String> choiceNames =
         methods.stream().map(Method::getName).distinct().collect(Collectors.toList());
     int choice = chooseOperation(choiceNames);
     if (choice == QUIT) {
-      List<Object> result = applyOperations(INPUT_PREVIEW_LENGTH);
+      List<Object> result = operations.apply(
+          inputData.stream().limit(INPUT_PREVIEW_LENGTH).collect(Collectors.toList()));
       highlight("Result: ");
       result.stream().map(InteractiveMode::objectToString).forEach(printStream::println);
       return false;
     }
     if (choice == CANCEL) {
-      operations.remove(operations.size() - 1);
+      operations.removeLast();
       return true;
     }
     String choiceName = choiceNames.get(choice);
@@ -133,13 +138,6 @@ public class InteractiveMode {
     return true;
   }
 
-  private List<Object> applyOperations(int limit) {
-    List<Object> result = inputData.stream().limit(limit).collect(Collectors.toList());
-    for (Operation value : operations) {
-      result = result.stream().map(value::apply).collect(Collectors.toList());
-    }
-    return result;
-  }
 
   public int run() {
     boolean stop = false;

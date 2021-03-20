@@ -14,6 +14,10 @@ public class Operation {
   }
 
   public Object apply(Object input) {
+    System.out.println("input of class " + input.getClass() + " arguments ");
+    for (int i = 0; i < parameters.length; ++i) {
+      System.out.println(" of type " + parameters[i].getClass());
+    }
     try {
       return method.invoke(input, parameters);
     } catch (IllegalAccessException | InvocationTargetException e) {
