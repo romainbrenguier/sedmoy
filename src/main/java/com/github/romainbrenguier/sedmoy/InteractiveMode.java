@@ -145,7 +145,6 @@ public class InteractiveMode {
     return true;
   }
 
-
   public int run() {
     boolean stop = false;
     while (!stop) {

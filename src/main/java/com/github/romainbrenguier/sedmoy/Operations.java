@@ -19,7 +19,6 @@ public class Operations {
       operationList.add(operation);
   }
 
-
   private static Object transformArrayToList(Object input) {
     if (input.getClass().isArray()) {
       return Arrays.stream((Object[])input).collect(Collectors.toList());
