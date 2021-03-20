@@ -33,7 +33,7 @@ public class InteractiveMode {
     for (int i = 0; i < parameterTypes.length; ++i) {
       printStream.println("Enter parameter " + i + " of type " + parameterTypes[i].toString());
       final String line = scanner.nextLine();
-      parameters[i] = line;
+      parameters[i] = stringToObject(line, parameterTypes[i]);
     }
     return new Operation(method, parameters);
   }
@@ -98,6 +98,13 @@ public class InteractiveMode {
               .collect(Collectors.joining(", ")));
     }
     return object.toString();
+  }
+
+  private static Object stringToObject(String input, Class<?> target) {
+    if (target.equals(Integer.class) || target.equals(int.class)) {
+      return Integer.parseInt(input);
+    }
+    return input;
   }
 
   /**

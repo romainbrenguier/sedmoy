@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
  * Wrapper for a list of operations.
  */
 public class Operations {
-  private List<Operation> operationList = new ArrayList<>();
+  private final List<Operation> operationList = new ArrayList<>();
 
   public void removeLast() {
       operationList.remove(operationList.size() - 1);
@@ -29,8 +29,6 @@ public class Operations {
 
   public List<Object> apply(List<Object> inputData) {
     for (Operation value : operationList) {
-      System.out.println("operation " + value.method + " of class"
-          + value.method.getDeclaringClass());
       List<Object> newResult = new ArrayList<>();
       for (Object input : inputData) {
         try {
