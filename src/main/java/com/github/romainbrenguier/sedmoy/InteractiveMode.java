@@ -1,5 +1,7 @@
 package com.github.romainbrenguier.sedmoy;
 
+import com.github.romainbrenguier.sedmoy.operation.MethodOperation;
+import com.github.romainbrenguier.sedmoy.operation.Operations;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;

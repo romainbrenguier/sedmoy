@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.sedmoy;
+package com.github.romainbrenguier.sedmoy.operation;
 
 import java.util.Stack;
 

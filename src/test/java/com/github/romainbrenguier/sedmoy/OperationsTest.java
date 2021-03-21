@@ -2,6 +2,8 @@ package com.github.romainbrenguier.sedmoy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.github.romainbrenguier.sedmoy.operation.MethodOperation;
+import com.github.romainbrenguier.sedmoy.operation.Operations;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
