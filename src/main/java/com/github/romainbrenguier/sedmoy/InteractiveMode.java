@@ -60,12 +60,19 @@ public class InteractiveMode {
   final static String choiceCodes =
       "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  String stretchString(String s, int length) {
+  private static String stretchString(String s, int length) {
     StringBuilder builder = new StringBuilder(s);
     for (int i = s.length(); i < length; ++i) {
       builder.append(" ");
     }
     return builder.toString();
+  }
+
+  private static String shortenString(String message, int length) {
+    if (message.length() < length) {
+      return stretchString(message, length);
+    }
+    return message.substring(0, length - 3) + "...";
   }
 
   /**
@@ -162,7 +169,7 @@ public class InteractiveMode {
 
   private static String stateToString(Operation.State state) {
     final String stackString = state.stack.stream()
-        .map(obj -> objectToString(obj))
+        .map(obj -> shortenString(objectToString(obj), 10))
         .collect(Collectors.joining(","));
     return "{" + stackString + "} " + objectToString(state.data);
   }
