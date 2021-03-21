@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.github.romainbrenguier.sedmoy.operation.ConstantParameter;
 import com.github.romainbrenguier.sedmoy.operation.MethodOperation;
+import com.github.romainbrenguier.sedmoy.operation.Operation.State;
 import com.github.romainbrenguier.sedmoy.operation.Operations;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,11 +35,11 @@ public class OperationsTest {
     List<Object> input = Arrays.asList("foo;bar", "baz;wiz");
 
     // Act
-    List<Object> result = operations.apply(input);
+    List<State> result = operations.apply(input);
 
     // Assert
     assertEquals(2, result.size());
-    assertEquals("bar", result.get(0));
-    assertEquals("wiz", result.get(1));
+    assertEquals("bar", result.get(0).data);
+    assertEquals("wiz", result.get(1).data);
   }
 }

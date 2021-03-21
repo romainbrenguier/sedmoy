@@ -2,6 +2,8 @@ package com.github.romainbrenguier.sedmoy;
 
 import com.github.romainbrenguier.sedmoy.operation.ConstantParameter;
 import com.github.romainbrenguier.sedmoy.operation.MethodOperation;
+import com.github.romainbrenguier.sedmoy.operation.Operation;
+import com.github.romainbrenguier.sedmoy.operation.Operation.State;
 import com.github.romainbrenguier.sedmoy.operation.Operations;
 import com.github.romainbrenguier.sedmoy.operation.Parameter;
 import com.github.romainbrenguier.sedmoy.operation.PopOperation;
@@ -39,6 +41,7 @@ public class InteractiveMode {
     final List<Parameter> parameters = new ArrayList<>();
     for (int i = 0; i < parameterTypes.length; ++i) {
       printStream.println("Enter parameter " + i + " of type " + parameterTypes[i].toString());
+      printStream.println("or \"-{index}\" to use an element from the stack");
       final String line = scanner.nextLine();
       if (line.charAt(0) == '-') {
         parameters.add(new StackParameter(Integer.parseInt(line.substring(1))));
@@ -97,7 +100,7 @@ public class InteractiveMode {
     if (matchingChoice.size() == 1) {
       return matchingChoice.get(0);
     }
-    printStream.println("Choices:");
+    highlight("Choices:");
     for (int i = 0; i < matchingChoice.size(); ++i) {
       printStream.println(choiceCodes.charAt(i + 2) + " " + Arrays
           .toString(matchingChoice.get(i).getParameterTypes()));
@@ -133,15 +136,15 @@ public class InteractiveMode {
    */
   public boolean step() {
     highlight("Input data:");
-    inputData.stream().limit(INPUT_PREVIEW_LENGTH).forEach(printStream::println);
+    final List<Object> inputPreview =
+        inputData.stream().limit(INPUT_PREVIEW_LENGTH).collect(Collectors.toList());
+    inputPreview.forEach(printStream::println);
     highlight("Current output:");
-    final List<Object> currentOutput = operations
-        .apply(
-            inputData.stream().limit(INPUT_PREVIEW_LENGTH).collect(Collectors.toList()));
+    final List<Operation.State> currentOutput = operations.apply(inputPreview);
     currentOutput.stream()
-        .map(InteractiveMode::objectToString)
+        .map(InteractiveMode::stateToString)
         .forEach(printStream::println);
-    final Class<?> classOfFirstResult = currentOutput.get(0).getClass();
+    final Class<?> classOfFirstResult = currentOutput.get(0).data.getClass();
     final List<Method> methods = choices(classOfFirstResult);
     final List<String> choiceNames =
         methods.stream().map(Method::getName).distinct().collect(Collectors.toList());
@@ -157,15 +160,23 @@ public class InteractiveMode {
     return true;
   }
 
+  private static String stateToString(Operation.State state) {
+    final String stackString = state.stack.stream()
+        .map(obj -> objectToString(obj))
+        .collect(Collectors.joining(","));
+    return "{" + stackString + "} " + objectToString(state.data);
+  }
+
   /**
    * @param choice code of a special choice
    * @return true for continue, false for stop execution
    */
   public boolean handleSpecialCode(int choice) {
     if (choice == QUIT) {
-      List<Object> result = operations.apply(new ArrayList<>(inputData));
+      List<State> result = operations.apply(new ArrayList<>(inputData));
       highlight("Result: ");
-      result.stream().map(InteractiveMode::objectToString).forEach(printStream::println);
+      result.stream().map(state -> state.data)
+          .map(InteractiveMode::objectToString).forEach(printStream::println);
       return false;
     }
     if (choice == CANCEL) {

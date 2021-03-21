@@ -1,5 +1,6 @@
 package com.github.romainbrenguier.sedmoy.operation;
 
+import com.github.romainbrenguier.sedmoy.operation.Operation.State;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,22 +28,21 @@ public class Operations {
     return input;
   }
 
-  public List<Object> apply(List<Object> inputData) {
-    Operation.State state = new Operation.State();
-    state.stack = new Stack<>();
-    for (final Operation operation : operationList) {
-      List<Object> newResult = new ArrayList<>();
-      for (Object input : inputData) {
-        try {
-          state.data = input;
+  public List<Operation.State> apply(List<Object> inputData) {
+    Stack<Object> stack = new Stack<>();
+    List<Operation.State> newResult = new ArrayList<>();
+    for (Object input : inputData) {
+      Operation.State state = new Operation.State(stack, input);
+      try {
+        for (final Operation operation : operationList) {
           state = operation.apply(state);
-          newResult.add(transformArrayToList(state.data));
-        } catch (Exception e) {
-          newResult.add(e.getMessage());
+          state.data = transformArrayToList(state.data);
         }
+      } catch (Exception e) {
+        state.data = e.getMessage();
       }
-      inputData = newResult;
+      newResult.add(new State((Stack<Object>) state.stack.clone(), state.data));
     }
-    return inputData;
+    return newResult;
   }
 }
