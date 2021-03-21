@@ -22,9 +22,9 @@ public class OperationsTest {
     // Arrange
     Operations operations = new Operations();
     Method split = String.class.getDeclaredMethod("split", String.class);
-    operations.add(new Operation(split, new Object[]{";"}));
+    operations.add(new MethodOperation(split, new Object[]{";"}));
     Method get = ArrayList.class.getDeclaredMethod("get", int.class);
-    operations.add(new Operation(get, new Object[]{1}));
+    operations.add(new MethodOperation(get, new Object[]{1}));
     List<Object> input = Arrays.asList("foo;bar", "baz;wiz");
 
     // Act

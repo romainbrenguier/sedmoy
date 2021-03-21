@@ -3,6 +3,7 @@ package com.github.romainbrenguier.sedmoy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 import java.util.stream.Collectors;
 
 /**
@@ -15,7 +16,7 @@ public class Operations {
       operationList.remove(operationList.size() - 1);
   }
 
-  public void add(Operation operation) {
+  public void add(MethodOperation operation) {
       operationList.add(operation);
   }
 
@@ -27,11 +28,13 @@ public class Operations {
   }
 
   public List<Object> apply(List<Object> inputData) {
-    for (Operation value : operationList) {
+    final Stack<Object> stack = new Stack<>();
+    for (final Operation operation : operationList) {
       List<Object> newResult = new ArrayList<>();
       for (Object input : inputData) {
         try {
-          newResult.add(transformArrayToList(value.apply(input)));
+          newResult.add(transformArrayToList(
+              operation.apply(stack, input)));
         } catch (Exception e) {
           newResult.add(e.getMessage());
         }

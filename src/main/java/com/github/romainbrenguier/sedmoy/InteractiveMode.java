@@ -3,7 +3,6 @@ package com.github.romainbrenguier.sedmoy;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -26,7 +25,7 @@ public class InteractiveMode {
     return Arrays.asList(forClass.getDeclaredMethods());
   }
 
-  private Operation inputOperation(Method method) {
+  private MethodOperation inputOperation(Method method) {
     printStream.println("For method " + method.getName());
     final Class<?>[] parameterTypes = method.getParameterTypes();
     final Object[] parameters = new Object[parameterTypes.length];
@@ -35,7 +34,7 @@ public class InteractiveMode {
       final String line = scanner.nextLine();
       parameters[i] = stringToObject(line, parameterTypes[i]);
     }
-    return new Operation(method, parameters);
+    return new MethodOperation(method, parameters);
   }
 
   final static String choiceCodes =
@@ -140,7 +139,7 @@ public class InteractiveMode {
     String choiceName = choiceNames.get(choice);
     printStream.println("You chose: " + choiceName);
     Method method = chooseMethodWithName(methods, choiceName);
-    final Operation operation = inputOperation(method);
+    final MethodOperation operation = inputOperation(method);
     operations.add(operation);
     return true;
   }
