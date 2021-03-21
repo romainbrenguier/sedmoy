@@ -2,9 +2,12 @@ package com.github.romainbrenguier.sedmoy;
 
 import com.github.romainbrenguier.sedmoy.operation.MethodOperation;
 import com.github.romainbrenguier.sedmoy.operation.Operations;
+import com.github.romainbrenguier.sedmoy.operation.PopOperation;
+import com.github.romainbrenguier.sedmoy.operation.PushOperation;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -39,10 +42,13 @@ public class InteractiveMode {
     return new MethodOperation(method, parameters);
   }
 
+  final static String specialCodes =  ":<+-";
+  final static int QUIT = 0;
+  final static int CANCEL = 1;
+  final static int PUSH = 2;
+  final static int POP = 3;
   final static String choiceCodes =
-      ":<0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  final static int QUIT = -2;
-  final static int CANCEL = -1;
+      "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   String stretchString(String s, int length) {
     StringBuilder builder = new StringBuilder(s);
@@ -53,19 +59,25 @@ public class InteractiveMode {
   }
 
   /**
-   * @return -2 for quit, -1 to cancel last operation, index of the method otherwise
+   * @return index of the method otherwise, or 1000 + special code
    */
   int chooseOperation(List<String> choices) {
     printStream.println("Choices:");
-    printStream.println(": stop");
-    printStream.println("< cancel last operation");
+    printStream.println("[" + specialCodes.charAt(QUIT) + "] stop");
+    printStream.println("[" + specialCodes.charAt(CANCEL) + "] cancel last operation");
+    printStream.println("[" + specialCodes.charAt(PUSH) + "] push to stack");
+    printStream.println("[" + specialCodes.charAt(POP) + "] pop from stack");
     for (int i = 0; i < choices.size(); ++i) {
-      printStream.print(choiceCodes.charAt(i + 2) + " " +
+      printStream.print("[" + choiceCodes.charAt(i) + "] " +
           stretchString(choices.get(i), 15));
       printStream.print((i % 5 == 4 || i == choices.size() - 1) ? "\n" : "\t\t");
     }
-    final String line = scanner.nextLine();
-    return choiceCodes.indexOf(line.charAt(0)) - 2;
+    final char choiceChar = scanner.nextLine().charAt(0);
+    final int specialCode = specialCodes.indexOf(choiceChar);
+    if (specialCode != -1) {
+      return 1000 + specialCode;
+    }
+    return choiceCodes.indexOf(choiceChar);
   }
 
   /**
@@ -127,22 +139,37 @@ public class InteractiveMode {
     final List<String> choiceNames =
         methods.stream().map(Method::getName).distinct().collect(Collectors.toList());
     int choice = chooseOperation(choiceNames);
-    if (choice == QUIT) {
-      List<Object> result = operations.apply(
-          inputData.stream().limit(INPUT_PREVIEW_LENGTH).collect(Collectors.toList()));
-      highlight("Result: ");
-      result.stream().map(InteractiveMode::objectToString).forEach(printStream::println);
-      return false;
-    }
-    if (choice == CANCEL) {
-      operations.removeLast();
-      return true;
+    if (choice >= 1000) {
+      return handleSpecialCode(choice - 1000);
     }
     String choiceName = choiceNames.get(choice);
     printStream.println("You chose: " + choiceName);
     Method method = chooseMethodWithName(methods, choiceName);
     final MethodOperation operation = inputOperation(method);
     operations.add(operation);
+    return true;
+  }
+
+  /**
+   * @param choice code of a special choice
+   * @return true for continue, false for stop execution
+   */
+  public boolean handleSpecialCode(int choice) {
+    if (choice == QUIT) {
+      List<Object> result = operations.apply(new ArrayList<>(inputData));
+      highlight("Result: ");
+      result.stream().map(InteractiveMode::objectToString).forEach(printStream::println);
+      return false;
+    }
+    if (choice == CANCEL) {
+      operations.removeLast();
+    }
+    if (choice == PUSH) {
+      operations.add(new PushOperation());
+    }
+    if (choice == POP) {
+      operations.add(new PopOperation());
+    }
     return true;
   }
 

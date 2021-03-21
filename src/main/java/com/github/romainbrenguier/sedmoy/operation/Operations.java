@@ -16,7 +16,7 @@ public class Operations {
       operationList.remove(operationList.size() - 1);
   }
 
-  public void add(MethodOperation operation) {
+  public void add(Operation operation) {
       operationList.add(operation);
   }
 
