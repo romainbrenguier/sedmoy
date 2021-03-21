@@ -28,13 +28,15 @@ public class Operations {
   }
 
   public List<Object> apply(List<Object> inputData) {
-    final Stack<Object> stack = new Stack<>();
+    Operation.State state = new Operation.State();
+    state.stack = new Stack<>();
     for (final Operation operation : operationList) {
       List<Object> newResult = new ArrayList<>();
       for (Object input : inputData) {
         try {
-          newResult.add(transformArrayToList(
-              operation.apply(stack, input)));
+          state.data = input;
+          state = operation.apply(state);
+          newResult.add(transformArrayToList(state.data));
         } catch (Exception e) {
           newResult.add(e.getMessage());
         }

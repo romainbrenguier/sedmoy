@@ -2,7 +2,6 @@ package com.github.romainbrenguier.sedmoy;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Stack;
 
 /** Represents a method with parameters */
 public class MethodOperation implements Operation {
@@ -15,12 +14,13 @@ public class MethodOperation implements Operation {
   }
 
   @Override
-  public Object apply(Stack<Object> stack, Object input) {
+  public State apply(State state) {
     try {
-      return method.invoke(input, parameters);
+      state.data = method.invoke(state.data, parameters);
     } catch (IllegalAccessException | InvocationTargetException e) {
-      return e;
+      state.data = e;
     }
+    return state;
   }
 
   public Class<?> getReturnType() {

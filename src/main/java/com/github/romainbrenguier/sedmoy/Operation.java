@@ -4,6 +4,10 @@ import java.util.Stack;
 
 public interface Operation {
 
-  Object apply(Stack<Object> stack, Object input);
+  class State {
+    Stack<Object> stack;
+    Object data;
+  }
 
+  State apply(State s);
 }
