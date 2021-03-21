@@ -6,6 +6,7 @@ import com.github.romainbrenguier.sedmoy.operation.Operations;
 import com.github.romainbrenguier.sedmoy.operation.Parameter;
 import com.github.romainbrenguier.sedmoy.operation.PopOperation;
 import com.github.romainbrenguier.sedmoy.operation.PushOperation;
+import com.github.romainbrenguier.sedmoy.operation.StackParameter;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
@@ -39,7 +40,11 @@ public class InteractiveMode {
     for (int i = 0; i < parameterTypes.length; ++i) {
       printStream.println("Enter parameter " + i + " of type " + parameterTypes[i].toString());
       final String line = scanner.nextLine();
-      parameters.add(new ConstantParameter(stringToObject(line, parameterTypes[i])));
+      if (line.charAt(0) == '-') {
+        parameters.add(new StackParameter(Integer.parseInt(line.substring(1))));
+      } else {
+        parameters.add(new ConstantParameter(stringToObject(line, parameterTypes[i])));
+      }
     }
     return new MethodOperation(method, parameters);
   }
