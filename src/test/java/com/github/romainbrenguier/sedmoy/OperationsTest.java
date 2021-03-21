@@ -2,11 +2,13 @@ package com.github.romainbrenguier.sedmoy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.github.romainbrenguier.sedmoy.operation.ConstantParameter;
 import com.github.romainbrenguier.sedmoy.operation.MethodOperation;
 import com.github.romainbrenguier.sedmoy.operation.Operations;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -24,9 +26,11 @@ public class OperationsTest {
     // Arrange
     Operations operations = new Operations();
     Method split = String.class.getDeclaredMethod("split", String.class);
-    operations.add(new MethodOperation(split, new Object[]{";"}));
+    operations.add(new MethodOperation(
+        split, Collections.singletonList(new ConstantParameter(";"))));
     Method get = ArrayList.class.getDeclaredMethod("get", int.class);
-    operations.add(new MethodOperation(get, new Object[]{1}));
+    operations.add(new MethodOperation(
+        get, Collections.singletonList(new ConstantParameter(1))));
     List<Object> input = Arrays.asList("foo;bar", "baz;wiz");
 
     // Act

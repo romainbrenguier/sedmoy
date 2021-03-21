@@ -1,7 +1,9 @@
 package com.github.romainbrenguier.sedmoy;
 
+import com.github.romainbrenguier.sedmoy.operation.ConstantParameter;
 import com.github.romainbrenguier.sedmoy.operation.MethodOperation;
 import com.github.romainbrenguier.sedmoy.operation.Operations;
+import com.github.romainbrenguier.sedmoy.operation.Parameter;
 import com.github.romainbrenguier.sedmoy.operation.PopOperation;
 import com.github.romainbrenguier.sedmoy.operation.PushOperation;
 import java.io.InputStream;
@@ -33,11 +35,11 @@ public class InteractiveMode {
   private MethodOperation inputOperation(Method method) {
     printStream.println("For method " + method.getName());
     final Class<?>[] parameterTypes = method.getParameterTypes();
-    final Object[] parameters = new Object[parameterTypes.length];
+    final List<Parameter> parameters = new ArrayList<>();
     for (int i = 0; i < parameterTypes.length; ++i) {
       printStream.println("Enter parameter " + i + " of type " + parameterTypes[i].toString());
       final String line = scanner.nextLine();
-      parameters[i] = stringToObject(line, parameterTypes[i]);
+      parameters.add(new ConstantParameter(stringToObject(line, parameterTypes[i])));
     }
     return new MethodOperation(method, parameters);
   }
@@ -69,8 +71,8 @@ public class InteractiveMode {
     printStream.println("[" + specialCodes.charAt(POP) + "] pop from stack");
     for (int i = 0; i < choices.size(); ++i) {
       printStream.print("[" + choiceCodes.charAt(i) + "] " +
-          stretchString(choices.get(i), 15));
-      printStream.print((i % 5 == 4 || i == choices.size() - 1) ? "\n" : "\t\t");
+          stretchString(choices.get(i), 31));
+      printStream.print((i % 3 == 2 || i == choices.size() - 1) ? "\n" : " ");
     }
     final char choiceChar = scanner.nextLine().charAt(0);
     final int specialCode = specialCodes.indexOf(choiceChar);
