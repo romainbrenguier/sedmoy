@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class Main {
   public static void main(String[] args) {
@@ -59,11 +60,12 @@ public class Main {
 
   public static void run(MainConfig config) {
     try {
-      CsvData data = read(config);
       if (config.isInteractive()) {
-        new InteractiveMode(data.toStrings(" ")).run();
+        List<String> data = Files.readAllLines(config.path);
+        new InteractiveMode(data).run();
         return;
       }
+      CsvData data = read(config);
       CsvData transformed =
           config.log() ? data.transform(new LogFile()) : sort(data);
       System.out.println(transformed.toString());
