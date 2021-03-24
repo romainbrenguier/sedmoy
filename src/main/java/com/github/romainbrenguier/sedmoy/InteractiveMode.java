@@ -80,14 +80,14 @@ public class InteractiveMode {
    */
   int chooseOperation(List<String> choices) {
     printStream.println("Choices:");
-    printStream.println("[" + specialCodes.charAt(QUIT) + "] stop");
-    printStream.println("[" + specialCodes.charAt(CANCEL) + "] cancel last operation");
-    printStream.println("[" + specialCodes.charAt(PUSH) + "] push to stack");
-    printStream.println("[" + specialCodes.charAt(POP) + "] pop from stack");
+    printChoice(specialCodes.charAt(QUIT), "stop");
+    printChoice(specialCodes.charAt(CANCEL), "cancel last operation");
+    printChoice(specialCodes.charAt(PUSH), "push to stack");
+    printChoice(specialCodes.charAt(POP), "pop from stack");
+    printStream.println();
     for (int i = 0; i < choices.size(); ++i) {
-      printStream.print("[" + choiceCodes.charAt(i) + "] " +
-          stretchString(choices.get(i), 31));
-      printStream.print((i % 3 == 2 || i == choices.size() - 1) ? "\n" : " ");
+      printChoice(choiceCodes.charAt(i), choices.get(i));
+      printStream.print((i % 3 == 2 || i == choices.size() - 1) ? "\n" : "");
     }
     final char choiceChar = scanner.nextLine().charAt(0);
     final int specialCode = specialCodes.indexOf(choiceChar);
@@ -95,6 +95,10 @@ public class InteractiveMode {
       return 1000 + specialCode;
     }
     return choiceCodes.indexOf(choiceChar);
+  }
+
+  void printChoice(char key, String description) {
+    printStream.print("[" + key + "] " + stretchString(description, 31));
   }
 
   /**
@@ -107,13 +111,15 @@ public class InteractiveMode {
     if (matchingChoice.size() == 1) {
       return matchingChoice.get(0);
     }
-    highlight("Choices:");
+    printStream.println("Choices:");
     for (int i = 0; i < matchingChoice.size(); ++i) {
-      printStream.println(choiceCodes.charAt(i + 2) + " " + Arrays
-          .toString(matchingChoice.get(i).getParameterTypes()));
+      printChoice(
+          choiceCodes.charAt(i),
+          Arrays.toString(matchingChoice.get(i).getParameterTypes()));
+      printStream.println();
     }
     final String line = scanner.nextLine();
-    return matchingChoice.get(choiceCodes.indexOf(line.charAt(0)) - 2);
+    return matchingChoice.get(choiceCodes.indexOf(line.charAt(0)));
   }
 
   private void highlight(String message) {
