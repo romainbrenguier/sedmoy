@@ -48,16 +48,6 @@ public class CsvData {
     return String.join(System.lineSeparator(), toStrings(separator));
   }
 
-  public List<String> toHtml() {
-    List<String> output = new ArrayList<>();
-    output.add("<html><head></head><body><ul>");
-    for (Row row : lines) {
-      output.add(String.format("<li>%s</li>", row.toString(":")));
-    }
-    output.add("</ul></body></html>");
-    return output;
-  }
-
   @Override
   public String toString() {
     return toString(SEPARATOR);

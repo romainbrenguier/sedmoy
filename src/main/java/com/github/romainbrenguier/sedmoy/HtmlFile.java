@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class HtmlFile {
   private final File file;
@@ -13,8 +16,21 @@ public class HtmlFile {
   }
 
   public static HtmlFile makeFromCsv(CsvData data) throws IOException {
+    List<String> lines = data.getLines().stream()
+        .map(row -> row.toString(":"))
+        .collect(Collectors.toList());
+    return makeFromLines(lines);
+  }
+
+  public static HtmlFile makeFromLines(List<String> lines) throws IOException {
+    List<String> output = new ArrayList<>();
+    output.add("<html><head></head><body><ul>");
+    for (String line : lines) {
+      output.add(String.format("<li>%s</li>", line));
+    }
+    output.add("</ul></body></html>");
     File tmpFile = File.createTempFile("sorted", ".html");
-    Files.write(tmpFile.toPath(), data.toHtml(), StandardOpenOption.WRITE);
+    Files.write(tmpFile.toPath(), output, StandardOpenOption.WRITE);
     return new HtmlFile(tmpFile);
   }
 
