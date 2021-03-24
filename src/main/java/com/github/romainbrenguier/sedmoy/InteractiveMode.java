@@ -9,11 +9,14 @@ import com.github.romainbrenguier.sedmoy.operation.Parameter;
 import com.github.romainbrenguier.sedmoy.operation.PopOperation;
 import com.github.romainbrenguier.sedmoy.operation.PushOperation;
 import com.github.romainbrenguier.sedmoy.operation.StackParameter;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -52,11 +55,13 @@ public class InteractiveMode {
     return new MethodOperation(method, parameters);
   }
 
-  final static String specialCodes =  ":<+-";
+  final static String specialCodes =  ":<+-/.";
   final static int QUIT = 0;
   final static int CANCEL = 1;
   final static int PUSH = 2;
   final static int POP = 3;
+  final static int HTML = 4;
+  final static int MOBI = 5;
   final static String choiceCodes =
       "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -83,7 +88,10 @@ public class InteractiveMode {
     printChoice(specialCodes.charAt(QUIT), "stop");
     printChoice(specialCodes.charAt(CANCEL), "cancel last operation");
     printChoice(specialCodes.charAt(PUSH), "push to stack");
+    printStream.println();
     printChoice(specialCodes.charAt(POP), "pop from stack");
+    printChoice(specialCodes.charAt(HTML), "write as html");
+    printChoice(specialCodes.charAt(MOBI), "write as mobi");
     printStream.println();
     for (int i = 0; i < choices.size(); ++i) {
       printChoice(choiceCodes.charAt(i), choices.get(i));
@@ -180,16 +188,34 @@ public class InteractiveMode {
     return "{" + stackString + "} " + objectToString(state.data);
   }
 
+  private List<String> fullOutput() {
+    List<State> result = operations.apply(new ArrayList<>(inputData));
+    return result.stream().map(state -> state.data)
+        .map(InteractiveMode::objectToString)
+        .collect(Collectors.toList());
+  }
+
+  private void chooseFromStack() {
+    State example = operations.apply(Collections.singletonList(inputData.get(0))).get(0);
+    printStream.println("Choose from stack:");
+    for (int i = 0; i < example.stack.size(); ++i) {
+      String description = "e.g.: " + objectToString(example.stackAtPosition(i));
+      printChoice(choiceCodes.charAt(i), description);
+      printStream.println();
+    }
+    final String line = scanner.nextLine();
+    final int position = choiceCodes.indexOf(line.charAt(0));
+    operations.add(new PopOperation(position));
+  }
+
   /**
    * @param choice code of a special choice
    * @return true for continue, false for stop execution
    */
   public boolean handleSpecialCode(int choice) {
     if (choice == QUIT) {
-      List<State> result = operations.apply(new ArrayList<>(inputData));
       highlight("Result: ");
-      result.stream().map(state -> state.data)
-          .map(InteractiveMode::objectToString).forEach(printStream::println);
+      fullOutput().forEach(printStream::println);
       return false;
     }
     if (choice == CANCEL) {
@@ -199,7 +225,22 @@ public class InteractiveMode {
       operations.add(new PushOperation());
     }
     if (choice == POP) {
-      operations.add(new PopOperation());
+      chooseFromStack();
+    }
+    if (choice == HTML) {
+      try {
+        printStream.println("Writing output to " + HtmlFile.makeFromLines(fullOutput()).getPath());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    if (choice == MOBI) {
+      try {
+        String path = HtmlFile.makeFromLines(fullOutput()).convertToMobi().getPath();
+        printStream.println("Writing output to " + path);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     return true;
   }

@@ -22,6 +22,10 @@ public class HtmlFile {
     return makeFromLines(lines);
   }
 
+  public String getPath() {
+    return file.getPath();
+  }
+
   public static HtmlFile makeFromLines(List<String> lines) throws IOException {
     List<String> output = new ArrayList<>();
     output.add("<html><head></head><body><ul>");
