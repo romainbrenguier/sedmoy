@@ -30,28 +30,6 @@ public class Main {
     return csvFile;
   }
 
-  public static File writeAsHtml(CsvData data, MainConfig config) throws IOException {
-    File tmpFile = File.createTempFile("sorted", ".html");
-    Files.write(tmpFile.toPath(), data.toHtml(), StandardOpenOption.WRITE);
-    return tmpFile;
-  }
-
-  public static File writeAsMobi(File htmlFile, MainConfig config) throws IOException {
-    File tmpMobi = File.createTempFile("sorted", ".mobi");
-    Process process =
-        new ProcessBuilder("ebook-convert", htmlFile.toString(), tmpMobi.toString())
-            .start();
-    try {
-      int result = process.waitFor();
-      if (result != 0) {
-        System.out.println("Process exited with unexpected code " + result);
-      }
-    } catch (InterruptedException e) {
-      System.out.println("Process interrupted");
-    }
-    return tmpMobi;
-  }
-
   private static CsvData sort(CsvData data) {
     SortedData sortedData = SortedData.ofCsv(data);
     sortedData.printStats();
@@ -71,10 +49,10 @@ public class Main {
       System.out.println(transformed.toString());
       File asCsv = writeAsCsv(transformed, config);
       System.out.println("wrote " + asCsv.toString());
-      File asHtml = writeAsHtml(transformed, config);
+      HtmlFile asHtml = HtmlFile.makeFromCsv(transformed);
       System.out.println("wrote " + asHtml.toString());
       if (config.writeMobi) {
-        File asMobi = writeAsMobi(asHtml, config);
+        File asMobi = asHtml.convertToMobi();
         System.out.println("wrote " + asMobi.toString());
       }
     } catch (IOException e) {
