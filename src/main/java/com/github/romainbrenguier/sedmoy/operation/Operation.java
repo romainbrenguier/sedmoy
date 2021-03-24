@@ -11,7 +11,13 @@ public interface Operation {
       this.stack = stack;
       this.data = data;
     }
+
+    /** Position starts from the top at 0 */
+    public Object stackAtPosition(int position) {
+      return stack.elementAt(stack.size() - 1 - position);
+    }
   }
 
   State apply(State s);
+
 }
