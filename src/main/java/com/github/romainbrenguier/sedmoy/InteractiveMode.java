@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,13 +57,17 @@ public class InteractiveMode {
     return new MethodOperation(method, parameters);
   }
 
-  final static String specialCodes =  ":<+-/.";
+  /** Codes for special instructions */
+  final static String specialCodes =  ":<+-!/.";
   final static int QUIT = 0;
   final static int CANCEL = 1;
   final static int PUSH = 2;
   final static int POP = 3;
-  final static int HTML = 4;
-  final static int MOBI = 5;
+  final static int TEXT = 4;
+  final static int HTML = 5;
+  final static int MOBI = 6;
+
+  /** Codes for methods */
   final static String choiceCodes =
       "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -87,9 +93,11 @@ public class InteractiveMode {
     printStream.println("Choices:");
     printChoice(specialCodes.charAt(QUIT), "stop");
     printChoice(specialCodes.charAt(CANCEL), "cancel last operation");
-    printChoice(specialCodes.charAt(PUSH), "push to stack");
     printStream.println();
+    printChoice(specialCodes.charAt(PUSH), "push to stack");
     printChoice(specialCodes.charAt(POP), "pop from stack");
+    printStream.println();
+    printChoice(specialCodes.charAt(TEXT), "write as text");
     printChoice(specialCodes.charAt(HTML), "write as html");
     printChoice(specialCodes.charAt(MOBI), "write as mobi");
     printStream.println();
@@ -214,8 +222,6 @@ public class InteractiveMode {
    */
   public boolean handleSpecialCode(int choice) {
     if (choice == QUIT) {
-      highlight("Result: ");
-      fullOutput().forEach(printStream::println);
       return false;
     }
     if (choice == CANCEL) {
@@ -226,6 +232,15 @@ public class InteractiveMode {
     }
     if (choice == POP) {
       chooseFromStack();
+    }
+    if (choice == TEXT) {
+      try {
+        File tmpFile = File.createTempFile("sedmoy-output-", ".txt");
+        printStream.println("Writing output to " + tmpFile.getPath());
+        Files.write(tmpFile.toPath(), fullOutput(), StandardOpenOption.WRITE);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
     if (choice == HTML) {
       try {
