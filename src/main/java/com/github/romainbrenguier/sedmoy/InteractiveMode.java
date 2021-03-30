@@ -9,6 +9,7 @@ import com.github.romainbrenguier.sedmoy.operation.Parameter;
 import com.github.romainbrenguier.sedmoy.operation.PopOperation;
 import com.github.romainbrenguier.sedmoy.operation.PushOperation;
 import com.github.romainbrenguier.sedmoy.operation.StackParameter;
+import com.github.romainbrenguier.sedmoy.sort.LexicographicComparator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -58,7 +60,7 @@ public class InteractiveMode {
   }
 
   /** Codes for special instructions */
-  final static String specialCodes =  ":<+-!/.";
+  final static String specialCodes =  ":<+-!/.>";
   final static int QUIT = 0;
   final static int CANCEL = 1;
   final static int PUSH = 2;
@@ -66,6 +68,7 @@ public class InteractiveMode {
   final static int TEXT = 4;
   final static int HTML = 5;
   final static int MOBI = 6;
+  final static int SORT = 7;
 
   /** Codes for methods */
   final static String choiceCodes =
@@ -100,6 +103,8 @@ public class InteractiveMode {
     printChoice(specialCodes.charAt(TEXT), "write as text");
     printChoice(specialCodes.charAt(HTML), "write as html");
     printChoice(specialCodes.charAt(MOBI), "write as mobi");
+    printStream.println();
+    printChoice(specialCodes.charAt(SORT), "sort lexicographically");
     printStream.println();
     for (int i = 0; i < choices.size(); ++i) {
       printChoice(choiceCodes.charAt(i), choices.get(i));
@@ -216,6 +221,17 @@ public class InteractiveMode {
     operations.add(new PopOperation(position));
   }
 
+  private Comparator<String> chooseComparator() {
+    printStream.println("Define lexicographic order (for instance `abcdefghijklmnopqrstuvwxyz`, or"
+        + " `tdmnaeiourhljckgfvpbsz`):");
+    final String line = scanner.nextLine();
+    return new LexicographicComparator(line);
+  }
+
+  void sort(Comparator<String> comparator) {
+    inputData.sort(comparator);
+  }
+
   /**
    * @param choice code of a special choice
    * @return true for continue, false for stop execution
@@ -256,6 +272,10 @@ public class InteractiveMode {
       } catch (IOException e) {
         e.printStackTrace();
       }
+    }
+    if (choice == SORT) {
+      final Comparator<String> comparator = chooseComparator();
+      sort(comparator);
     }
     return true;
   }
