@@ -1,6 +1,6 @@
 package com.github.romainbrenguier.sedmoy.sort;
 
-import com.github.romainbrenguier.sedmoy.Row;
+import com.github.romainbrenguier.sedmoy.csv.Row;
 import java.util.Comparator;
 
 public class RowComparator implements Comparator<Row> {

@@ -3,6 +3,8 @@ package com.github.romainbrenguier.sedmoy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.github.romainbrenguier.sedmoy.csv.CsvData;
+import com.github.romainbrenguier.sedmoy.csv.Row;
 import com.github.romainbrenguier.sedmoy.sort.SortedData;
 import java.io.IOException;
 import java.nio.file.Files;

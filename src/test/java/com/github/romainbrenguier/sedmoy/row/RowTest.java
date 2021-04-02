@@ -1,9 +1,10 @@
-package com.github.romainbrenguier.sedmoy;
+package com.github.romainbrenguier.sedmoy.row;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.github.romainbrenguier.sedmoy.csv.Row;
 import org.junit.jupiter.api.Test;
 
 public class RowTest {
@@ -51,8 +52,8 @@ public class RowTest {
   @Test
   public void testLimit() {
     // Arrange, Act and Assert
-    assertEquals(1, Row.split("foo bar", " ").limit(1).data.length);
-    assertEquals(2, Row.split("foo bar", " ").limit(10).data.length);
+    assertEquals(1, Row.split("foo bar", " ").limit(1).numberOfColumns());
+    assertEquals(2, Row.split("foo bar", " ").limit(10).numberOfColumns());
     assertThrows(NegativeArraySizeException.class, () -> Row.split("Line", "Separator").limit(-1));
   }
 }

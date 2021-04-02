@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.sedmoy;
+package com.github.romainbrenguier.sedmoy.csv;
 
 public class Row {
   String[] data;
@@ -18,7 +18,7 @@ public class Row {
     return new Row(result);
   }
 
-  static int lengthOfFirstWord(String s) {
+  static public int lengthOfFirstWord(String s) {
     int firstSpace = s.indexOf(' ');
     return firstSpace == -1 ? s.length() : firstSpace;
   }
@@ -40,7 +40,11 @@ public class Row {
     return new Row(result);
   }
 
-  String toString(String separator) {
+  public String toString(String separator) {
     return String.join(separator, data);
+  }
+
+  public int numberOfColumns() {
+    return data.length;
   }
 }

@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.sedmoy;
+package com.github.romainbrenguier.sedmoy.csv;
 
 import com.github.romainbrenguier.sedmoy.sort.SortedData;
 import java.util.ArrayList;
