@@ -50,11 +50,12 @@ public class InteractiveMode {
     final Class<?>[] parameterTypes = method.getParameterTypes();
     final List<Parameter> parameters = new ArrayList<>();
     for (int i = 0; i < parameterTypes.length; ++i) {
-      printStream.println("Enter parameter " + i + " of type " + parameterTypes[i].toString());
-      printStream.println("or \"-{index}\" to use an element from the stack");
+      printStream.println("Enter parameter " + i + " of type " + parameterTypes[i].toString() +
+          " or `-` to use an element from the stack");
       final String line = scanner.nextLine();
-      if (line.charAt(0) == '-') {
-        parameters.add(new StackParameter(Integer.parseInt(line.substring(1))));
+      if (line.equals("-")) {
+        final int stackIndex = chooseFromStack();
+        parameters.add(new StackParameter(stackIndex));
       } else {
         parameters.add(new ConstantParameter(stringToObject(line, parameterTypes[i])));
       }
@@ -211,7 +212,7 @@ public class InteractiveMode {
         .collect(Collectors.toList());
   }
 
-  private void chooseFromStack() {
+  private int chooseFromStack() {
     State example = operations.apply(Collections.singletonList(inputData.get(0))).get(0);
     printStream.println("Choose from stack:");
     for (int i = 0; i < example.stack.size(); ++i) {
@@ -220,8 +221,7 @@ public class InteractiveMode {
       printStream.println();
     }
     final String line = scanner.nextLine();
-    final int position = choiceCodes.indexOf(line.charAt(0));
-    operations.add(new PopOperation(position));
+    return choiceCodes.indexOf(line.charAt(0));
   }
 
   private Comparator<String> chooseComparator() {
@@ -257,7 +257,7 @@ public class InteractiveMode {
       operations.add(new PushOperation());
     }
     if (choice == POP) {
-      chooseFromStack();
+      operations.add(new PopOperation(chooseFromStack()));
     }
     if (choice == TEXT) {
       try {
