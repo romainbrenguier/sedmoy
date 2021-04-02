@@ -14,7 +14,7 @@ public class Preferences {
   private static final Path DEFAULT_FILE =
       Paths.get(System.getProperty("user.home"), ".sedmoy.prf");
 
-  private Preferences() {
+  public Preferences() {
     this.properties = new Properties();
   }
 
@@ -34,5 +34,14 @@ public class Preferences {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public String lexicographicOrder() {
+    return properties.getProperty("lexicographicOrder",
+        "abcdefghijklmnopqrstuvwxyz");
+  }
+
+  public void lexicographicOrder(String toSave) {
+    properties.setProperty("lexicographicOrder", toSave);
   }
 }

@@ -18,7 +18,7 @@ public class Main {
     try {
       final Preferences preferences = Preferences.load();
       final List<String> data = Files.readAllLines(config.path);
-      new InteractiveMode(data).run();
+      new InteractiveMode(data, preferences).run();
       preferences.save();
     } catch (IOException e) {
       e.printStackTrace();

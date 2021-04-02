@@ -32,9 +32,12 @@ public class InteractiveMode {
   final PrintStream printStream = System.out;
   final Scanner scanner;
   final Operations operations = new Operations();
+  private final Preferences preferences;
 
-  public InteractiveMode(List<String> inputData) {
+  public InteractiveMode(List<String> inputData,
+      Preferences preferences) {
     this.inputData = inputData;
+    this.preferences = preferences;
     this.scanner = new Scanner(inputStream);
   }
 
@@ -222,9 +225,12 @@ public class InteractiveMode {
   }
 
   private Comparator<String> chooseComparator() {
-    printStream.println("Define lexicographic order (for instance `abcdefghijklmnopqrstuvwxyz`, or"
-        + " `tdmnaeiourhljckgfvpbsz`):");
+    printStream.println("Define lexicographic order, for instance `abcdefghijklmnopqrstuvwxyz`."
+        + " Last used `" + preferences.lexicographicOrder() + "`:");
     final String line = scanner.nextLine();
+    if (line.length() > 5) {
+      preferences.lexicographicOrder(line);
+    }
     return new LexicographicComparator(line);
   }
 
