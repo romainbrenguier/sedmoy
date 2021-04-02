@@ -226,10 +226,14 @@ public class InteractiveMode {
 
   private Comparator<String> chooseComparator() {
     printStream.println("Define lexicographic order, for instance `abcdefghijklmnopqrstuvwxyz`."
-        + " Last used `" + preferences.lexicographicOrder() + "`:");
+        + " Default: `" + preferences.lexicographicOrder() + "`:");
     final String line = scanner.nextLine();
-    if (line.length() > 5) {
+    if (line.isEmpty()) {
+      return new LexicographicComparator(preferences.lexicographicOrder());
+    } else if (line.length() > 5) {
       preferences.lexicographicOrder(line);
+    } else {
+      printStream.println("Line shorter than expected, will not be saved");
     }
     return new LexicographicComparator(line);
   }
