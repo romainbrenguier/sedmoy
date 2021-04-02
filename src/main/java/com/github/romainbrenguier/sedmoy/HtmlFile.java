@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class HtmlFile {
+  private static int MAX_ITEMS_IN_LIST = 40;
   private final File file;
 
   private HtmlFile(File file) {
@@ -30,8 +31,13 @@ public class HtmlFile {
   public static HtmlFile makeFromLines(List<String> lines) throws IOException {
     List<String> output = new ArrayList<>();
     output.add("<html><head></head><body><ul>");
+    int index = 0;
     for (String line : lines) {
       output.add(String.format("<li>%s</li>", line));
+      if (++index % MAX_ITEMS_IN_LIST == 0) {
+        output.add("</ul>");
+        output.add("<ul>");
+      }
     }
     output.add("</ul></body></html>");
     File tmpFile = File.createTempFile("sorted", ".html");
