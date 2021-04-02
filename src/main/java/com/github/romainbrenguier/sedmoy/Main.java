@@ -16,8 +16,10 @@ public class Main {
   public static void run(MainConfig config) {
     assert config.isInteractive() : "only interactive mode is supported";
     try {
+      final Preferences preferences = Preferences.load();
       final List<String> data = Files.readAllLines(config.path);
       new InteractiveMode(data).run();
+      preferences.save();
     } catch (IOException e) {
       e.printStackTrace();
     }
