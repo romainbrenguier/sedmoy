@@ -14,4 +14,12 @@ class LexicographicComparatorTest {
     assertTrue(order.compare("bar", "baz") < 0);
     assertEquals(0, order.compare("bar", "bar"));
   }
+
+  @Test
+  void testCompare_special() {
+    Comparator<String> order = new LexicographicComparator(
+        "tdnmāaáäåēeéīiōoóöūuúrhljyqckgfvpbsz");
+    assertTrue(order.compare("spridning", "andra") > 0);
+    assertTrue(order.compare("spridning,spread", "andra,other") > 0);
+  }
 }

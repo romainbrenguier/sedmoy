@@ -8,7 +8,6 @@ import java.util.Comparator;
 public class LexicographicComparator implements Comparator<String> {
   private final String order;
 
-
   public LexicographicComparator(String order) {
     this.order = order;
   }
