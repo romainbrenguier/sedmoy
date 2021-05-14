@@ -285,7 +285,7 @@ public class InteractiveMode {
     }
     if (choice == SORT) {
       final Comparator<String> comparator = chooseComparator();
-      sort(comparator);
+      operations.addSortOperation(comparator);
     }
     return true;
   }

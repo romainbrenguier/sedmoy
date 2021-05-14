@@ -1,7 +1,9 @@
 package com.github.romainbrenguier.sedmoy.operation;
 
 import com.github.romainbrenguier.sedmoy.operation.BatchOperation.Objectwise;
+import com.github.romainbrenguier.sedmoy.operation.BatchOperation.SortOperation;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -18,6 +20,10 @@ public class Operations {
 
   public void add(Operation operation) {
       operationList.add(new Objectwise(operation));
+  }
+
+  public void addSortOperation(Comparator<String> comparator) {
+    operationList.add(new SortOperation(comparator));
   }
 
   public List<Operation.State> apply(List<Object> inputData) {

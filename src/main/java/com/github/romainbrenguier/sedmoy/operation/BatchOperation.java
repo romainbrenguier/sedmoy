@@ -2,6 +2,7 @@ package com.github.romainbrenguier.sedmoy.operation;
 
 import com.github.romainbrenguier.sedmoy.operation.Operation.State;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Stack;
 import java.util.stream.Collectors;
@@ -39,6 +40,21 @@ public interface BatchOperation {
         stack = state.stack;
         states.set(i, state);
       }
+      return states;
+    }
+  }
+
+  class SortOperation implements BatchOperation {
+    private final Comparator<String> comparator;
+
+    public SortOperation(Comparator<String> comparator) {
+      this.comparator = comparator;
+    }
+
+    @Override
+    public List<State> apply(List<State> states) {
+      states.sort((state1, state2) -> comparator.compare(
+          state1.data.toString(), state2.data.toString()));
       return states;
     }
   }
