@@ -30,19 +30,22 @@ public class Operations {
 
   public List<Operation.State> apply(List<Object> inputData) {
     Stack<Object> stack = new Stack<>();
-    List<Operation.State> newResult = new ArrayList<>();
-    for (Object input : inputData) {
-      Operation.State state = new Operation.State(stack, input);
-      try {
-        for (final Operation operation : operationList) {
+    List<Operation.State> states = inputData.stream()
+        .map(data -> new Operation.State(new Stack<>(), data))
+        .collect(Collectors.toList());
+    for (final Operation operation : operationList) {
+      for (int i = 0; i < states.size(); ++i) {
+        Operation.State state = new Operation.State(stack, states.get(i).data);
+        try {
           state = operation.apply(state);
           state.data = transformArrayToList(state.data);
+        } catch (Exception e) {
+          state.data = e.getMessage();
         }
-      } catch (Exception e) {
-        state.data = e.getMessage();
+        stack = state.stack;
+        states.set(i, state);
       }
-      newResult.add(new State((Stack<Object>) state.stack.clone(), state.data));
     }
-    return newResult;
+    return states;
   }
 }
