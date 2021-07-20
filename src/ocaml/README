@@ -1,0 +1,2 @@
+This uses `dune` as a build system. `dune` is installed using `opam`.
+To build the main executable: `dune build main.exe`. The executable is then present in `_build/default/main.exe`.
