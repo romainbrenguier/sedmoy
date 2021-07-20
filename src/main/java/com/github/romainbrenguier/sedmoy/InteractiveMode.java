@@ -9,6 +9,7 @@ import com.github.romainbrenguier.sedmoy.operation.Parameter;
 import com.github.romainbrenguier.sedmoy.operation.PopOperation;
 import com.github.romainbrenguier.sedmoy.operation.PushOperation;
 import com.github.romainbrenguier.sedmoy.operation.StackParameter;
+import com.github.romainbrenguier.sedmoy.sort.FileMappingComparator;
 import com.github.romainbrenguier.sedmoy.sort.LexicographicComparator;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -226,10 +229,19 @@ public class InteractiveMode {
 
   private Comparator<String> chooseComparator() {
     printStream.println("Define lexicographic order, for instance `abcdefghijklmnopqrstuvwxyz`."
+        + " Or `<file_name` for using a file (mapping symbols to strings)."
         + " Default: `" + preferences.lexicographicOrder() + "`:");
     final String line = scanner.nextLine();
     if (line.isEmpty()) {
       return new LexicographicComparator(preferences.lexicographicOrder());
+    } else if (line.startsWith("<")) {
+      final Path path = Paths.get(line.substring(1));
+      try {
+        return new FileMappingComparator(path);
+      } catch (IOException e) {
+        printStream.println("Could not read file, will use the default.");
+        return new LexicographicComparator(preferences.lexicographicOrder());
+      }
     } else if (line.length() > 5) {
       preferences.lexicographicOrder(line);
     } else {
