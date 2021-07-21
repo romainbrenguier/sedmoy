@@ -3,6 +3,12 @@ open GMain
 let locale = GtkMain.Main.init ()
 
 let _ =
+  let lines = Tree.read_file Sys.argv.(1) in
+  lines |> Tree.process |> List.iter print_endline;
+  print_endline "=================";
+  List.map Tree.abstract_tabulation lines |> Tree.to_tree |> 
+    List.iter (fun x -> x |> Tree.to_string |> print_endline);
+
   (* Simple gtk example extracted from https://ocaml.org/learn/tutorials/introduction_to_gtk.html *)
   let window = GWindow.window
     ~width:800 ~height:600

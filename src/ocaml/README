@@ -1,2 +1,4 @@
 This uses `dune` as a build system. `dune` is installed using `opam`.
+The project uses lablgtk, which requires `sudo apt install libgtk2.0-dev` and `opam install lwt`, then can be installed with opam.
+
 To build the main executable: `dune build main.exe`. The executable is then present in `_build/default/main.exe`.
