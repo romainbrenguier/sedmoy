@@ -67,3 +67,9 @@ let evaluate_one command value_list =
 
 let evaluate commands value_list =
   List.fold_left (fun values command -> evaluate_one command values) value_list commands 
+
+let starts_with prefix string =
+  String.length prefix <= String.length string && String.equal (String.sub string 0 (String.length prefix)) prefix
+
+let suggest_command prefix =
+  List.filter (fun x -> starts_with prefix x.name) signatures

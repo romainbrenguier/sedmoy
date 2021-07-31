@@ -19,11 +19,18 @@ let evaluate command_text input =
     output_values
   |> join ~separator:"\n===================\n"
     
+let current_word text position =
+  let last_space = try String.rindex_from text (position - 1) ' ' with Not_found | Invalid_argument _ -> -1 in
+  String.sub text (last_space + 1) (position - 1 - last_space)
+ 
+let suggest_text prefix = 
+  Operation.suggest_command prefix |> List.map (fun x -> x.Operation.name) |> join ~separator:"   "
+
 let run_ui input_list = 
   (* Simple gtk example extracted from https://ocaml.org/learn/tutorials/introduction_to_gtk.html *)
   let window = GWindow.window
     ~width:1200 ~height:800
-    ~title:"Simple lablgtk program" () in
+    ~title:"Sedmoy" () in
     
   let vbox = GPack.vbox ~packing:window#add () in 
   window#connect#destroy ~callback:Main.quit |> ignore;
@@ -34,18 +41,27 @@ let run_ui input_list =
                 ~packing:vbox#pack () in
 *)
   let button = GButton.button ~label:"Evaluate" ~packing:vbox#add () in
+
+  let suggestions = GText.view ~height:50 ~editable:false ~packing:vbox#add () in
   let hbox = GPack.hbox ~packing:vbox#add () in
   let input_text_view = GText.view  ~height:700 ~width:400 ~editable:false ~packing:hbox#pack () in
   let text_edit = GText.view ~height:700 ~width:400 ~border_width:5 ~editable:true ~packing:hbox#pack (*scroll#add_with_viewport*) () in
   let output_text_view = GText.view  ~height:700 ~width:400 ~editable:false ~packing:hbox#pack () in
+  suggestions#buffer#set_text (suggest_text "");
   text_edit#buffer#set_text "";
   input_text_view#buffer#set_text (join ~separator:"\n" input_list);
   output_text_view#buffer#set_text "Output text";
+
   button#connect#clicked 
     ~callback:(fun () -> 
       evaluate (text_edit#buffer#get_text()) (input_text_view#buffer#get_text())
       |> output_text_view#buffer#set_text)
    |> ignore ;
+
+  text_edit#buffer#connect#changed ~callback:(fun () -> 
+    let current = current_word (text_edit#buffer#get_text()) (text_edit#buffer#cursor_position) in
+    suggestions#buffer#set_text (suggest_text current) 
+  ) |> ignore;
 
   window#show ();
   Main.main ()
