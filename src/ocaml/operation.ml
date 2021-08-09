@@ -1,7 +1,10 @@
-type argument_type = StringT | NumberT
-type value_type = StringValue | NumberValue | ListValue of value_type
+type argument_type = StringArgType | NumberArgType
 type argument_value = StringArg of string | NumberArg of int
-type value = String of string | Number of int
+
+(** Values are inputs and output of strem operations *)
+type value = StringValue of string | NumberValue of int | ListValue of value list
+type value_type = StringType | NumberType | ListType of value_type
+
 type signature = { 
   name: string; argument_types: argument_type list;
   input_type: value_type; output_type: value_type; 
@@ -9,51 +12,59 @@ type signature = {
 type t = {
   signature: signature; argument_values: argument_value list;}
 
-let value_to_string = function String s -> s | Number i -> string_of_int i
+let rec value_to_string = function StringValue s -> s | NumberValue i -> string_of_int i 
+  | ListValue l -> List.map value_to_string l |> Util.join ~separator:"; " |> fun x -> "[" ^ x ^ "]" 
 
 let substring arguments value = match arguments, value with
-  | NumberArg i :: [], String s -> String (String.sub s 0 i)
+  | NumberArg i :: [], StringValue s -> StringValue (String.sub s 0 i)
   | _ -> failwith "unreachable" 
 
 let concat arguments value = match arguments, value with
-  | StringArg arg :: [], String s -> String (s ^ arg)
+  | StringArg arg :: [], StringValue s -> StringValue (s ^ arg)
   | _ -> failwith "unreachable" 
 
 let index_of arguments value = match arguments, value with
-  | StringArg s :: [], String t -> Number (try Str.search_forward (Str.regexp s) t 0 with Not_found -> -1)
+  | StringArg s :: [], StringValue t -> NumberValue (try Str.search_forward (Str.regexp s) t 0 with Not_found -> -1)
   | _ -> failwith "unreachable" 
 
 let to_string arguments value = match arguments, value with
-  | [], Number n -> String (string_of_int n)
+  | [], NumberValue n -> StringValue (string_of_int n)
   | _ -> failwith "unreachable" 
 
 let length arguments value = match arguments, value with
-  | [], String s -> Number (String.length s)
+  | [], StringValue s -> NumberValue (String.length s)
   | _ -> failwith "unreachable" 
 
 let replace_all arguments value = match arguments, value with
-  | StringArg replace :: StringArg by :: [], String s -> String (Str.global_replace (Str.regexp replace) by s)
+  | StringArg replace :: StringArg by :: [], StringValue s -> StringValue (Str.global_replace (Str.regexp replace) by s)
+  | _ -> failwith "unreachable" 
+
+let split arguments value = match arguments, value with
+  | StringArg separator :: [], StringValue s when String.length separator = 1 -> 
+    ListValue (String.split_on_char separator.[0] s |> List.map (fun s -> StringValue s))
   | _ -> failwith "unreachable" 
 
 let signatures = [
-  {name="concat"; argument_types=[StringT]; implementation=concat; input_type=StringValue; output_type=StringValue};
-  {name="index_of"; argument_types=[StringT]; implementation=index_of; input_type=StringValue; output_type=NumberValue};
-  {name="substring"; argument_types=[NumberT]; implementation=substring; input_type=StringValue; output_type=StringValue};
-  {name="to_string"; argument_types=[]; implementation=to_string; input_type=NumberValue; output_type=StringValue};
-  {name="length"; argument_types=[]; implementation=length; input_type=StringValue; output_type=NumberValue};
-  {name="replace_all"; argument_types=[StringT; StringT]; implementation=replace_all; input_type=StringValue; output_type=StringValue};
+  {name="concat"; argument_types=[StringArgType]; implementation=concat; input_type=StringType; output_type=StringType};
+  {name="index_of"; argument_types=[StringArgType]; implementation=index_of; input_type=StringType; output_type=NumberType};
+  {name="substring"; argument_types=[NumberArgType]; implementation=substring; input_type=StringType; output_type=StringType};
+  {name="to_string"; argument_types=[]; implementation=to_string; input_type=NumberType; output_type=StringType};
+  {name="length"; argument_types=[]; implementation=length; input_type=StringType; output_type=NumberType};
+  {name="replace_all"; argument_types=[StringArgType; StringArgType]; implementation=replace_all; input_type=StringType; output_type=StringType};
+  {name="split"; argument_types=[StringArgType]; implementation=split; input_type=StringType; output_type= ListType StringType};
   ]
 
 let rec parse_arguments accu = function
   | [], lexems -> List.rev accu, lexems 
-  | StringT :: tail_left, s :: tail_right -> 
+  | StringArgType :: tail_left, s :: tail_right -> 
     parse_arguments (StringArg s :: accu) (tail_left, tail_right)
-  | NumberT :: tail_left, s :: tail_right -> 
+  | NumberArgType :: tail_left, s :: tail_right -> 
     parse_arguments (NumberArg (int_of_string s) :: accu) (tail_left, tail_right)
   | _ -> failwith "invalid arguments"
 
 let rec parse_lexems accu = function
   | [] -> List.rev accu
+  | [""] -> List.rev accu
   | head :: tail -> 
     let signature = List.find (fun x -> x.name = head) signatures in
     let argument_values, remainder = parse_arguments [] (signature.argument_types, tail) in 

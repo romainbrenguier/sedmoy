@@ -2,29 +2,22 @@ open GMain
 
 let locale = GtkMain.Main.init ()
 
-let join ~separator = function 
-  | [] -> "" | head :: tail -> List.fold_left (fun a b -> a ^ separator ^ b) head tail
+let parse_program program_text = 
+  String.split_on_char '\n' program_text |> List.map Operation.parse
 
-let rec limit accu size list = match size, list with
-  | 0, _ | _, [] -> List.rev accu 
-  | s, head :: tail -> limit (head :: accu) (s - 1) tail
+let execute_program program input_values = 
+  List.map (fun command -> Operation.evaluate command input_values) program
 
 let evaluate command_text input = 
-  let lines = String.split_on_char '\n' command_text in
-  let commands = List.map Operation.parse lines in
-  let input_values = String.split_on_char '\n' input |> limit [] 7 |> List.map (fun x -> Operation.String x) in
-  let output_values = List.map (fun command -> Operation.evaluate command input_values) commands in
+  let input_values = String.split_on_char '\n' input |> Util.limit [] 7 |> List.map (fun x -> Operation.StringValue x) in
+  let output_values = execute_program (parse_program command_text) input_values in
   List.map 
-    (fun output -> List.map (fun x -> Operation.value_to_string x) output |> join ~separator:"\n") 
+    (fun output -> List.map (fun x -> Operation.value_to_string x) output |> Util.join ~separator:"\n") 
     output_values
-  |> join ~separator:"\n===================\n"
-    
-let current_word text position =
-  let last_space = try String.rindex_from text (position - 1) ' ' with Not_found | Invalid_argument _ -> -1 in
-  String.sub text (last_space + 1) (position - 1 - last_space)
- 
+  |> Util.join ~separator:"\n===================\n"
+
 let suggest_text prefix = 
-  Operation.suggest_command prefix |> List.map (fun x -> x.Operation.name) |> join ~separator:"   "
+  Operation.suggest_command prefix |> List.map (fun x -> x.Operation.name) |> Util.join ~separator:"   "
 
 let run_ui input_list = 
   (* Simple gtk example extracted from https://ocaml.org/learn/tutorials/introduction_to_gtk.html *)
@@ -49,7 +42,7 @@ let run_ui input_list =
   let output_text_view = GText.view  ~height:700 ~width:400 ~editable:false ~packing:hbox#pack () in
   suggestions#buffer#set_text (suggest_text "");
   text_edit#buffer#set_text "";
-  input_text_view#buffer#set_text (join ~separator:"\n" input_list);
+  input_text_view#buffer#set_text (Util.join ~separator:"\n" input_list);
   output_text_view#buffer#set_text "Output text";
 
   button#connect#clicked 
@@ -59,7 +52,7 @@ let run_ui input_list =
    |> ignore ;
 
   text_edit#buffer#connect#changed ~callback:(fun () -> 
-    let current = current_word (text_edit#buffer#get_text()) (text_edit#buffer#cursor_position) in
+    let current = Util.current_word (text_edit#buffer#get_text()) (text_edit#buffer#cursor_position) in
     suggestions#buffer#set_text (suggest_text current) 
   ) |> ignore;
 
