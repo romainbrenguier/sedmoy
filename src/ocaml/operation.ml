@@ -81,8 +81,23 @@ let rec parse_lexems accu = function
     let argument_values, remainder = parse_arguments [] (signature.argument_types, tail) in 
     parse_lexems ({signature; argument_values}::accu) remainder
 
+let apply_to_elements ~filter ~f_matching ~f_non_matching list =
+  let rec aux start_index accu = function 
+    | [] -> List.rev accu
+    | head :: tail -> 
+      let element = if filter start_index then f_matching head else f_non_matching head in
+      aux (start_index + 1) (element :: accu) tail
+  in aux 0 [] list
+
+let lexify string = 
+  String.split_on_char '"' string
+  |> apply_to_elements ~filter:(fun i -> i mod 2 = 0) 
+      ~f_matching:(fun s -> String.trim s |> String.split_on_char ' ')
+      ~f_non_matching:(fun x -> [x])
+  |> List.flatten
+  
 let parse string = 
-  String.split_on_char ' ' string |> parse_lexems []
+  lexify string |> parse_lexems []
 
 let evaluate_one command value_list =
   List.map (command.signature.implementation command.argument_values) value_list
