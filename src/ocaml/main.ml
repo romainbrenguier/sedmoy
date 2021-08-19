@@ -8,13 +8,24 @@ let parse_program program_text =
 let execute_program program input_values = 
   List.map (fun command -> Operation.evaluate command input_values) program
 
-let evaluate command_text input = 
-  let input_values = String.split_on_char '\n' input |> Util.limit [] 7 |> List.map (fun x -> Operation.StringValue x) in
+let evaluate_values command_text input_values = 
   let output_values = execute_program (parse_program command_text) input_values in
   List.map 
     (fun output -> List.map (fun x -> Operation.value_to_string x) output |> Util.join ~separator:"\n") 
     output_values
-  |> Util.join ~separator:"\n===================\n"
+
+let evaluate command_text input = 
+  let input_values = String.split_on_char '\n' input |> Util.limit [] 7 |> List.map (fun x -> Operation.StringValue x) in
+  evaluate_values command_text input_values |> Util.join ~separator:"\n===================\n"  
+
+let save_as_html command_text input =
+  let input_values = String.split_on_char '\n' input |> List.map (fun x -> Operation.StringValue x) in
+  let result = evaluate_values command_text input_values in
+  let out_channel = open_out "/tmp/sedmoy.out" in
+  Printf.fprintf out_channel "<html><head></head><body>\n";
+  List.iter (fun line -> Printf.fprintf out_channel "<p>%s\n" line) result; 
+  Printf.fprintf out_channel "</body></html>\n";
+  close_out out_channel
 
 let suggest_text prefix = 
   Operation.suggest_command prefix |> List.map (fun x -> x.Operation.name) |> Util.join ~separator:"   "
@@ -25,15 +36,17 @@ let run_ui input_list =
     ~width:1200 ~height:800
     ~title:"Sedmoy" () in
     
-  let vbox = GPack.vbox ~packing:window#add () in 
   window#connect#destroy ~callback:Main.quit |> ignore;
   
-  (*
-  let scroll = GBin.scrolled_window
+  (*  let scroll = GBin.scrolled_window
                 ~hpolicy:`AUTOMATIC ~vpolicy:`AUTOMATIC
-                ~packing:vbox#pack () in
-*)
-  let button = GButton.button ~label:"Evaluate" ~packing:vbox#add () in
+                ~packing:vbox#pack () *)
+
+  let vbox = GPack.vbox ~packing:window#add () in 
+  let buttons_hbox = GPack.hbox ~packing:vbox#add () in 
+
+  let button = GButton.button ~label:"Evaluate" ~packing:buttons_hbox#add () in
+  let button_save_html = GButton.button ~label:"Save as html" ~packing:buttons_hbox#add () in
 
   let suggestions = GText.view ~height:50 ~editable:false ~packing:vbox#add () in
   let hbox = GPack.hbox ~packing:vbox#add () in
@@ -49,6 +62,11 @@ let run_ui input_list =
     ~callback:(fun () -> 
       evaluate (text_edit#buffer#get_text()) (input_text_view#buffer#get_text())
       |> output_text_view#buffer#set_text)
+   |> ignore ;
+
+  button_save_html#connect#clicked 
+    ~callback:(fun () -> 
+      save_as_html (text_edit#buffer#get_text()) (input_text_view#buffer#get_text()))
    |> ignore ;
 
   text_edit#buffer#connect#changed ~callback:(fun () -> 
