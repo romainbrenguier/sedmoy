@@ -48,7 +48,6 @@ let run_ui input_list =
   let vbox = GPack.vbox ~packing:window#add () in 
   let buttons_hbox = GPack.hbox ~packing:vbox#add () in 
 
-  let button = GButton.button ~label:"Evaluate" ~packing:buttons_hbox#add () in
   let button_save_html = GButton.button ~label:"Save as html" ~packing:buttons_hbox#add () in
 
   let suggestions = GText.view ~height:50 ~editable:false ~border_width:1 ~packing:vbox#add () in
@@ -62,12 +61,6 @@ let run_ui input_list =
   input_text_view#buffer#set_text (Util.join ~separator:"\n" input_list);
   output_text_view#buffer#set_text "Output text";
 
-  button#connect#clicked 
-    ~callback:(fun () -> 
-      evaluate (text_edit#buffer#get_text()) (input_text_view#buffer#get_text())
-      |> output_text_view#buffer#set_text)
-   |> ignore ;
-
   button_save_html#connect#clicked 
     ~callback:(fun () -> 
       save_as_html (text_edit#buffer#get_text()) (input_text_view#buffer#get_text()))
@@ -76,10 +69,11 @@ let run_ui input_list =
   text_edit#buffer#connect#changed ~callback:(fun () -> 
     let current = Util.current_word (text_edit#buffer#get_text()) (text_edit#buffer#cursor_position) in
     suggestions#buffer#set_text (suggest_text current) |> ignore;
-    evaluate (text_edit#buffer#get_text()) (input_text_view#buffer#get_text())
+    try evaluate (text_edit#buffer#get_text()) (input_text_view#buffer#get_text())
       |> output_text_view#buffer#set_text
+    with Not_found -> ()
   ) |> ignore;
-
+  
   window#show ();
   Main.main ()
 
