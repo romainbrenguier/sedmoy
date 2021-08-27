@@ -89,4 +89,11 @@ let _ =
   | _command :: "table" :: file_name :: [] 
   | _command :: file_name :: [] -> 
     FileUtil.read_file file_name |> run_ui 
+  | _command :: "split" :: expression :: [] -> 
+    SplitParser.parse expression 
+    |> Split.expression_to_automaton
+    |> fun auto -> Split.apply auto stdin
+    |> List.iter (fun list -> 
+      print_endline "================";
+      List.iter print_endline list)
   | _ -> failwith "Invalid command argument, should be: tree <filename> | table <filename> | <filename>"
