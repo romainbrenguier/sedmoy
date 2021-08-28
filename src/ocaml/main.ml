@@ -92,8 +92,6 @@ let _ =
   | _command :: "split" :: expression :: [] -> 
     SplitParser.parse expression 
     |> Split.expression_to_automaton
-    |> fun auto -> Split.apply auto stdin
-    |> List.iter (fun list -> 
-      print_endline "================";
-      List.iter print_endline list)
+    |> fun auto -> Split.apply_to_channel auto stdin
+    |> Split.write_stream 
   | _ -> failwith "Invalid command argument, should be: tree <filename> | table <filename> | <filename>"

@@ -72,19 +72,49 @@ let transition auto state line =
   with 
   | Some (_,l,dest) -> Some (l, dest) 
   | None -> None
-     
-let apply auto in_channel =
-  let rec read accu current_block state =
-    let line_opt = try Some (input_line in_channel) with End_of_file -> None in
-    match line_opt with
-      | None -> current_block :: accu
-      | Some line -> 
-        match transition auto state line with 
-          | None -> read accu (line :: current_block) state 
-          | Some (Before _, new_state) -> 
-            read ((List.rev current_block) :: accu) [line] new_state
-          | Some (After _, new_state) -> 
-            read ((List.rev (line :: current_block)) :: accu) [] new_state
-  in read [] [] auto.initial |> List.rev
 
-  
+type token = Line of string | Split
+
+let apply auto line_channel =
+  let next_token : token option ref = ref None in
+  let state = ref auto.initial in
+  let next _ = match !next_token with
+    | Some token -> next_token := None; Some token
+    | None ->
+      match Stream.peek line_channel with
+    | None -> None
+    | Some line ->
+      Stream.junk line_channel; 
+      match transition auto !state line with 
+        | None -> Some (Line line) 
+        | Some (Before _, new_state) ->
+          state := new_state;
+          next_token := Some (Line line);
+          Some Split
+        | Some (After _, new_state) ->
+          state := new_state;
+          next_token := Some Split; 
+          Some (Line line)
+  in Stream.from next
+
+let apply_to_channel auto in_channel =
+  Util.line_stream in_channel |> apply auto
+
+let output_line channel line =
+  output_string channel (line ^ "\n")
+
+let write_stream stream =
+  let make_out index = open_out (Printf.sprintf "xx%03d" index) in
+  let rec write current_out_channel current_index =
+    match Stream.peek stream with
+    | None -> close_out current_out_channel
+    | Some Split -> 
+      Stream.junk stream;
+      close_out current_out_channel;
+      let new_out = make_out current_index in 
+      write new_out (current_index + 1)
+    | Some (Line line) ->
+      Stream.junk stream;
+      output_line current_out_channel line;
+      write current_out_channel current_index
+  in write (make_out 0) 1
