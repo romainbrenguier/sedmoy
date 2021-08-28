@@ -118,3 +118,9 @@ let write_stream stream =
       output_line current_out_channel line;
       write current_out_channel current_index
   in write (make_out 0) 1
+
+let rec preview stream prefix size =
+  if size = 0 then prefix else match Stream.peek stream with
+    | None -> prefix
+    | Some split -> preview stream (prefix ^ "=============\n") size
+    | Some (Line line) -> preview stream (prefix ^ line ^ "\n") (size - 1)
