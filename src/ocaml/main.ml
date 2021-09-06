@@ -94,4 +94,8 @@ let _ =
     |> Split.expression_to_automaton
     |> fun auto -> Split.apply_to_channel auto stdin
     |> Split.write_stream 
+  | _command :: "shell" :: file_name :: [] ->
+    Util.let_open_in file_name 
+      (fun in_channel -> 
+         ShellInterpret.transform_channel in_channel stdout)
   | _ -> failwith "Invalid command argument, should be: tree <filename> | table <filename> | <filename>"

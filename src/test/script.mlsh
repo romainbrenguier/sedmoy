@@ -1,0 +1,4 @@
+#!/bin/sh
+
+let out_channel =
+git diff --name-only origin/develop | sed "s|/.*||" | uniq | xargs | sed "s/ /,/g"
