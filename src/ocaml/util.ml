@@ -14,3 +14,15 @@ let current_word text position =
 let line_stream in_channel =
   Stream.from (fun _ ->
     try Some (input_line in_channel) with End_of_file -> None)
+
+let starts_with string prefix =
+  String.length string >= String.length prefix &&
+  String.sub string 0 (String.length prefix) = prefix
+
+let let_open_in file_name in_channel_fun =
+  let in_channel = open_in file_name in
+  try in_channel_fun in_channel with _ -> ();
+  close_in in_channel
+
+let stream_next stream =
+  try Some (Stream.next stream) with Stream.Failure -> None
