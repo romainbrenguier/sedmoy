@@ -122,5 +122,5 @@ let write_stream stream =
 let rec preview stream prefix size =
   if size = 0 then prefix else match Stream.peek stream with
     | None -> prefix
-    | Some split -> preview stream (prefix ^ "=============\n") size
+    | Some Split -> preview stream (prefix ^ "=============\n") size
     | Some (Line line) -> preview stream (prefix ^ line ^ "\n") (size - 1)
