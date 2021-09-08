@@ -98,7 +98,7 @@ let apply auto line_channel =
   in Stream.from next
 
 let apply_to_channel auto in_channel =
-  Util.line_stream in_channel |> apply auto
+  Streams.of_channel in_channel |> apply auto
 
 let output_line channel line =
   output_string channel (line ^ "\n")

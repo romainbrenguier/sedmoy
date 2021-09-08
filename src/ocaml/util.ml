@@ -19,6 +19,3 @@ let let_open_in file_name in_channel_fun =
   let in_channel = open_in file_name in
   try in_channel_fun in_channel with _ -> ();
   close_in in_channel
-
-let stream_next stream =
-  try Some (Stream.next stream) with Stream.Failure -> None
