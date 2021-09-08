@@ -15,11 +15,5 @@ let transform_next_line stream = match Util.stream_next stream with
 let transform_stream stream =
     Stream.from (fun _ -> transform_next_line stream)
 
-let rec write_stream out_channel stream = match Util.stream_next stream with
-  | None -> ()
-  | Some line -> 
-    output_string out_channel (line ^ "\n");
-    write_stream out_channel stream
-
 let transform_channel in_channel out_channel = 
-  Util.line_stream in_channel |> transform_stream |> write_stream out_channel
+  Streams.line_stream in_channel |> transform_stream |> Streams.write_stream out_channel

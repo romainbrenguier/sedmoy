@@ -11,10 +11,6 @@ let current_word text position =
   let last_space = try String.rindex_from text (position - 1) ' ' with Not_found | Invalid_argument _ -> -1 in
   String.sub text (last_space + 1) (position - 1 - last_space)
  
-let line_stream in_channel =
-  Stream.from (fun _ ->
-    try Some (input_line in_channel) with End_of_file -> None)
-
 let starts_with string prefix =
   String.length string >= String.length prefix &&
   String.sub string 0 (String.length prefix) = prefix
