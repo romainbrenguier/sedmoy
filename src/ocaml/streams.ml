@@ -54,3 +54,9 @@ let pipe consumer output =
   {out=new_output.out; err=concat output.err new_output.err}
 
 let (||>) output cmd = pipe (exec cmd) output
+
+let flush_err output =
+  write output.err ~to_channel:stderr;
+  output.out
+
+let (|>|) output f = flush_err output |> f

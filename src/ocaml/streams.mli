@@ -24,3 +24,7 @@ val exec : string  -> input -> output
 val pipe : (input -> output) -> output -> output
 
 val (||>) : output -> string -> output
+
+val flush_err : output -> string Stream.t
+
+val (|>|) : output -> (input -> 'a) -> 'a
