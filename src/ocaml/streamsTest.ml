@@ -1,8 +1,16 @@
 let test =
+  let open Streams in
   let output = 
-    Streams.empty ()
-    |> Streams.exec "git diff --name-only origin/main"
+    empty ()
+    |> exec "git diff --name-only origin/main"
+    ||> "sed \"s|/.*||\""
+    ||> "uniq"
   in
-  Streams.write output.out ~to_channel:stdout;
   print_endline "===== ERR =====";
-  Streams.write output.err ~to_channel:stdout
+  write output.err ~to_channel:stdout;
+  print_endline "=== END ERR ===";
+  let join = accumulate output.out 
+    ~f:(fun accu s -> accu ^ "," ^ s)
+  in
+  match join with None -> print_endline "empty diff"
+  | Some j -> print_endline j

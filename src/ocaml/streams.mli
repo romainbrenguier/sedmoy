@@ -9,6 +9,10 @@ val empty : unit -> 'a Stream.t
 
 val concat : 'a Stream.t -> 'a Stream.t -> 'a Stream.t
 
+val fold : 'a Stream.t -> f:('b -> 'a -> 'b) -> init:'b -> 'b
+
+val accumulate : 'a Stream.t -> f:('a -> 'a -> 'a) -> 'a option
+
 val of_channel : in_channel -> input
 
 val write : input -> to_channel:out_channel -> unit
@@ -17,4 +21,6 @@ val write_to_file : input -> file_name:string -> unit
 
 val exec : string  -> input -> output
 
-val pipe : output -> (input -> output) -> output
+val pipe : (input -> output) -> output -> output
+
+val (||>) : output -> string -> output

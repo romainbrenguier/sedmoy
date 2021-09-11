@@ -21,6 +21,12 @@ let concat stream1 stream2 =
     else (next stream2, 2)
   in from f 1
 
+let rec fold stream ~f ~init = 
+  match next stream with None -> init | Some x -> fold stream ~f ~init:(f init x)
+
+let accumulate stream ~f = 
+  match next stream with None -> None | Some init -> Some (fold stream ~f ~init)
+
 let of_channel in_channel =
   Stream.from (fun _ ->
     try Some (input_line in_channel) with End_of_file -> None)
@@ -43,6 +49,8 @@ let exec cmd input =
   close_out out_channel;
   {out=of_channel in_channel; err=of_channel err_in_channel}
 
-let pipe output consumer =
+let pipe consumer output =
   let new_output = consumer output.out in
   {out=new_output.out; err=concat output.err new_output.err}
+
+let (||>) output cmd = pipe (exec cmd) output
