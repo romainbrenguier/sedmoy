@@ -16,4 +16,4 @@ let transform_stream stream =
     Stream.from (fun _ -> transform_next_line stream)
 
 let transform_channel in_channel out_channel = 
-  Streams.of_channel in_channel |> transform_stream |> Streams.write out_channel
+  Streams.of_channel in_channel |> transform_stream |> Streams.write ~to_channel:out_channel
