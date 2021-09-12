@@ -1,5 +1,3 @@
-open GMain
-
 let locale = GtkMain.Main.init ()
 
 let parse_program program_text = 

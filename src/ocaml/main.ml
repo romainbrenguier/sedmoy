@@ -8,6 +8,7 @@ let _ =
     List.map Tree.abstract_tabulation lines |> Tree.to_tree 
     |> List.map (fun x -> x |> Tree.to_string)
     |> Ui.run
+  | _ :: "start-day" :: [] -> StartDay.run ()
   | _command :: "table" :: file_name :: [] 
   | _command :: file_name :: [] -> 
     FileUtil.read_file file_name |> Ui.run 

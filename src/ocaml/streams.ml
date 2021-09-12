@@ -12,7 +12,11 @@ let from f initial_state =
   Stream.from (fun _ -> 
     let (result, new_state) = f !state in state := new_state; result)
 
-let empty () = Stream.from (fun _ -> raise End_of_file)
+let empty () = Stream.from (fun _ -> None)
+
+let single a = 
+  let f is_first = if is_first then (Some a, false) else (None, false) in
+  from f true
 
 let concat stream1 stream2 =
   let f i = if i = 1
@@ -20,6 +24,8 @@ let concat stream1 stream2 =
       match next stream1 with None -> (next stream2, 2) | Some x -> (Some x, 1)
     else (next stream2, 2)
   in from f 1
+
+let add element stream = concat stream (single element)
 
 let rec fold stream ~f ~init = 
   match next stream with None -> init | Some x -> fold stream ~f ~init:(f init x)
@@ -49,6 +55,8 @@ let exec cmd input =
   close_out out_channel;
   {out=of_channel in_channel; err=of_channel err_in_channel}
 
+let exec_no_input cmd = empty () |> exec cmd
+
 let pipe consumer output =
   let new_output = consumer output.out in
   {out=new_output.out; err=concat output.err new_output.err}
@@ -60,3 +68,10 @@ let flush_err output =
   output.out
 
 let (|>|) output f = flush_err output |> f
+
+let seq output1 output2 =
+  {out=concat output1.out output2.out; err=concat output1.err output2.err}
+
+let (|+) = seq 
+
+let echo string = {out=single string; err=empty ()}
