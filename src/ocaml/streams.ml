@@ -28,7 +28,8 @@ let concat stream1 stream2 =
 let add element stream = concat stream (single element)
 
 let rec fold stream ~f ~init = 
-  match next stream with None -> init | Some x -> fold stream ~f ~init:(f init x)
+  match next stream with None -> init 
+  | Some x -> fold stream ~f ~init:(f init x)
 
 let accumulate stream ~f = 
   match next stream with None -> None | Some init -> Some (fold stream ~f ~init)

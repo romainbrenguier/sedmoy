@@ -19,3 +19,6 @@ let let_open_in file_name in_channel_fun =
   let in_channel = open_in file_name in
   try in_channel_fun in_channel with _ -> ();
   close_in in_channel
+
+let parse_int string =
+  try Some (int_of_string (String.trim string)) with _ -> None
