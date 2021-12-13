@@ -23,4 +23,4 @@ let _ =
   | _command :: "table" :: file_name :: [] 
   | _command :: file_name :: [] -> 
     FileUtil.read_file file_name |> Ui.run 
-  | _ -> failwith "Invalid command argument, should be: tree <filename> | table <filename> | <filename>"
+  | _ -> failwith "Invalid command argument, should be: tree <filename> | ngrams <filename> | table <filename> | etc.."
