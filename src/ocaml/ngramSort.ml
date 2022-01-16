@@ -19,26 +19,22 @@ let split_keeping_quoted ~sep string =
     | [] -> List.rev accu
     | non_quoted :: [] -> List.rev (List.rev_append (String.split_on_char sep non_quoted) accu)
     | non_quoted :: quoted :: tail ->
-       Printf.printf "quoted: %s\n" quoted;
-       Printf.printf "non quoted: %s\n" non_quoted;
        let new_accu = quoted :: ((List.rev_append (String.split_on_char sep non_quoted) accu)) in
        loop new_accu tail
   in loop [] quote_splitted
-  
+
 let parse_entry ~sep string = match split_keeping_quoted ~sep string with
   | r :: s :: t :: [] ->
-    Some {rank=Util.parse_int r; source=String.trim s; target=String.trim t}
-  | x ->
-     Printf.printf
-       "Not the right number of entries in line %s, with separator %c. %d elements\n"
-       string sep (List.length x);
-     print_endline "Ignoring line";
-     None
+     Log.return (Some {rank=Util.parse_int r; source=String.trim s; target=String.trim t}) (Log.empty)
+  | _ ->
+     Log.return None (Log.warn ["Ignoring line " ^ string])
 
 let parse_entries ~sep stream =
    Streams.fold stream ~init:[] 
      ~f:(fun accu line ->
-       match parse_entry ~sep line with Some x -> x :: accu | None -> accu)
+       match parse_entry ~sep line with
+       | {result=Some x; log} -> Log.to_stdout log; x :: accu
+       | {result=None; log} -> Log.to_stdout log; accu)
 
 (** Key size is in number of char. A single symbol in utf-8 may be using 1, 2 or 4 chars *)
 let key_of_string ~key_size string = String.sub (string^"  ") 0 key_size
@@ -56,7 +52,6 @@ let add_entry ~key_size ~indexed_table entry =
 
 let collect_entries ~key_size entry_list =
   let indexed_table = {keys=Hashtbl.create 1000; table=Hashtbl.create 1000} in
-  print_endline "collect_entries";
   List.iter (add_entry ~key_size ~indexed_table) entry_list;
   indexed_table
 
