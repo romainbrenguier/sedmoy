@@ -19,7 +19,9 @@ let dispatch_command =
       (fun in_channel -> 
          ShellInterpret.transform_channel in_channel stdout)
   | _command :: "ngrams" :: file_name :: [] ->
-    Util.let_open_in file_name (NgramSort.main ~sep:',')
+     Util.let_open_in file_name (NgramSort.main ~sep:',' ~key_size:2)
+  | _command :: "ngrams" :: file_name :: key_size :: [] ->
+     Util.let_open_in file_name (NgramSort.main ~sep:',' ~key_size:(int_of_string key_size))
   | _command :: "table" :: file_name :: [] 
   | _command :: file_name :: [] -> 
     FileUtil.read_file file_name |> Ui.run 

@@ -35,13 +35,13 @@ let parse_entry ~sep string = match split_keeping_quoted ~sep string with
      print_endline "Ignoring line";
      None
 
-
 let parse_entries ~sep stream =
    Streams.fold stream ~init:[] 
      ~f:(fun accu line ->
        match parse_entry ~sep line with Some x -> x :: accu | None -> accu)
 
-let key_of_string string = String.sub (string^"  ") 0 2
+(** Key size is in number of char. A single symbol in utf-8 may be using 1, 2 or 4 chars *)
+let key_of_string ~key_size string = String.sub (string^"  ") 0 key_size
 
 type table = (string, entry) Hashtbl.t
 
@@ -49,15 +49,15 @@ type key_set = (string, unit) Hashtbl.t
 
 type indexed_table = {keys:key_set; table:table}
 
-let add_entry indexed_table entry =
-  let key = key_of_string entry.source in
+let add_entry ~key_size ~indexed_table entry =
+  let key = key_of_string ~key_size entry.source in
   Hashtbl.replace indexed_table.keys key ();
   Hashtbl.add indexed_table.table key entry
 
-let collect_entries entry_list =
+let collect_entries ~key_size entry_list =
   let indexed_table = {keys=Hashtbl.create 1000; table=Hashtbl.create 1000} in
   print_endline "collect_entries";
-  List.iter (add_entry indexed_table) entry_list;
+  List.iter (add_entry ~key_size ~indexed_table) entry_list;
   indexed_table
 
 let rec score_entry_list offset = function [] -> offset
@@ -77,16 +77,11 @@ let sort_keys indexed_table scores =
   let keys = Hashtbl.fold (fun key () accu -> key :: accu) indexed_table.keys [] in
   List.sort (fun k1 k2 -> Hashtbl.find scores k2 - Hashtbl.find scores k1) keys 
   
-let main ~sep in_channel =
-  print_endline "starting main";
+let main ~sep ~key_size in_channel =
   let indexed_table = Streams.of_channel in_channel 
     |> parse_entries ~sep
-    |> collect_entries
+    |> collect_entries ~key_size
   in
-  if Hashtbl.length indexed_table.keys = 0 then
-    Printf.printf "no entry using seperator %c\n" sep;
-  Printf.printf "%d entries\n" (Hashtbl.length indexed_table.keys);
-  print_endline "scoring";
   let scores = score_keys indexed_table in
   sort_keys indexed_table scores
   |> List.iter (fun key ->
