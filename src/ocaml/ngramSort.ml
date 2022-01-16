@@ -12,15 +12,34 @@ let entry_to_short_string entry =
     (match entry.rank with Some x -> x | None -> 1000)
     (set_length entry.source) entry.target
 
-    
-let parse_entry ~sep string = match String.split_on_char sep string with
-  | r :: s :: t :: [] ->  
-    {rank=Util.parse_int r; source=String.trim s; target=String.trim t}
-  | _ -> failwith ("invalid entry "^ string)
+(** Split according to separator but not breaking quoted string *)
+let split_keeping_quoted ~sep string =
+  let quote_splitted = String.split_on_char '"' string in
+  let rec loop accu = function
+    | [] -> List.rev accu
+    | non_quoted :: [] -> List.rev (List.rev_append (String.split_on_char sep non_quoted) accu)
+    | non_quoted :: quoted :: tail ->
+       Printf.printf "quoted: %s\n" quoted;
+       Printf.printf "non quoted: %s\n" non_quoted;
+       let new_accu = quoted :: ((List.rev_append (String.split_on_char sep non_quoted) accu)) in
+       loop new_accu tail
+  in loop [] quote_splitted
+  
+let parse_entry ~sep string = match split_keeping_quoted ~sep string with
+  | r :: s :: t :: [] ->
+    Some {rank=Util.parse_int r; source=String.trim s; target=String.trim t}
+  | x ->
+     Printf.printf
+       "Not the right number of entries in line %s, with separator %c. %d elements\n"
+       string sep (List.length x);
+     print_endline "Ignoring line";
+     None
+
 
 let parse_entries ~sep stream =
    Streams.fold stream ~init:[] 
-     ~f:(fun accu line -> parse_entry ~sep line :: accu)
+     ~f:(fun accu line ->
+       match parse_entry ~sep line with Some x -> x :: accu | None -> accu)
 
 let key_of_string string = String.sub (string^"  ") 0 2
 
@@ -37,6 +56,7 @@ let add_entry indexed_table entry =
 
 let collect_entries entry_list =
   let indexed_table = {keys=Hashtbl.create 1000; table=Hashtbl.create 1000} in
+  print_endline "collect_entries";
   List.iter (add_entry indexed_table) entry_list;
   indexed_table
 
@@ -58,10 +78,15 @@ let sort_keys indexed_table scores =
   List.sort (fun k1 k2 -> Hashtbl.find scores k2 - Hashtbl.find scores k1) keys 
   
 let main ~sep in_channel =
+  print_endline "starting main";
   let indexed_table = Streams.of_channel in_channel 
     |> parse_entries ~sep
     |> collect_entries
   in
+  if Hashtbl.length indexed_table.keys = 0 then
+    Printf.printf "no entry using seperator %c\n" sep;
+  Printf.printf "%d entries\n" (Hashtbl.length indexed_table.keys);
+  print_endline "scoring";
   let scores = score_keys indexed_table in
   sort_keys indexed_table scores
   |> List.iter (fun key ->

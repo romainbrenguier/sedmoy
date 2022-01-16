@@ -1,5 +1,5 @@
 
-let _ =
+let dispatch_command =
   match Array.to_list Sys.argv with
   | _command :: "tree" :: file_name :: [] -> 
     let lines = FileUtil.read_file file_name in
@@ -19,7 +19,7 @@ let _ =
       (fun in_channel -> 
          ShellInterpret.transform_channel in_channel stdout)
   | _command :: "ngrams" :: file_name :: [] ->
-    Util.let_open_in file_name (NgramSort.main ~sep:'\t')
+    Util.let_open_in file_name (NgramSort.main ~sep:',')
   | _command :: "table" :: file_name :: [] 
   | _command :: file_name :: [] -> 
     FileUtil.read_file file_name |> Ui.run 
