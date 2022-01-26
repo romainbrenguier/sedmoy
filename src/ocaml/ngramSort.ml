@@ -37,7 +37,8 @@ let parse_entries ~sep stream =
        | {result=None; log} -> Log.to_stdout log; accu)
 
 (** Key size is in number of char. A single symbol in utf-8 may be using 1, 2 or 4 chars *)
-let key_of_string ~key_size string = String.sub (string^"  ") 0 key_size
+let key_of_string ~key_size string =
+  String.sub (string^"  ") 0 key_size |> Normalize.replace
 
 type table = (string, entry) Hashtbl.t
 
@@ -68,9 +69,15 @@ let score_keys indexed_table =
     indexed_table.keys;
   ranks
 
-let sort_keys indexed_table scores =
-  let keys = Hashtbl.fold (fun key () accu -> key :: accu) indexed_table.keys [] in
-  List.sort (fun k1 k2 -> Hashtbl.find scores k2 - Hashtbl.find scores k1) keys 
+let keys indexed_table =
+  Hashtbl.fold (fun key () accu -> key :: accu) indexed_table.keys []
+
+let sort_keys_by_score indexed_table scores =
+  keys indexed_table
+  |> List.sort (fun k1 k2 -> Hashtbl.find scores k2 - Hashtbl.find scores k1) 
+
+let sort_keys indexed_table =
+  keys indexed_table |> List.sort String.compare
   
 let main ~sep ~key_size in_channel =
   let indexed_table = Streams.of_channel in_channel 
@@ -78,10 +85,15 @@ let main ~sep ~key_size in_channel =
     |> collect_entries ~key_size
   in
   let scores = score_keys indexed_table in
-  sort_keys indexed_table scores
+  Printf.printf "# Summary [%d entries]\n\n" (List.length (keys indexed_table));
+  sort_keys indexed_table
   |> List.iter (fun key ->
-      let entries = Hashtbl.find_all indexed_table.table key in
-      if List.length entries > 1
-      then Printf.printf "# %s [%d]\n\n" key (Hashtbl.find scores key);
-      List.iter (fun entry -> print_endline (entry_to_short_string entry)) entries;
-      print_newline())
+         let entries = Hashtbl.find_all indexed_table.table key in
+         Printf.printf "%s [%d]\n\n" key (List.length entries));
+  sort_keys_by_score indexed_table scores
+  |> List.iter (fun key ->
+         let entries = Hashtbl.find_all indexed_table.table key in
+         if List.length entries > 1
+         then Printf.printf "# %s [%d]\n\n" key (Hashtbl.find scores key);
+         List.iter (fun entry -> print_endline (entry_to_short_string entry)) entries;
+         print_newline())
