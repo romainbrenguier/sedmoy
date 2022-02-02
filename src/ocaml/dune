@@ -1,3 +1,3 @@
 (executables 
-  (names main operationTest splitTest streamsTest ngramSortTest)
-  (libraries lwt.unix lablgtk2 str))
+  (names main operationTest splitTest streamsTest ngramSortTest ubiquitousTest)
+  (libraries lwt.unix lablgtk3 str))
