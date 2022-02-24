@@ -1,5 +1,6 @@
 type entry = {rank: int option; source: string; target: string}
 
+let make_entry r s t = {rank=Util.parse_int r; source=String.trim s; target=String.trim t} 
 let entry_to_string entry =
   Printf.sprintf "rank:%s; source:%s; target:%s" 
     (match entry.rank with Some x -> string_of_int x | None -> "XXXX")
@@ -16,18 +17,24 @@ let entry_to_short_string entry =
 let split_keeping_quoted ~sep string =
   let quote_splitted = String.split_on_char '"' string in
   let rec loop accu = function
-    | [] -> List.rev accu
+    | "" :: [] | [] -> List.rev accu
     | non_quoted :: [] -> List.rev (List.rev_append (String.split_on_char sep non_quoted) accu)
     | non_quoted :: quoted :: tail ->
-       let new_accu = quoted :: ((List.rev_append (String.split_on_char sep non_quoted) accu)) in
-       loop new_accu tail
+       match List.rev (String.split_on_char sep non_quoted)  with
+       | tail_rev :: head_rev ->
+           let new_accu = ((tail_rev ^ quoted) :: head_rev) @ accu in
+           loop new_accu tail
+       | [] -> loop (quoted :: accu) tail
   in loop [] quote_splitted
+
 
 let parse_entry ~sep string = match split_keeping_quoted ~sep string with
   | r :: s :: t :: [] ->
-     Log.return (Some {rank=Util.parse_int r; source=String.trim s; target=String.trim t}) (Log.empty)
-  | _ ->
-     Log.return None (Log.warn ["Ignoring line " ^ string])
+     Log.return (Some (make_entry r s t)) (Log.empty)
+  | r :: s :: t :: remainder ->
+     Log.return (Some (make_entry r s t)) (Log.warn ["Ignoring remainder of line: " ^ Util.join ~separator:"|" remainder])
+  | list ->
+     Log.return None (Log.warn ["Ignoring line " ^ string ^ ", parsed as: " ^ Util.join ~separator:"|" list])
 
 let parse_entries ~sep stream =
    Streams.fold stream ~init:[] 
@@ -86,10 +93,15 @@ let main ~sep ~key_size in_channel =
   in
   let scores = score_keys indexed_table in
   Printf.printf "# Summary [%d entries]\n\n" (List.length (keys indexed_table));
+  let current_index = ref 0 in
   sort_keys indexed_table
   |> List.iter (fun key ->
+         incr current_index;
          let entries = Hashtbl.find_all indexed_table.table key in
-         Printf.printf "%s [%d]\n\n" key (List.length entries));
+         Printf.printf "  %s [%d]" key (List.length entries);
+         if !current_index mod 10 = 0 then print_newline();
+       );
+  print_endline "\n\n";
   sort_keys_by_score indexed_table scores
   |> List.iter (fun key ->
          let entries = Hashtbl.find_all indexed_table.table key in
