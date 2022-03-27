@@ -10,7 +10,7 @@ import picocli.CommandLine.Option;
 
 @Command
 public class Main implements Runnable {
-  @Option(names = {"--input", "-i"})
+  @Option(names = {"--input", "-i"}, required = true)
   Path input;
 
   public static void main(String[] args) {
