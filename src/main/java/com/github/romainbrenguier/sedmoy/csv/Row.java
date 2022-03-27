@@ -1,22 +1,15 @@
 package com.github.romainbrenguier.sedmoy.csv;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Row {
   List<String> data;
 
-  @Deprecated
-  public Row(String[] data) {
-    this.data = Arrays.stream(data).collect(Collectors.toList());
-  }
-
   public Row(List<String> data) {
     this.data = data;
   }
-
 
   public Row addLeft(Object content) {
     List<String> result = new ArrayList<>();
