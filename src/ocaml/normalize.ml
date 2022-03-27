@@ -32,6 +32,12 @@ let replacement =
     "ϙ","?";
     "Ϛ","?";
     "ϛ","?";
+    (* German *)
+    "Ä", "a";
+    "Ö", "o";
+    "Ü", "u";
+    "ä", "a";
+    "ü", "u"  
   ]
 
 let regexp_to_replace =
@@ -49,6 +55,12 @@ let find string =
 (** Remove accents on utf8 strings, only works for greek at the moment *)
 let replace s =
   let open Str in
-  full_split regexp_to_replace s
-  |> List.map (function Text t -> t | Delim x -> find x)
-  |> List.fold_left (^) ""
+  let accent_replaced =
+    full_split regexp_to_replace s
+    |> List.map (function Text t -> t | Delim x -> find x)
+    |> List.fold_left (^) ""
+  in
+  Printf.sprintf "%c%s"
+    (Char.lowercase_ascii (String.get accent_replaced 0))
+    (String.sub accent_replaced 1 (String.length accent_replaced - 1))
+    
