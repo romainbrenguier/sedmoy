@@ -1,6 +1,7 @@
 package com.github.romainbrenguier.sedmoy;
 
 import com.github.romainbrenguier.sedmoy.GroovyInterpreter.GroovyException;
+import com.github.romainbrenguier.sedmoy.csv.CsvData;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,8 +26,9 @@ public class Main implements Runnable {
   public void run() {
     if (groovyScript != null) {
       try {
-        GroovyInterpreter.run(groovyScript.toFile(), input);
-      } catch (GroovyException e) {
+        final CsvData csvData = CsvData.parseLines(Files.readAllLines(input));
+        GroovyInterpreter.run(groovyScript.toFile(), csvData);
+      } catch (GroovyException | IOException e) {
         e.printStackTrace();
       }
       return;

@@ -16,6 +16,7 @@ public class GroovyInterpreter {
     System.out.println(
         "Welcome to Sedmoy's groovy interpreter. The input file is accessible from your Groovy\n"
             + "script through the 'input' variable.");
+    System.out.println("input is of type " + input.getClass());
     try {
       final Object result = shell.evaluate(groovyScript);
       if (result != null) {

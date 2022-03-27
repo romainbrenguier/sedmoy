@@ -1,4 +1,3 @@
 
-println "Hello World"
-println("input:" + input)
+println "Input first 10 lines:\n${input.limit(10)}"
 
