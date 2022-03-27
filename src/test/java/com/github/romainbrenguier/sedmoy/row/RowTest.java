@@ -43,17 +43,8 @@ public class RowTest {
   }
 
   @Test
-  public void testLengthOfFirstWord() {
-    // Arrange, Act and Assert
-    assertEquals(3, Row.lengthOfFirstWord("foo bar"));
-    assertEquals(1, Row.lengthOfFirstWord("S"));
-  }
-
-  @Test
   public void testLimit() {
     // Arrange, Act and Assert
-    assertEquals(1, Row.split("foo bar", " ").limit(1).numberOfColumns());
-    assertEquals(2, Row.split("foo bar", " ").limit(10).numberOfColumns());
     assertThrows(NegativeArraySizeException.class, () -> Row.split("Line", "Separator").limit(-1));
   }
 }

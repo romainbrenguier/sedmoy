@@ -18,17 +18,8 @@ public class Row {
     return new Row(result);
   }
 
-  static public int lengthOfFirstWord(String s) {
-    int firstSpace = s.indexOf(' ');
-    return firstSpace == -1 ? s.length() : firstSpace;
-  }
-
   public String column(int index) {
     return index < data.length ? data[index] : "";
-  }
-
-  public void setColumn(int index, Object content) {
-    data[index] = content.toString();
   }
 
   public Row limit(int nbColumns) {
@@ -42,9 +33,5 @@ public class Row {
 
   public String toString(String separator) {
     return String.join(separator, data);
-  }
-
-  public int numberOfColumns() {
-    return data.length;
   }
 }
