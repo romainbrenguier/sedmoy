@@ -10,8 +10,8 @@ import picocli.CommandLine.Option;
 
 @Command
 public class Main implements Runnable {
-  @Option(names = "--path")
-  Path path;
+  @Option(names = {"--input", "-i"})
+  Path input;
 
   public static void main(String[] args) {
     CommandLine.run(new Main(), args);
@@ -21,7 +21,7 @@ public class Main implements Runnable {
   public void run() {
     try {
       final Preferences preferences = Preferences.load();
-      final List<String> data = Files.readAllLines(path);
+      final List<String> data = Files.readAllLines(input);
       new InteractiveMode(data, preferences).run();
       preferences.save();
     } catch (IOException e) {
