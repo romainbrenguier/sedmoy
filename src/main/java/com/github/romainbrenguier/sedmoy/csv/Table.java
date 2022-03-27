@@ -52,10 +52,4 @@ public class Table {
   public String toString() {
     return toString(SEPARATOR);
   }
-
-  public Table sort() {
-    SortedData sortedData = SortedData.ofCsv(this);
-    sortedData.printStats();
-    return sortedData.toCsv();
-  }
 }
