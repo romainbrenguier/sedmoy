@@ -5,7 +5,6 @@ import com.github.romainbrenguier.sedmoy.csv.Row;
 import com.github.romainbrenguier.sedmoy.structure.BucketMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class SortedData {
   private final BucketMap<Row> data = new BucketMap<>(new RowComparator());
@@ -40,18 +39,7 @@ public class SortedData {
     return discarded;
   }
 
-  public Table toCsv() {
-    Table result = new Table();
-    for(int i = 0; i < this.maxIndex + 1; ++i) {
-      Set<Row> bucket = this.data.get(i);
-      int index = 0;
-      for (Row row : bucket) {
-        result.addLine(row.addLeft(i * 10 + index++).limit(10));
-      }
-    }
-    return result;
-  }
-
+  /** For debugging only*/
   public void printStats() {
     System.out.println("Number of entries: " + nbEntries());
     System.out.println("Number discarded: " + getDiscarded().size());

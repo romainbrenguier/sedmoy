@@ -1,6 +1,5 @@
 package com.github.romainbrenguier.sedmoy.csv;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,13 +8,6 @@ public class Row {
 
   public Row(List<String> data) {
     this.data = data;
-  }
-
-  public Row addLeft(Object content) {
-    List<String> result = new ArrayList<>();
-    result.add(content.toString());
-    result.addAll(data);
-    return new Row(result);
   }
 
   public String column(int index) {

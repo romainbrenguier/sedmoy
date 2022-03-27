@@ -32,18 +32,6 @@ public class RowTest {
   }
 
   @Test
-  public void testWithIndex() {
-    // Arrange
-    Row row = new Row(Arrays.asList("foo", "foo", "foo"));
-
-    // Act
-    Row result = row.addLeft(1);
-
-    // Assert
-    assertEquals("1", result.column(0));
-  }
-
-  @Test
   public void testLimit() {
     // Arrange, Act and Assert
     assertThrows(NegativeArraySizeException.class,
