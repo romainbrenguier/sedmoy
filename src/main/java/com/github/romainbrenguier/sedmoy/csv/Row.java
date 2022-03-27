@@ -1,27 +1,19 @@
 package com.github.romainbrenguier.sedmoy.csv;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class Row {
-  List<String> data;
-
-  public Row(List<String> data) {
-    this.data = data;
+public class Row extends ArrayList<String> {
+  public Row(Collection<String> data) {
+    super();
+    addAll(data);
   }
 
   public String column(int index) {
-    return index < data.size() ? data.get(index) : "";
-  }
-
-  public Row limit(int nbColumns) {
-    if (nbColumns >= data.size()) {
-      return this;
-    }
-    return new Row(data.stream().limit(nbColumns).collect(Collectors.toList()));
+    return index < size() ? get(index) : "";
   }
 
   public String toString(String separator) {
-    return String.join(separator, data);
+    return String.join(separator, this);
   }
 }

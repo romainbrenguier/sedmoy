@@ -30,12 +30,5 @@ public class RowTest {
     assertEquals("bar", actualOfCsvLineResult.column(1));
     assertEquals("", actualOfCsvLineResult.column(2));
   }
-
-  @Test
-  public void testLimit() {
-    // Arrange, Act and Assert
-    assertThrows(NegativeArraySizeException.class,
-        () -> new Row(Arrays.asList("Line", "Separator")).limit(-1));
-  }
 }
 

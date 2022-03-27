@@ -24,7 +24,6 @@ public class Table {
     lines.add(row);
   }
 
-
   static List<String> splitRow(String line, String separator) {
     return Arrays.stream(line.split(separator)).collect(Collectors.toList());
   }
