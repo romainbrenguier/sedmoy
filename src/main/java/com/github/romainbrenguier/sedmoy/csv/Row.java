@@ -1,34 +1,43 @@
 package com.github.romainbrenguier.sedmoy.csv;
 
-public class Row {
-  String[] data;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
+public class Row {
+  List<String> data;
+
+  @Deprecated
   public Row(String[] data) {
+    this.data = Arrays.stream(data).collect(Collectors.toList());
+  }
+
+  public Row(List<String> data) {
     this.data = data;
   }
 
   public static Row split(String line, String separator) {
-    return new Row(line.split(separator));
+    return new Row(
+        Arrays.stream(line.split(separator)).collect(Collectors.toList()));
   }
 
   public Row addLeft(Object content) {
-    String[] result = new String[data.length + 1];
-    result[0] = content.toString();
-    System.arraycopy(data, 0, result, 1, data.length);
+    List<String> result = new ArrayList<>();
+    result.add(content.toString());
+    result.addAll(data);
     return new Row(result);
   }
 
   public String column(int index) {
-    return index < data.length ? data[index] : "";
+    return index < data.size() ? data.get(index) : "";
   }
 
   public Row limit(int nbColumns) {
-    if (nbColumns >= data.length) {
+    if (nbColumns >= data.size()) {
       return this;
     }
-    String[] result = new String[nbColumns];
-    System.arraycopy(data, 0, result, 0, nbColumns);
-    return new Row(result);
+    return new Row(data.stream().limit(nbColumns).collect(Collectors.toList()));
   }
 
   public String toString(String separator) {
