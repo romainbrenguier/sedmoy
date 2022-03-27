@@ -25,7 +25,7 @@ public class Main implements Runnable {
   public void run() {
     if (groovyScript != null) {
       try {
-        GroovyInterpreter.run(groovyScript.toFile());
+        GroovyInterpreter.run(groovyScript.toFile(), input);
       } catch (GroovyException e) {
         e.printStackTrace();
       }
