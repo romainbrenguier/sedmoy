@@ -1,6 +1,6 @@
 package com.github.romainbrenguier.sedmoy.sort;
 
-import com.github.romainbrenguier.sedmoy.csv.CsvData;
+import com.github.romainbrenguier.sedmoy.csv.Table;
 import com.github.romainbrenguier.sedmoy.csv.Row;
 import com.github.romainbrenguier.sedmoy.structure.BucketMap;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class SortedData {
     }
   }
 
-  public static SortedData ofCsv(CsvData csv) {
+  public static SortedData ofCsv(Table csv) {
     SortedData sortedData = new SortedData();
     for (Row line : csv.getLines()) {
       sortedData.add(line);
@@ -40,8 +40,8 @@ public class SortedData {
     return discarded;
   }
 
-  public CsvData toCsv() {
-    CsvData result = new CsvData();
+  public Table toCsv() {
+    Table result = new Table();
     for(int i = 0; i < this.maxIndex + 1; ++i) {
       Set<Row> bucket = this.data.get(i);
       int index = 0;

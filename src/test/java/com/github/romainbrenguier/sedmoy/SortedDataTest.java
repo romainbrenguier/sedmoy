@@ -3,7 +3,7 @@ package com.github.romainbrenguier.sedmoy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.github.romainbrenguier.sedmoy.csv.CsvData;
+import com.github.romainbrenguier.sedmoy.csv.Table;
 import com.github.romainbrenguier.sedmoy.csv.Row;
 import com.github.romainbrenguier.sedmoy.sort.SortedData;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public class SortedDataTest {
   @Test
   public void testAdd() {
     // Arrange
-    SortedData ofCsvResult = SortedData.ofCsv(CsvData.parseLines(new ArrayList<>()));
+    SortedData ofCsvResult = SortedData.ofCsv(Table.parseLines(new ArrayList<>()));
 
     // Act
     ofCsvResult.add(new Row(new String[]{"foo", "foo", "foo"}));
@@ -38,7 +38,7 @@ public class SortedDataTest {
     // Arrange
     Path example = Paths
         .get(System.getProperty("user.home"), "Downloads", "mcrw10000.csv");
-    CsvData input = CsvData
+    Table input = Table
         .parseLines(Files.readAllLines(example))
         .limit(1000);
 
@@ -52,14 +52,14 @@ public class SortedDataTest {
   @Test
   public void testNbEntries() {
     // Arrange, Act and Assert
-    assertEquals(0, SortedData.ofCsv(CsvData.parseLines(new ArrayList<>())).nbEntries());
+    assertEquals(0, SortedData.ofCsv(Table.parseLines(new ArrayList<>())).nbEntries());
   }
 
   @Test
   public void testToCsv() {
     // Arrange, Act and Assert
     assertEquals("",
-        SortedData.ofCsv(CsvData.parseLines(new ArrayList<String>())).toCsv().toString());
+        SortedData.ofCsv(Table.parseLines(new ArrayList<String>())).toCsv().toString());
   }
 
   @Test
@@ -69,7 +69,7 @@ public class SortedDataTest {
     stringList.add("foo");
 
     // Act
-    CsvData actualToCsvResult = SortedData.ofCsv(CsvData.parseLines(stringList)).toCsv();
+    Table actualToCsvResult = SortedData.ofCsv(Table.parseLines(stringList)).toCsv();
 
     // Assert
     assertEquals("300,foo", actualToCsvResult.toString());
@@ -81,11 +81,11 @@ public class SortedDataTest {
     // Arrange
     ArrayList<String> stringList = new ArrayList<String>();
     stringList.add("foo");
-    CsvData parseLinesResult = CsvData.parseLines(stringList);
+    Table parseLinesResult = Table.parseLines(stringList);
     parseLinesResult.addLine(new Row(new String[]{"Line"}));
 
     // Act
-    CsvData actualToCsvResult = SortedData.ofCsv(parseLinesResult).toCsv();
+    Table actualToCsvResult = SortedData.ofCsv(parseLinesResult).toCsv();
 
     // Assert
     assertEquals("0,Line\n300,foo", actualToCsvResult.toString());

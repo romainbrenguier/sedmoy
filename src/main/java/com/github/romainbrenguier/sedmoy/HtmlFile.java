@@ -1,6 +1,6 @@
 package com.github.romainbrenguier.sedmoy;
 
-import com.github.romainbrenguier.sedmoy.csv.CsvData;
+import com.github.romainbrenguier.sedmoy.csv.Table;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +17,7 @@ public class HtmlFile {
     this.file = file;
   }
 
-  public static HtmlFile makeFromCsv(CsvData data) throws IOException {
+  public static HtmlFile makeFromCsv(Table data) throws IOException {
     List<String> lines = data.getLines().stream()
         .map(row -> row.toString(":"))
         .collect(Collectors.toList());

@@ -5,17 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CsvData {
+public class Table {
+
+  private final List<Row> lines;
+
+  private static final String SEPARATOR = ",";
 
   public List<Row> getLines() {
     return lines;
   }
 
-  private final List<Row> lines;
-
-  private static String SEPARATOR = ",";
-
-  public CsvData() {
+  public Table() {
     lines = new ArrayList<>();
   }
 
@@ -23,19 +23,19 @@ public class CsvData {
     lines.add(row);
   }
 
-  public static CsvData parseLines(List<String> lines) {
-    return new CsvData(lines.stream()
+  public static Table parseLines(List<String> lines) {
+    return new Table(lines.stream()
         .map(line -> line.replace("\"", ""))
         .map(line -> Row.split(line, SEPARATOR))
         .collect(Collectors.toList()));
   }
 
-  private CsvData(List<Row> lines) {
+  private Table(List<Row> lines) {
     this.lines = lines;
   }
 
-  public CsvData limit(int number) {
-    return new CsvData(lines.stream().limit(number).collect(Collectors.toList()));
+  public Table limit(int number) {
+    return new Table(lines.stream().limit(number).collect(Collectors.toList()));
   }
 
   private List<String> toStrings(String separator) {
@@ -53,7 +53,7 @@ public class CsvData {
     return toString(SEPARATOR);
   }
 
-  public CsvData sort() {
+  public Table sort() {
     SortedData sortedData = SortedData.ofCsv(this);
     sortedData.printStats();
     return sortedData.toCsv();
