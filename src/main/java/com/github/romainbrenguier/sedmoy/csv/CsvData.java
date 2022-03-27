@@ -30,7 +30,7 @@ public class CsvData {
         .collect(Collectors.toList()));
   }
 
-  public CsvData(List<Row> lines) {
+  private CsvData(List<Row> lines) {
     this.lines = lines;
   }
 
@@ -38,13 +38,13 @@ public class CsvData {
     return new CsvData(lines.stream().limit(number).collect(Collectors.toList()));
   }
 
-  public List<String> toStrings(String separator) {
+  private List<String> toStrings(String separator) {
     return lines.stream()
         .map(row -> row.toString(separator))
         .collect(Collectors.toList());
   }
 
-  public String toString(String separator) {
+  private String toString(String separator) {
     return String.join(System.lineSeparator(), toStrings(separator));
   }
 
