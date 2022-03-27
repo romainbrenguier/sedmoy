@@ -53,12 +53,6 @@ public class CsvData {
     return toString(SEPARATOR);
   }
 
-  public CsvData transform(RowTransform transform) {
-    CsvData result = new CsvData();
-    lines.forEach(result::addLine);
-    return result;
-  }
-
   public CsvData sort() {
     SortedData sortedData = SortedData.ofCsv(this);
     sortedData.printStats();
