@@ -1,6 +1,5 @@
 package com.github.romainbrenguier.sedmoy.csv;
 
-import com.github.romainbrenguier.sedmoy.sort.SortedData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,14 +13,6 @@ public class Table {
 
   public List<Row> getLines() {
     return lines;
-  }
-
-  public Table() {
-    lines = new ArrayList<>();
-  }
-
-  public void addLine(Row row) {
-    lines.add(row);
   }
 
   static List<String> splitRow(String line, String separator) {
