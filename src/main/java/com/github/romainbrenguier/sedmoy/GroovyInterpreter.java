@@ -26,7 +26,9 @@ public class GroovyInterpreter {
     final GroovyShell shell = new GroovyShell(binding);
     try {
       final Object result = shell.evaluate(groovyScript);
-      System.out.println(result.toString());
+      if (result != null) {
+        System.out.println(result);
+      }
     } catch (IOException exception) {
       throw new GroovyException(groovyScript, exception);
     }
