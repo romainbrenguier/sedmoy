@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +32,7 @@ public class SortedDataTest {
     SortedData ofCsvResult = SortedData.ofCsv(Table.parseLines(new ArrayList<>()));
 
     // Act
-    ofCsvResult.add(new Row(new String[]{"foo", "foo", "foo"}));
+    ofCsvResult.add(new Row(Arrays.asList("foo", "foo", "foo")));
   }
 
   @Test
@@ -59,13 +61,13 @@ public class SortedDataTest {
   public void testToCsv() {
     // Arrange, Act and Assert
     assertEquals("",
-        SortedData.ofCsv(Table.parseLines(new ArrayList<String>())).toCsv().toString());
+        SortedData.ofCsv(Table.parseLines(new ArrayList<>())).toCsv().toString());
   }
 
   @Test
   public void testToCsv2() {
     // Arrange
-    ArrayList<String> stringList = new ArrayList<String>();
+    ArrayList<String> stringList = new ArrayList<>();
     stringList.add("foo");
 
     // Act
@@ -79,10 +81,10 @@ public class SortedDataTest {
   @Test
   public void testToCsv3() {
     // Arrange
-    ArrayList<String> stringList = new ArrayList<String>();
+    ArrayList<String> stringList = new ArrayList<>();
     stringList.add("foo");
     Table parseLinesResult = Table.parseLines(stringList);
-    parseLinesResult.addLine(new Row(new String[]{"Line"}));
+    parseLinesResult.addLine(new Row(Collections.singletonList("Line")));
 
     // Act
     Table actualToCsvResult = SortedData.ofCsv(parseLinesResult).toCsv();

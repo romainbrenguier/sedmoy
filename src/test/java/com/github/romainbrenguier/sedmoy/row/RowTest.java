@@ -1,10 +1,11 @@
 package com.github.romainbrenguier.sedmoy.row;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.github.romainbrenguier.sedmoy.csv.Row;
+import java.util.Arrays;
+import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 public class RowTest {
@@ -12,7 +13,7 @@ public class RowTest {
   @Test
   public void testOfCsvLine() {
     // Arrange and Act
-    Row actualOfCsvLineResult = new Row(new String[]{"Line"});
+    Row actualOfCsvLineResult = new Row(Collections.singletonList("Line"));
 
     // Assert
     assertEquals("Line", actualOfCsvLineResult.column(0));
@@ -22,7 +23,7 @@ public class RowTest {
   @Test
   public void testOfCsvLine2() {
     // Arrange and Act
-    Row actualOfCsvLineResult = new Row(new String[]{"foo", "bar"});
+    Row actualOfCsvLineResult = new Row(Arrays.asList("foo", "bar"));
 
     // Assert
     assertEquals("foo", actualOfCsvLineResult.column(0));
@@ -33,7 +34,7 @@ public class RowTest {
   @Test
   public void testWithIndex() {
     // Arrange
-    Row row = new Row(new String[]{"foo", "foo", "foo"});
+    Row row = new Row(Arrays.asList("foo", "foo", "foo"));
 
     // Act
     Row result = row.addLeft(1);
@@ -45,7 +46,8 @@ public class RowTest {
   @Test
   public void testLimit() {
     // Arrange, Act and Assert
-    assertThrows(NegativeArraySizeException.class, () -> Row.split("Line", "Separator").limit(-1));
+    assertThrows(NegativeArraySizeException.class,
+        () -> new Row(Arrays.asList("Line", "Separator")).limit(-1));
   }
 }
 

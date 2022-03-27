@@ -2,6 +2,7 @@ package com.github.romainbrenguier.sedmoy.csv;
 
 import com.github.romainbrenguier.sedmoy.sort.SortedData;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,10 +24,15 @@ public class Table {
     lines.add(row);
   }
 
+
+  static List<String> splitRow(String line, String separator) {
+    return Arrays.stream(line.split(separator)).collect(Collectors.toList());
+  }
+
   public static Table parseLines(List<String> lines) {
     return new Table(lines.stream()
         .map(line -> line.replace("\"", ""))
-        .map(line -> Row.split(line, SEPARATOR))
+        .map(line -> new Row(splitRow(line, SEPARATOR)))
         .collect(Collectors.toList()));
   }
 

@@ -17,10 +17,6 @@ public class Row {
     this.data = data;
   }
 
-  public static Row split(String line, String separator) {
-    return new Row(
-        Arrays.stream(line.split(separator)).collect(Collectors.toList()));
-  }
 
   public Row addLeft(Object content) {
     List<String> result = new ArrayList<>();
