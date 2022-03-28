@@ -30,10 +30,6 @@ public class Table {
     return width;
   }
 
-  public Table limit(int number) {
-    return new Table(lines.stream().limit(number).collect(Collectors.toList()));
-  }
-
   public String cell(int columnIndex, int lineIndex) {
     final Row row = lines.get(lineIndex);
     if (row == null) {
@@ -54,6 +50,22 @@ public class Table {
         lines.stream().limit(lineIndex + 1)
             .map(row -> new Row(row.subList(0, Math.min(row.size(), columnIndex + 1))))
             .collect(Collectors.toList()));
+  }
+
+  public Table upFrom(int lineIndex) {
+    return upFrom(width - 1, lineIndex);
+  }
+
+  public Table downFrom(int lineIndex) {
+    return downFrom(0, lineIndex);
+  }
+
+  public Table leftFrom(int columnIndex) {
+    return upFrom(columnIndex, height - 1);
+  }
+
+  public Table rightFrom(int columnIndex) {
+    return downFrom(columnIndex, 0);
   }
 
   @Override

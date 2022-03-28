@@ -43,7 +43,7 @@ public class SortedDataTest {
         .get(System.getProperty("user.home"), "Downloads", "mcrw10000.csv");
     Table input = new TableParser()
         .parseLines(Files.readAllLines(example))
-        .limit(1000);
+        .upFrom(1000);
 
     // Act
     SortedData data = SortedData.ofCsv(input);
