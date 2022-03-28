@@ -49,6 +49,13 @@ public class Table {
             .collect(Collectors.toList()));
   }
 
+  public Table upFrom(int columnIndex, int lineIndex) {
+    return new Table(
+        lines.stream().limit(lineIndex + 1)
+            .map(row -> new Row(row.subList(0, Math.min(row.size(), columnIndex + 1))))
+            .collect(Collectors.toList()));
+  }
+
   @Override
   public String toString() {
     return lines.stream()

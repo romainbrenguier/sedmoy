@@ -49,5 +49,21 @@ class TableTest {
     assertEquals("i", actualDownFromResult.cell(0, 1));
     assertEquals("", actualDownFromResult.cell(1, 1));
   }
+
+  @Test
+  void testUpFrom() {
+    // Act
+    Table actualDownFromResult = makeSimpleTable().upFrom(2, 1);
+
+    // Assert
+    assertEquals(3, actualDownFromResult.width());
+    assertEquals(2, actualDownFromResult.height());
+    assertEquals("a", actualDownFromResult.cell(0, 0));
+    assertEquals("b", actualDownFromResult.cell(1, 0));
+    assertEquals("c", actualDownFromResult.cell(2, 0));
+    assertEquals("d", actualDownFromResult.cell(0, 1));
+    assertEquals("e", actualDownFromResult.cell(1, 1));
+    assertEquals("foo", actualDownFromResult.cell(2, 1));
+  }
 }
 
