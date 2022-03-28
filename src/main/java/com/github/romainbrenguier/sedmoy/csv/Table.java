@@ -19,18 +19,10 @@ public class Table {
     return new Table(lines.stream().limit(number).collect(Collectors.toList()));
   }
 
-  private List<String> toStrings(String separator) {
-    return lines.stream()
-        .map(row -> row.toString(separator))
-        .collect(Collectors.toList());
-  }
-
-  private String toString(String separator) {
-    return String.join(System.lineSeparator(), toStrings(separator));
-  }
-
   @Override
   public String toString() {
-    return toString(TableParser.DEFAULT_SEPARATOR);
+    return lines.stream()
+        .map(row -> row.toString(TableParser.DEFAULT_SEPARATOR))
+        .collect(Collectors.joining(System.lineSeparator()));
   }
 }
