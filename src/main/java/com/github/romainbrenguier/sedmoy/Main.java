@@ -2,6 +2,7 @@ package com.github.romainbrenguier.sedmoy;
 
 import com.github.romainbrenguier.sedmoy.GroovyInterpreter.GroovyException;
 import com.github.romainbrenguier.sedmoy.csv.Table;
+import com.github.romainbrenguier.sedmoy.csv.TableParser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +27,7 @@ public class Main implements Runnable {
   public void run() {
     if (groovyScript != null) {
       try {
-        final Table table = Table.parseLines(Files.readAllLines(input));
+        final Table table = new TableParser().parseLines(Files.readAllLines(input));
         GroovyInterpreter.run(groovyScript.toFile(), table);
       } catch (GroovyException | IOException e) {
         e.printStackTrace();

@@ -1,7 +1,5 @@
 package com.github.romainbrenguier.sedmoy.csv;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,24 +7,11 @@ public class Table {
 
   private final List<Row> lines;
 
-  private static final String SEPARATOR = ",";
-
   public List<Row> getLines() {
     return lines;
   }
 
-  static List<String> splitRow(String line, String separator) {
-    return Arrays.stream(line.split(separator)).collect(Collectors.toList());
-  }
-
-  public static Table parseLines(List<String> lines) {
-    return new Table(lines.stream()
-        .map(line -> line.replace("\"", ""))
-        .map(line -> new Row(splitRow(line, SEPARATOR)))
-        .collect(Collectors.toList()));
-  }
-
-  private Table(List<Row> lines) {
+  public Table(List<Row> lines) {
     this.lines = lines;
   }
 
@@ -46,6 +31,6 @@ public class Table {
 
   @Override
   public String toString() {
-    return toString(SEPARATOR);
+    return toString(TableParser.DEFAULT_SEPARATOR);
   }
 }

@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.github.romainbrenguier.sedmoy.csv.Table;
 import com.github.romainbrenguier.sedmoy.csv.Row;
+import com.github.romainbrenguier.sedmoy.csv.TableParser;
 import com.github.romainbrenguier.sedmoy.sort.SortedData;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,7 +30,7 @@ public class SortedDataTest {
   @Test
   public void testAdd() {
     // Arrange
-    SortedData ofCsvResult = SortedData.ofCsv(Table.parseLines(new ArrayList<>()));
+    SortedData ofCsvResult = SortedData.ofCsv(new Table(new ArrayList<>()));
 
     // Act
     ofCsvResult.add(new Row(Arrays.asList("foo", "foo", "foo")));
@@ -40,7 +41,7 @@ public class SortedDataTest {
     // Arrange
     Path example = Paths
         .get(System.getProperty("user.home"), "Downloads", "mcrw10000.csv");
-    Table input = Table
+    Table input = new TableParser()
         .parseLines(Files.readAllLines(example))
         .limit(1000);
 
@@ -54,7 +55,7 @@ public class SortedDataTest {
   @Test
   public void testNbEntries() {
     // Arrange, Act and Assert
-    assertEquals(0, SortedData.ofCsv(Table.parseLines(new ArrayList<>())).nbEntries());
+    assertEquals(0, SortedData.ofCsv(new Table(new ArrayList<>())).nbEntries());
   }
 }
 
