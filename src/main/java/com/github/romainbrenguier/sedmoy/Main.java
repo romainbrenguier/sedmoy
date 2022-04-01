@@ -18,7 +18,7 @@ public class Main implements Runnable {
   @Option(names = {"--input", "-i"}, required = true)
   Path input;
 
-  @Option(names = {"--separator", "-s"}, required = false)
+  @Option(names = {"--separator", "-s"})
   String separator = TableParser.DEFAULT_SEPARATOR;
 
   @Option(names = {"--groovy-script", "-g"})
