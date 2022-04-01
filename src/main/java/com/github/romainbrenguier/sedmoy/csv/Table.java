@@ -38,6 +38,17 @@ public class Table {
     return row.column(columnIndex);
   }
 
+  public Row row(int lineIndex) {
+    return lines.get(lineIndex);
+  }
+
+  public List<String> column(int columnIndex) {
+    return
+        lines.stream()
+            .map(row -> row.column(columnIndex))
+            .collect(Collectors.toList());
+  }
+
   public Table downFrom(int columnIndex, int lineIndex) {
     return new Table(
         lines.stream().skip(lineIndex)
