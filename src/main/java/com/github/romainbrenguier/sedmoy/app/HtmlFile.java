@@ -1,6 +1,6 @@
-package com.github.romainbrenguier.sedmoy;
+package com.github.romainbrenguier.sedmoy.app;
 
-import com.github.romainbrenguier.sedmoy.csv.Table;
+import com.github.romainbrenguier.sedmoy.model.Table;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;

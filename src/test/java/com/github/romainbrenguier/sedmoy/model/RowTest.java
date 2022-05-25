@@ -1,9 +1,8 @@
-package com.github.romainbrenguier.sedmoy.csv;
+package com.github.romainbrenguier.sedmoy.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.github.romainbrenguier.sedmoy.csv.Row;
 import java.util.Arrays;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.sedmoy.csv;
+package com.github.romainbrenguier.sedmoy.model;
 
 import java.util.Arrays;
 import java.util.List;

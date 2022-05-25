@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.sedmoy;
+package com.github.romainbrenguier.sedmoy.app;
 
 
 import groovy.lang.Binding;
@@ -27,18 +27,4 @@ public class GroovyInterpreter {
     }
   }
 
-  static class GroovyException extends Exception {
-
-    final private File groovyFile;
-
-    GroovyException(File groovyFile, Exception cause) {
-      super(cause);
-      this.groovyFile = groovyFile;
-    }
-
-    @Override
-    public String getMessage() {
-      return "Error while reading script: " + groovyFile;
-    }
-  }
 }

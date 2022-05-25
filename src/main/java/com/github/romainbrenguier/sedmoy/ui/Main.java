@@ -1,13 +1,14 @@
-package com.github.romainbrenguier.sedmoy;
+package com.github.romainbrenguier.sedmoy.ui;
 
-import com.github.romainbrenguier.sedmoy.GroovyInterpreter.GroovyException;
-import com.github.romainbrenguier.sedmoy.csv.Table;
-import com.github.romainbrenguier.sedmoy.csv.TableParser;
+import com.github.romainbrenguier.sedmoy.app.GroovyException;
+import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
+import com.github.romainbrenguier.sedmoy.model.Table;
+import com.github.romainbrenguier.sedmoy.model.TableParser;
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

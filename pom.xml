@@ -46,7 +46,7 @@
           <manifest>
             <addClasspath>true</addClasspath>
             <classpathPrefix>libs/</classpathPrefix>
-            <mainClass>com.github.romainbrenguier.sedmoy.Main</mainClass>
+            <mainClass>com.github.romainbrenguier.sedmoy.ui.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
