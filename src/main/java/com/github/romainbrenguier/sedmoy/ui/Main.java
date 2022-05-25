@@ -2,6 +2,8 @@ package com.github.romainbrenguier.sedmoy.ui;
 
 import com.github.romainbrenguier.sedmoy.app.GroovyException;
 import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
+import com.github.romainbrenguier.sedmoy.app.HtmlToMobi;
+import com.github.romainbrenguier.sedmoy.app.TableToHtml;
 import com.github.romainbrenguier.sedmoy.model.Table;
 import com.github.romainbrenguier.sedmoy.model.TableParser;
 import java.io.IOException;
@@ -34,7 +36,11 @@ public class Main implements Runnable {
     if (groovyScript != null) {
       try {
         final Table table = new TableParser(separator).parseLines(Files.readAllLines(input));
-        GroovyInterpreter.run(groovyScript.toFile(), table);
+        final GroovyInterpreter groovyInterpreter = new GroovyInterpreter();
+        groovyInterpreter.set("input", table);
+        groovyInterpreter.set("tableToHtml", new TableToHtml());
+        groovyInterpreter.set("htmlToMobi", new HtmlToMobi());
+        groovyInterpreter.run(groovyScript.toFile());
       } catch (MalformedInputException e) {
         System.out.println("Failure reading the file. Before running the script, ensure the\n"
             + "input file is using utf-8 encoding. On linux use `file -i <filname>` to find the\n"
