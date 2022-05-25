@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.sedmoy.row;
+package com.github.romainbrenguier.sedmoy.csv;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

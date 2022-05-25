@@ -43,15 +43,6 @@ public class Main implements Runnable {
       } catch (GroovyException | IOException e) {
         e.printStackTrace();
       }
-      return;
-    }
-    try {
-      final Preferences preferences = Preferences.load();
-      final List<String> data = Files.readAllLines(input);
-      new InteractiveMode(data, preferences).run();
-      preferences.save();
-    } catch (IOException e) {
-      e.printStackTrace();
     }
   }
 }
