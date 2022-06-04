@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
-class DocumentTest {
+public class DocumentTest {
 
   @Test
-  void toJson() throws IOException {
+  public void testToJson() throws IOException {
     final Document document = new Document();
     final DataTable dataTable = new DataTable(new Dimension(2, 1));
     dataTable.set(0,1, "foo");

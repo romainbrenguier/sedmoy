@@ -1,31 +1,29 @@
 package com.github.romainbrenguier.sedmoy.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
-class DataTableTest {
+public class DataTableTest {
   DataTable makeSimpleTable() {
     return new CsvParser().parseLines(Arrays.asList("a,b,c", "d,e,foo,bar", "g,h,i"));
   }
 
   @Test
-  void testHeight() {
+  public void testHeight() {
     // Act and Assert
     assertEquals(3, makeSimpleTable().height());
   }
 
   @Test
-  void testWidth() {
+  public void testWidth() {
     // Act and Assert
     assertEquals(4, makeSimpleTable().width());
   }
 
   @Test
-  void testCell() {
+  public void testCell() {
     // Arrange
     DataTable table = makeSimpleTable();
 
@@ -36,7 +34,7 @@ class DataTableTest {
   }
 
   @Test
-  void testDownFrom() {
+  public void testDownFrom() {
     // Act
     DataTable actualDownFromResult = makeSimpleTable().downFrom(2, 1);
 
@@ -50,7 +48,7 @@ class DataTableTest {
   }
 
   @Test
-  void testUpFrom() {
+  public void testUpFrom() {
     // Act
     DataTable actualDownFromResult = makeSimpleTable().upFrom(2, 1);
 

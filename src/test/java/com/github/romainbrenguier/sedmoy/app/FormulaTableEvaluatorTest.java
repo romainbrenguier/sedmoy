@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class FormulaTableEvaluatorTest {
+public class FormulaTableEvaluatorTest {
 
   @Test
-  void testEvaluate() {
+  public void testEvaluate() {
     GroovyInterpreter interpreter = new MockInterpreter();
     final DataTable dataTable = new DataTable(new Dimension(2, 2));
     dataTable.set(0, 0, "a");

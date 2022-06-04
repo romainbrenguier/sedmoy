@@ -8,12 +8,12 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class DataTableToHtmlTest {
+public class DataTableToHtmlTest {
     /**
      * Method under test: {@link TableToHtml#convertToStrings(DataTable)}
      */
     @Test
-    void testConvertToStrings() {
+    public void testConvertToStrings() {
         // Arrange
         TableToHtml tableToHtml = new TableToHtml();
         List<List<String>> lines = Collections.singletonList(Arrays.asList("foo", "bar"));
