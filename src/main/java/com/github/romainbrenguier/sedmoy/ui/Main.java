@@ -7,6 +7,7 @@ import com.github.romainbrenguier.sedmoy.app.TableToHtml;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.CsvParser;
 import com.github.romainbrenguier.sedmoy.model.Document;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -73,6 +74,15 @@ public class Main implements Runnable {
         }
         document.toJson(out);
         System.out.println();
+      } catch (IOException exception) {
+        System.out.println("Failed to read input: " + input);
+        exception.printStackTrace();
+      }
+    } else if (input.toString().endsWith("sdm")) {
+      System.out.println("Read sedmoy document");
+      try {
+        final Document document = Document.ofJson(new FileInputStream(input.toFile()));
+        System.out.println(document.toString());
       } catch (IOException exception) {
         System.out.println("Failed to read input: " + input);
         exception.printStackTrace();

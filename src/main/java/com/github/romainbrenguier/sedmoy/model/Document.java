@@ -32,4 +32,15 @@ public class Document {
     final ObjectMapper objectMapper = new ObjectMapper();
     objectMapper.writeValue(out, this);
   }
+
+  @Override
+  public String toString() {
+    final StringBuilder builder = new StringBuilder();
+    for (String tableName : tableNames) {
+      Table table = tables.get(tableName);
+      builder.append("=== ").append(tableName).append(" ===")
+          .append("\n").append(table).append("\n");
+    }
+    return builder.toString();
+  }
 }
