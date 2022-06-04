@@ -1,6 +1,6 @@
-import com.github.romainbrenguier.sedmoy.model.Table
+import com.github.romainbrenguier.sedmoy.model.DataTable
 
-def table = input as Table
+def table = input as DataTable
 
 //table = table.upFrom(20)
 

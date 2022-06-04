@@ -17,8 +17,8 @@ public class CsvParser {
     this(DEFAULT_SEPARATOR);
   }
 
-  public Table parseLines(List<String> lines) {
-    return new Table(lines.stream()
+  public DataTable parseLines(List<String> lines) {
+    return new DataTable(lines.stream()
         .map(line -> line.replace("\"", ""))
         .map(line -> new Row(splitRow(line, separator)))
         .collect(Collectors.toList()));

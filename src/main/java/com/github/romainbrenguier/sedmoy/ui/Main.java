@@ -4,7 +4,7 @@ import com.github.romainbrenguier.sedmoy.app.GroovyException;
 import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
 import com.github.romainbrenguier.sedmoy.app.HtmlToMobi;
 import com.github.romainbrenguier.sedmoy.app.TableToHtml;
-import com.github.romainbrenguier.sedmoy.model.Table;
+import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.CsvParser;
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
@@ -35,7 +35,7 @@ public class Main implements Runnable {
   public void run() {
     if (groovyScript != null) {
       try {
-        final Table table = new CsvParser(separator).parseLines(Files.readAllLines(input));
+        final DataTable table = new CsvParser(separator).parseLines(Files.readAllLines(input));
         final GroovyInterpreter groovyInterpreter = new GroovyInterpreter();
         groovyInterpreter.set("input", table);
         groovyInterpreter.set("tableToHtml", new TableToHtml());

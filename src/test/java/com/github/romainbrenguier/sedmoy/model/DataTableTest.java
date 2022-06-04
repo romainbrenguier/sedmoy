@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
-class TableTest {
-  Table makeSimpleTable() {
+class DataTableTest {
+  DataTable makeSimpleTable() {
     return new CsvParser().parseLines(Arrays.asList("a,b,c", "d,e,foo,bar", "g,h,i"));
   }
 
@@ -27,7 +27,7 @@ class TableTest {
   @Test
   void testCell() {
     // Arrange
-    Table table = makeSimpleTable();
+    DataTable table = makeSimpleTable();
 
     // Act and Assert
     assertEquals("a", table.cell(0, 0));
@@ -38,7 +38,7 @@ class TableTest {
   @Test
   void testDownFrom() {
     // Act
-    Table actualDownFromResult = makeSimpleTable().downFrom(2, 1);
+    DataTable actualDownFromResult = makeSimpleTable().downFrom(2, 1);
 
     // Assert
     assertEquals(2, actualDownFromResult.width());
@@ -52,7 +52,7 @@ class TableTest {
   @Test
   void testUpFrom() {
     // Act
-    Table actualDownFromResult = makeSimpleTable().upFrom(2, 1);
+    DataTable actualDownFromResult = makeSimpleTable().upFrom(2, 1);
 
     // Assert
     assertEquals(3, actualDownFromResult.width());

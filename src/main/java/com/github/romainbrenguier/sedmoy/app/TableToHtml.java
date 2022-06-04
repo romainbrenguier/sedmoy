@@ -1,6 +1,6 @@
 package com.github.romainbrenguier.sedmoy.app;
 
-import com.github.romainbrenguier.sedmoy.model.Table;
+import com.github.romainbrenguier.sedmoy.model.DataTable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class TableToHtml {
   private static final int MAX_ITEMS_IN_LIST = 40;
 
-  public List<String> convertToStrings(Table data) {
+  public List<String> convertToStrings(DataTable data) {
     List<String> lines = data.getLines().stream()
             .map(row -> row.toString(":"))
             .collect(Collectors.toList());
@@ -30,7 +30,7 @@ public class TableToHtml {
     return output;
   }
 
-  public File writeToTmpFile(Table data) throws IOException {
+  public File writeToTmpFile(DataTable data) throws IOException {
     List<String> output = convertToStrings(data);
     File tmpFile = File.createTempFile("sorted", ".html");
     Files.write(tmpFile.toPath(), output, StandardOpenOption.WRITE);
