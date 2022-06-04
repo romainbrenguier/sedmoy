@@ -4,15 +4,15 @@ import java.io.File;
 
 public class GroovyException extends Exception {
 
-    private final File groovyFile;
+    private final String source;
 
-    GroovyException(File groovyFile, Exception cause) {
+    GroovyException(String source, Exception cause) {
         super(cause);
-        this.groovyFile = groovyFile;
+        this.source = source;
     }
 
     @Override
     public String getMessage() {
-        return "Error while reading script: " + groovyFile;
+        return "Error while reading script: " + source;
     }
 }

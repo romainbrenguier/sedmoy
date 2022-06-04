@@ -86,9 +86,4 @@ public class DataTable implements Table {
         .map(row -> row.toString(CsvParser.DEFAULT_SEPARATOR))
         .collect(Collectors.joining(System.lineSeparator()));
   }
-
-  @Override
-  public DataTable evaluate(Function<String, Table> environment) {
-    return this;
-  }
 }

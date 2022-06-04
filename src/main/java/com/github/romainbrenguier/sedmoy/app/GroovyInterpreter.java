@@ -20,8 +20,15 @@ public class GroovyInterpreter {
     binding.setProperty(variable, value);
   }
 
+  public void setFromMap(Map<String, ?> map) {
+    map.forEach(this::set);
+  }
+
+  public Object run(String groovyScript) {
+    return new GroovyShell(binding).evaluate(groovyScript);
+  }
+
   public void run(File groovyScript) throws GroovyException {
-    final Binding binding = this.binding;
     final GroovyShell shell = new GroovyShell(binding);
     System.out.println("=== Sedmoy ===");
     System.out.println(
@@ -34,7 +41,7 @@ public class GroovyInterpreter {
         System.out.println(result);
       }
     } catch (IOException exception) {
-      throw new GroovyException(groovyScript, exception);
+      throw new GroovyException(groovyScript.getAbsolutePath(), exception);
     }
   }
 
