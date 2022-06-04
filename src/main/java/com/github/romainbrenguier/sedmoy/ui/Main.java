@@ -7,7 +7,9 @@ import com.github.romainbrenguier.sedmoy.app.TableToHtml;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.CsvParser;
 import com.github.romainbrenguier.sedmoy.model.Document;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,6 +23,9 @@ public class Main implements Runnable {
 
   @Option(names = {"--input", "-i"}, required = true)
   Path input;
+
+  @Option(names = {"--output", "-o"})
+  Path output;
 
   @Option(names = {"--table-name", "-n"}, defaultValue = "table")
   String tableName;
@@ -60,7 +65,13 @@ public class Main implements Runnable {
         final DataTable table = new CsvParser(separator).parseLines(Files.readAllLines(input));
         final Document document = new Document();
         document.add(tableName, table);
-        document.toJson(System.out);
+        OutputStream out;
+        if (output != null) {
+          out = new FileOutputStream(output.toFile());
+        } else {
+          out = System.out;
+        }
+        document.toJson(out);
         System.out.println();
       } catch (IOException exception) {
         System.out.println("Failed to read input: " + input);
