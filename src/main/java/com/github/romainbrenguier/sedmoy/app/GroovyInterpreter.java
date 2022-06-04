@@ -9,20 +9,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GroovyInterpreter {
-  Map<String, Object> variables = new HashMap<>();
+
+  private final Binding binding;
+
+  public GroovyInterpreter() {
+    binding = new Binding();
+  }
 
   public void set(String variable, Object value) {
-    variables.put(variable, value);
+    binding.setProperty(variable, value);
   }
 
   public void run(File groovyScript) throws GroovyException {
-    final Binding binding = new Binding();
+    final Binding binding = this.binding;
     final GroovyShell shell = new GroovyShell(binding);
     System.out.println("=== Sedmoy ===");
     System.out.println(
         "Welcome to Sedmoy's groovy interpreter. The following variables are accessible:\n");
-    variables.entrySet().forEach(entry ->
-            System.out.println(entry.getKey() + " of type " + entry.getValue().getClass() + "\n"));
+    binding.getVariables().forEach((key, value) ->
+            System.out.println(key + " of type " + value.getClass() + "\n"));
     try {
       final Object result = shell.evaluate(groovyScript);
       if (result != null) {

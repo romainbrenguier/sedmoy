@@ -1,4 +1,4 @@
-import com.github.romainbrenguier.sedmoy.csv.Table
+import com.github.romainbrenguier.sedmoy.model.Table
 
 def table = input as Table
 
