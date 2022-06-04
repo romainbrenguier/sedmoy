@@ -1,7 +1,7 @@
 package com.github.romainbrenguier.sedmoy.model;
 
 /** Table whose data is obtained by the evaluation of a formula */
-public class FormulaTable {
+public class FormulaTable implements Table {
   private Dimension dimension;
   private String groovyScript = "";
 
