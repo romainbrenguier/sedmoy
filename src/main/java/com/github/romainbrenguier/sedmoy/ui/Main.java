@@ -6,6 +6,7 @@ import com.github.romainbrenguier.sedmoy.app.HtmlToMobi;
 import com.github.romainbrenguier.sedmoy.app.TableToHtml;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.CsvParser;
+import com.github.romainbrenguier.sedmoy.model.Document;
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
@@ -20,6 +21,9 @@ public class Main implements Runnable {
 
   @Option(names = {"--input", "-i"}, required = true)
   Path input;
+
+  @Option(names = {"--table-name", "-n"}, defaultValue = "table")
+  String tableName;
 
   @Option(names = {"--separator", "-s"})
   String separator = CsvParser.DEFAULT_SEPARATOR;
@@ -50,6 +54,20 @@ public class Main implements Runnable {
       } catch (GroovyException | IOException e) {
         e.printStackTrace();
       }
+    } else if (input.toString().endsWith("csv")) {
+      System.out.println("Convert csv to sedmoy document");
+      try {
+        final DataTable table = new CsvParser(separator).parseLines(Files.readAllLines(input));
+        final Document document = new Document();
+        document.add(tableName, table);
+        document.toJson(System.out);
+        System.out.println();
+      } catch (IOException exception) {
+        System.out.println("Failed to read input: " + input);
+        exception.printStackTrace();
+      }
+    } else {
+      System.out.println("No action found to perform on input " + input.getFileName());
     }
   }
 }
