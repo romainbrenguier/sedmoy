@@ -82,7 +82,7 @@ public class Table {
   @Override
   public String toString() {
     return lines.stream()
-        .map(row -> row.toString(TableParser.DEFAULT_SEPARATOR))
+        .map(row -> row.toString(CsvParser.DEFAULT_SEPARATOR))
         .collect(Collectors.joining(System.lineSeparator()));
   }
 }

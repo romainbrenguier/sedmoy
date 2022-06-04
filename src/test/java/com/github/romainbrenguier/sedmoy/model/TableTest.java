@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 class TableTest {
   Table makeSimpleTable() {
-    return new TableParser().parseLines(Arrays.asList("a,b,c", "d,e,foo,bar", "g,h,i"));
+    return new CsvParser().parseLines(Arrays.asList("a,b,c", "d,e,foo,bar", "g,h,i"));
   }
 
   @Test

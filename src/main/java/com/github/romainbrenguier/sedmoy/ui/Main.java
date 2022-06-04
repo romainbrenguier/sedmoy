@@ -5,7 +5,7 @@ import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
 import com.github.romainbrenguier.sedmoy.app.HtmlToMobi;
 import com.github.romainbrenguier.sedmoy.app.TableToHtml;
 import com.github.romainbrenguier.sedmoy.model.Table;
-import com.github.romainbrenguier.sedmoy.model.TableParser;
+import com.github.romainbrenguier.sedmoy.model.CsvParser;
 import java.io.IOException;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
@@ -22,7 +22,7 @@ public class Main implements Runnable {
   Path input;
 
   @Option(names = {"--separator", "-s"})
-  String separator = TableParser.DEFAULT_SEPARATOR;
+  String separator = CsvParser.DEFAULT_SEPARATOR;
 
   @Option(names = {"--groovy-script", "-g"})
   Path groovyScript;
@@ -35,7 +35,7 @@ public class Main implements Runnable {
   public void run() {
     if (groovyScript != null) {
       try {
-        final Table table = new TableParser(separator).parseLines(Files.readAllLines(input));
+        final Table table = new CsvParser(separator).parseLines(Files.readAllLines(input));
         final GroovyInterpreter groovyInterpreter = new GroovyInterpreter();
         groovyInterpreter.set("input", table);
         groovyInterpreter.set("tableToHtml", new TableToHtml());

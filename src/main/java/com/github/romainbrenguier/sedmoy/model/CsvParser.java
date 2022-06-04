@@ -4,16 +4,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TableParser {
+public class CsvParser {
   public static final String DEFAULT_SEPARATOR = ",";
 
   private String separator;
 
-  public TableParser(String separator) {
+  public CsvParser(String separator) {
     this.separator = separator;
   }
 
-  public TableParser() {
+  public CsvParser() {
     this(DEFAULT_SEPARATOR);
   }
 
