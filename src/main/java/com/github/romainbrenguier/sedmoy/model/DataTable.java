@@ -2,9 +2,10 @@ package com.github.romainbrenguier.sedmoy.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class DataTable {
+public class DataTable implements Table {
 
   private final List<Row> lines;
 
@@ -84,5 +85,10 @@ public class DataTable {
     return lines.stream()
         .map(row -> row.toString(CsvParser.DEFAULT_SEPARATOR))
         .collect(Collectors.joining(System.lineSeparator()));
+  }
+
+  @Override
+  public DataTable evaluate(Function<String, Table> environment) {
+    return this;
   }
 }
