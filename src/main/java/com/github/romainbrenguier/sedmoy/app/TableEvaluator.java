@@ -13,7 +13,7 @@ public class TableEvaluator {
     this.groovyInterpreter = groovyInterpreter;
   }
 
-  public DataTable evaluate(Map<String, Table> environment, Table table) {
+  public DataTable evaluate(Map<String, DataTable> environment, Table table) {
     if (table instanceof DataTable) {
       return (DataTable) table;
     }

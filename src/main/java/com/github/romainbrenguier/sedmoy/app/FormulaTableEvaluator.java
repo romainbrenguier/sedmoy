@@ -3,15 +3,13 @@ package com.github.romainbrenguier.sedmoy.app;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import com.github.romainbrenguier.sedmoy.model.Row;
-import com.github.romainbrenguier.sedmoy.model.Table;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class FormulaTableEvaluator {
 
-  public DataTable evaluate(GroovyInterpreter interpreter, Map<String, Table> environment,
+  public DataTable evaluate(GroovyInterpreter interpreter, Map<String, DataTable> environment,
       FormulaTable table) {
     interpreter.setFromMap(environment);
     final List<Row> rows = new ArrayList<>();
