@@ -16,4 +16,13 @@ public class FormulaTable {
   public void setGroovyScript(String groovyScript) {
     this.groovyScript = groovyScript;
   }
+
+  public Dimension getDimension() {
+    return dimension;
+  }
+
+  public FormulaTable withDimension(Dimension dimension) {
+    this.dimension = dimension;
+    return this;
+  }
 }
