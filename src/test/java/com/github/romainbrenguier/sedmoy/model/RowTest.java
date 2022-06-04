@@ -1,10 +1,10 @@
 package com.github.romainbrenguier.sedmoy.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class RowTest {
@@ -12,22 +12,22 @@ public class RowTest {
   @Test
   public void testOfCsvLine() {
     // Arrange and Act
-    Row actualOfCsvLineResult = new Row(Collections.singletonList("Line"));
+    List<String> actualOfCsvLineResult = Collections.singletonList("Line");
 
     // Assert
-    assertEquals("Line", actualOfCsvLineResult.column(0));
-    assertEquals("", actualOfCsvLineResult.column(1));
+    assertEquals("Line", Row.column(actualOfCsvLineResult, 0));
+    assertEquals("", Row.column(actualOfCsvLineResult, 1));
   }
 
   @Test
   public void testOfCsvLine2() {
     // Arrange and Act
-    Row actualOfCsvLineResult = new Row(Arrays.asList("foo", "bar"));
+    List<String> actualOfCsvLineResult = Arrays.asList("foo", "bar");
 
     // Assert
-    assertEquals("foo", actualOfCsvLineResult.column(0));
-    assertEquals("bar", actualOfCsvLineResult.column(1));
-    assertEquals("", actualOfCsvLineResult.column(2));
+    assertEquals("foo", Row.column(actualOfCsvLineResult, 0));
+    assertEquals("bar", Row.column(actualOfCsvLineResult, 1));
+    assertEquals("", Row.column(actualOfCsvLineResult, 2));
   }
 }
 

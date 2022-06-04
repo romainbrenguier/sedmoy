@@ -1,6 +1,12 @@
 package com.github.romainbrenguier.sedmoy.model;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
 class DocumentTest {
@@ -14,8 +20,18 @@ class DocumentTest {
     final FormulaTable formulaTable = new FormulaTable(new Dimension(1, 2));
     formulaTable.setGroovyScript("bar");
     document.add("bar_table", formulaTable);
+    final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-    document.toJson(System.out);
-    System.out.println("---");
+    // Serialize
+    document.toJson(outputStream);
+    String result = outputStream.toString();
+
+    // Deserialize
+    final ByteArrayInputStream inputStream = new ByteArrayInputStream(
+        result.getBytes(StandardCharsets.UTF_8));
+    Document deserialized = Document.ofJson(inputStream);
+
+    // Assert
+    assertThat(deserialized.tableNames, equalTo(document.tableNames));
   }
 }

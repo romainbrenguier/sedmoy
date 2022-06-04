@@ -1,19 +1,20 @@
 package com.github.romainbrenguier.sedmoy.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
-public class Row extends ArrayList<String> {
-  public Row(Collection<String> data) {
-    super();
-    addAll(data);
+public class Row {
+  private Row () {
   }
 
-  public String column(int index) {
-    return index < size() ? get(index) : "";
+  public static String column(List<String> arrayList, int index) {
+    return index < arrayList.size() ? arrayList.get(index) : "";
   }
 
-  public String toString(String separator) {
-    return String.join(separator, this);
+  public static String toString(List<String> arrayList, String separator) {
+    return String.join(separator, arrayList);
+  }
+
+  public static List<String> subList(List<String> input, int start, int end) {
+    return input.subList(start, end);
   }
 }

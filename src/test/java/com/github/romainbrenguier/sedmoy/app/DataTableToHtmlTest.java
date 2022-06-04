@@ -2,13 +2,10 @@ package com.github.romainbrenguier.sedmoy.app;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.github.romainbrenguier.sedmoy.model.Row;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
 class DataTableToHtmlTest {
@@ -19,7 +16,7 @@ class DataTableToHtmlTest {
     void testConvertToStrings() {
         // Arrange
         TableToHtml tableToHtml = new TableToHtml();
-        List<Row> lines = Collections.singletonList(new Row(Arrays.asList("foo", "bar")));
+        List<List<String>> lines = Collections.singletonList(Arrays.asList("foo", "bar"));
         DataTable data = new DataTable(lines);
 
         // Act

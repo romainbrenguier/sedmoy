@@ -20,7 +20,7 @@ public class CsvParser {
   public DataTable parseLines(List<String> lines) {
     return new DataTable(lines.stream()
         .map(line -> line.replace("\"", ""))
-        .map(line -> new Row(splitRow(line, separator)))
+        .map(line -> splitRow(line, separator))
         .collect(Collectors.toList()));
   }
 

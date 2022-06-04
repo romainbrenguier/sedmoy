@@ -2,6 +2,7 @@ package com.github.romainbrenguier.sedmoy.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,10 @@ public class Document {
 
   public List<String> tableNames = new ArrayList<>();
   public HashMap<String, Table> tables = new HashMap<>();
+
+  public static Document ofJson(InputStream input) throws IOException {
+    return new ObjectMapper().readValue(input, Document.class);
+  }
 
   public void add(String tableName, Table table) {
     assert !tables.containsKey(tableName);

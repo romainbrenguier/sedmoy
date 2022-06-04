@@ -1,6 +1,7 @@
 package com.github.romainbrenguier.sedmoy.app;
 
 import com.github.romainbrenguier.sedmoy.model.DataTable;
+import com.github.romainbrenguier.sedmoy.model.Row;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,7 +15,7 @@ public class TableToHtml {
 
   public List<String> convertToStrings(DataTable data) {
     List<String> lines = data.getLines().stream()
-            .map(row -> row.toString(":"))
+            .map(row -> Row.toString(row, ":"))
             .collect(Collectors.toList());
     List<String> output = new ArrayList<>();
     output.add("<html><head></head><body><ul>");
