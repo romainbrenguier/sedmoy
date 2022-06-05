@@ -36,4 +36,13 @@ public class FormulaTable implements Table {
     this.dimension = dimension;
     return this;
   }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("FormulaTable{");
+    sb.append("dimension=").append(dimension);
+    sb.append(", groovyScript='").append(groovyScript).append('\'');
+    sb.append('}');
+    return sb.toString();
+  }
 }

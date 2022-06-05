@@ -7,7 +7,9 @@ import com.github.romainbrenguier.sedmoy.app.TableEvaluator;
 import com.github.romainbrenguier.sedmoy.app.TableToHtml;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.CsvParser;
+import com.github.romainbrenguier.sedmoy.model.Dimension;
 import com.github.romainbrenguier.sedmoy.model.Document;
+import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -32,6 +34,15 @@ public class Main implements Runnable {
 
   @Option(names = {"--table-name", "-n"}, defaultValue = "table")
   String tableName;
+
+  @Option(names = {"--add-formula"})
+  String addFormula;
+
+  @Option(names = {"--number-of-columns", "-c"}, defaultValue = "1")
+  Integer numberOfColumns;
+
+  @Option(names = {"--number-of-lines", "-l"}, defaultValue = "1")
+  Integer numberOfLines;
 
   @Option(names = {"--separator", "-s"})
   String separator = CsvParser.DEFAULT_SEPARATOR;
@@ -84,12 +95,20 @@ public class Main implements Runnable {
       System.out.println("Read sedmoy document");
       try {
         final Document document = Document.ofJson(new FileInputStream(input.toFile()));
+        if (addFormula != null) {
+          final FormulaTable formulaTable =
+              new FormulaTable(new Dimension(numberOfLines, numberOfColumns), addFormula);
+          document.add(tableName, formulaTable);
+        }
         if (output == null) {
           System.out.println(document.toString());
         } else if (output.toString().endsWith("csv")) {
           final Document result = new TableEvaluator(new GroovyInterpreter()).evaluate(document);
           System.out.println("Write file " + output);
           Files.write(output, Collections.singleton(result.toString()));
+        } else if (output.toString().endsWith("sdm")) {
+          System.out.println("Write file " + output);
+          document.toJson(new FileOutputStream(output.toFile()));
         } else {
           System.out.println("No action known for output type:" + output);
         }

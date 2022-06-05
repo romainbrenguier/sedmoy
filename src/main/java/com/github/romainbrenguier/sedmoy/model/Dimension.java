@@ -15,4 +15,9 @@ public class Dimension {
     this.numberOfLines = Math.max(0, numberOfLines);
     this.numberOfColumns = Math.max(0, numberOfColumns);
   }
+
+  @Override
+  public String toString() {
+    return numberOfColumns + "x" + numberOfLines;
+  }
 }
