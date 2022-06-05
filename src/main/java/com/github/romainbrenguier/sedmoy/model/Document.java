@@ -38,7 +38,7 @@ public class Document {
     final StringBuilder builder = new StringBuilder();
     for (String tableName : tableNames) {
       Table table = tables.get(tableName);
-      builder.append("=== ").append(tableName).append(" ===")
+      builder.append("# ").append(tableName)
           .append("\n").append(table).append("\n");
     }
     return builder.toString();
