@@ -1,8 +1,10 @@
 package com.github.romainbrenguier.sedmoy.app;
 
 import com.github.romainbrenguier.sedmoy.model.DataTable;
+import com.github.romainbrenguier.sedmoy.model.Document;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import com.github.romainbrenguier.sedmoy.model.Table;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TableEvaluator {
@@ -18,9 +20,23 @@ public class TableEvaluator {
       return (DataTable) table;
     }
     if (table instanceof FormulaTable) {
-      new FormulaTableEvaluator().evaluate(
+      return new FormulaTableEvaluator().evaluate(
           groovyInterpreter, environment, (FormulaTable) table);
     }
     throw new IllegalArgumentException("Table of unknown type: " + table.getClass());
   }
+
+  /** Evaluate all formulas to DataTable */
+  public Document evaluate(Document document) {
+    final Document result = new Document();
+    final HashMap<String, DataTable> environment = new HashMap<>();
+    for (String tableName : document.tableNames) {
+      final Table table = document.tables.get(tableName);
+      DataTable dataTable = evaluate(environment, table);
+      environment.put(tableName, dataTable);
+      result.add(tableName, dataTable);
+    }
+    return result;
+  }
+
 }

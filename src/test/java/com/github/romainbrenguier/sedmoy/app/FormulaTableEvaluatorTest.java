@@ -11,7 +11,6 @@ import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.Dimension;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -43,24 +42,4 @@ public class FormulaTableEvaluatorTest {
     assertThat(result.cell(1, 1), equalTo("foo[1,1]="));
   }
 
-  /**
-   * Fake interpreter that returns the result of a hardcoded script
-   */
-  class MockInterpreter extends GroovyInterpreter {
-
-    Map<String, Object> variables = new HashMap<>();
-
-    @Override
-    public void set(String variable, Object value) {
-      variables.put(variable, value);
-    }
-
-    @Override
-    public Object run(String groovyScript) {
-      final int i = (int) variables.get("line");
-      final int j = (int) variables.get("column");
-      final DataTable foo = (DataTable) variables.get("foo");
-      return "foo[" + i + "," + j + "]=" + foo.cell(i, j);
-    }
-  }
 }

@@ -17,8 +17,12 @@ public class FormulaTableEvaluator {
       final List<String> row = new ArrayList<>();
       for (int column = 0; column < table.getDimension().numberOfColumns; ++ column) {
         interpreter.set("column", column);
-        final Object result = interpreter.run(table.getGroovyScript());
-        row.add(result.toString());
+        try {
+          final Object result = interpreter.run(table.getGroovyScript());
+          row.add(result.toString());
+        } catch (Exception e) {
+          row.add(e.toString());
+        }
       }
       lines.add(row);
     }
