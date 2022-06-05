@@ -3,6 +3,7 @@ package com.github.romainbrenguier.sedmoy.ui;
 import com.github.romainbrenguier.sedmoy.app.GroovyException;
 import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
 import com.github.romainbrenguier.sedmoy.app.HtmlToMobi;
+import com.github.romainbrenguier.sedmoy.app.TableEvaluator;
 import com.github.romainbrenguier.sedmoy.app.TableToHtml;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.CsvParser;
@@ -15,6 +16,7 @@ import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import java.util.Collections;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -82,7 +84,15 @@ public class Main implements Runnable {
       System.out.println("Read sedmoy document");
       try {
         final Document document = Document.ofJson(new FileInputStream(input.toFile()));
-        System.out.println(document.toString());
+        if (output == null) {
+          System.out.println(document.toString());
+        } else if (output.toString().endsWith("csv")) {
+          final Document result = new TableEvaluator(new GroovyInterpreter()).evaluate(document);
+          System.out.println("Write file " + output);
+          Files.write(output, Collections.singleton(result.toString()));
+        } else {
+          System.out.println("No action known for output type:" + output);
+        }
       } catch (IOException exception) {
         System.out.println("Failed to read input: " + input);
         exception.printStackTrace();
