@@ -28,9 +28,9 @@ public class DataTableTest {
     DataTable table = makeSimpleTable();
 
     // Act and Assert
-    assertEquals("a", table.cell(0, 0));
-    assertEquals("bar", table.cell(3, 1));
-    assertEquals("", table.cell(5, 2));
+    assertEquals("a", table.cellAsString(0, 0));
+    assertEquals("bar", table.cellAsString(3, 1));
+    assertEquals("", table.cellAsString(5, 2));
   }
 
   @Test
@@ -41,10 +41,10 @@ public class DataTableTest {
     // Assert
     assertEquals(2, actualDownFromResult.width());
     assertEquals(2, actualDownFromResult.height());
-    assertEquals("foo", actualDownFromResult.cell(0, 0));
-    assertEquals("bar", actualDownFromResult.cell(1, 0));
-    assertEquals("i", actualDownFromResult.cell(0, 1));
-    assertEquals("", actualDownFromResult.cell(1, 1));
+    assertEquals("foo", actualDownFromResult.cellAsString(0, 0));
+    assertEquals("bar", actualDownFromResult.cellAsString(1, 0));
+    assertEquals("i", actualDownFromResult.cellAsString(0, 1));
+    assertEquals("", actualDownFromResult.cellAsString(1, 1));
   }
 
   @Test
@@ -55,12 +55,12 @@ public class DataTableTest {
     // Assert
     assertEquals(3, actualDownFromResult.width());
     assertEquals(2, actualDownFromResult.height());
-    assertEquals("a", actualDownFromResult.cell(0, 0));
-    assertEquals("b", actualDownFromResult.cell(1, 0));
-    assertEquals("c", actualDownFromResult.cell(2, 0));
-    assertEquals("d", actualDownFromResult.cell(0, 1));
-    assertEquals("e", actualDownFromResult.cell(1, 1));
-    assertEquals("foo", actualDownFromResult.cell(2, 1));
+    assertEquals("a", actualDownFromResult.cellAsString(0, 0));
+    assertEquals("b", actualDownFromResult.cellAsString(1, 0));
+    assertEquals("c", actualDownFromResult.cellAsString(2, 0));
+    assertEquals("d", actualDownFromResult.cellAsString(0, 1));
+    assertEquals("e", actualDownFromResult.cellAsString(1, 1));
+    assertEquals("foo", actualDownFromResult.cellAsString(2, 1));
   }
 }
 

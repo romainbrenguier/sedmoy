@@ -34,9 +34,9 @@ public class TableEvaluatorTest {
     assertThat(result, not(nullValue()));
     final Table foo = result.tables.get("foo");
     assertThat(foo, instanceOf(DataTable.class));
-    assertThat(((DataTable)foo).cell(0, 0), equalTo("a"));
+    assertThat(((DataTable)foo).cellAsString(0, 0), equalTo("a"));
     final Table bar = result.tables.get("bar");
     assertThat(bar, instanceOf(DataTable.class));
-    assertThat(((DataTable)bar).cell(0, 0), equalTo("foo[0,0]=a"));
+    assertThat(((DataTable)bar).cellAsString(0, 0), equalTo("foo[0,0]=a"));
   }
 }

@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DataTable implements Table {
+
+  private final static Pattern INT_PATTERN = Pattern.compile("[0-9]+");
 
   private final List<List<String>> lines;
   private final Dimension dimension;
@@ -58,12 +61,20 @@ public class DataTable implements Table {
     lines.get(lineIndex).set(columnIndex, content);
   }
 
-  public String cell(int columnIndex, int lineIndex) {
+  public String cellAsString(int columnIndex, int lineIndex) {
     final List<String> row = lines.get(lineIndex);
     if (row == null) {
       return "";
     }
     return Row.column(row, columnIndex);
+  }
+
+  public Object cell(int columnIndex, int lineIndex) {
+    final String string = cellAsString(columnIndex, lineIndex);
+    if (INT_PATTERN.matcher(string).matches()) {
+      return Integer.parseInt(string);
+    }
+    return string;
   }
 
   public List<String> row(int lineIndex) {

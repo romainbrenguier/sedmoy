@@ -36,10 +36,10 @@ public class FormulaTableEvaluatorTest {
     assertEquals(2, result.width());
     assertEquals(2, result.height());
     // FIXME order of line and column differs which is confusing
-    assertThat(result.cell(0, 0), equalTo("foo[0,0]=a"));
-    assertThat(result.cell(0, 1), equalTo("foo[1,0]=b"));
-    assertThat(result.cell(1, 0), equalTo("foo[0,1]=A"));
-    assertThat(result.cell(1, 1), equalTo("foo[1,1]="));
+    assertThat(result.cellAsString(0, 0), equalTo("foo[0,0]=a"));
+    assertThat(result.cellAsString(0, 1), equalTo("foo[1,0]=b"));
+    assertThat(result.cellAsString(1, 0), equalTo("foo[0,1]=A"));
+    assertThat(result.cellAsString(1, 1), equalTo("foo[1,1]="));
   }
 
 }

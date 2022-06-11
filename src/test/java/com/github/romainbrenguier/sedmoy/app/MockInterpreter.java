@@ -21,6 +21,6 @@ class MockInterpreter extends GroovyInterpreter {
     final int i = (int) variables.get("line");
     final int j = (int) variables.get("column");
     final DataTable foo = (DataTable) variables.get("foo");
-    return "foo[" + i + "," + j + "]=" + foo.cell(i, j);
+    return "foo[" + i + "," + j + "]=" + foo.cellAsString(i, j);
   }
 }
