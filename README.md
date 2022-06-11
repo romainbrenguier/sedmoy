@@ -22,7 +22,7 @@ The document can then be exported back to csv by evaluating the formulas:
 
 # Formulas
 
-Formulas are evaluate as groovy scripts which have the following variables predifined:
+Formulas are evaluate as groovy scripts which have the following variables predefined:
   
   * `line` and `column` indicates the position in the table of the cell currently being constructed
   * For each table defined in the document before the formula table, a variable with that name is defined.
