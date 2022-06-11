@@ -5,8 +5,8 @@ import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
 import com.github.romainbrenguier.sedmoy.app.HtmlToMobi;
 import com.github.romainbrenguier.sedmoy.app.TableEvaluator;
 import com.github.romainbrenguier.sedmoy.app.TableToHtml;
-import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.CsvParser;
+import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.Dimension;
 import com.github.romainbrenguier.sedmoy.model.Document;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
@@ -17,7 +17,6 @@ import java.io.OutputStream;
 import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 import java.util.Collections;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -102,6 +101,9 @@ public class Main implements Runnable {
         }
         if (output == null) {
           System.out.println(document.toString());
+          System.out.println("Evaluate");
+          final TableEvaluator evaluator = new TableEvaluator(new GroovyInterpreter());
+          System.out.println(evaluator.evaluate(document).toString());
         } else if (output.toString().endsWith("csv")) {
           final Document result = new TableEvaluator(new GroovyInterpreter()).evaluate(document);
           System.out.println("Write file " + output);
