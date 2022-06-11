@@ -11,6 +11,7 @@ import java.util.stream.IntStream;
 public class DataTable implements Table {
 
   private final static Pattern INT_PATTERN = Pattern.compile("[0-9]+");
+  private final static Pattern FLOAT_PATTERN = Pattern.compile("[0-9]*\\.[0-9]*");
 
   private final List<List<String>> lines;
   private final Dimension dimension;
@@ -73,6 +74,9 @@ public class DataTable implements Table {
     final String string = cellAsString(columnIndex, lineIndex);
     if (INT_PATTERN.matcher(string).matches()) {
       return Integer.parseInt(string);
+    }
+    if (FLOAT_PATTERN.matcher(string).matches()) {
+      return Float.parseFloat(string);
     }
     return string;
   }
