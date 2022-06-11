@@ -11,6 +11,7 @@ public class FormulaTableEvaluator {
       FormulaTable table) {
     interpreter.setFromMap(environment);
     final DataTable result = new DataTable(table.getDimension());
+    interpreter.set("current", result);
     for (int line = 0; line < table.getDimension().numberOfLines; ++line) {
       interpreter.set("line", line);
       for (int column = 0; column < table.getDimension().numberOfColumns; ++ column) {

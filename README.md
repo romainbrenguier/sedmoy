@@ -26,6 +26,7 @@ Formulas are evaluate as groovy scripts which have the following variables prede
   
   * `line` and `column` indicates the position in the table of the cell currently being constructed
   * For each table defined in the document before the formula table, a variable with that name is defined.
+  * `current` is the table currently being defined
 
 The table variables have type `DataTable`, which define in particular the methods: `int height()`,
 `int width()` and `String cell(int columnNumber, int lineNumber)`.
