@@ -5,6 +5,7 @@ import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.codehaus.groovy.control.CompilationFailedException;
 
 public class FormulaTableEvaluator {
 
@@ -20,6 +21,8 @@ public class FormulaTableEvaluator {
         try {
           final Object result = interpreter.run(table.getGroovyScript());
           row.add(result.toString());
+        } catch (CompilationFailedException e) {
+          throw e;
         } catch (Exception e) {
           row.add(e.toString());
         }
