@@ -18,11 +18,11 @@ def scores = [:]
 static int scoreOfRank(int rank) { 10000 / rank }
 
 for (int i = 0; i < table.height(); ++i) {
-    def key = table.cell(1, i)
-    def value = table.cell(2, i)
+    def key = table.cellAsString(1, i)
+    def value = table.cellAsString(2, i)
     indexedTable[key] = value
     scores[keyOfString(key)] = scores.getOrDefault(keyOfString(key), 0) +
-            scoreOfRank(Integer.parseInt(table.cell(0, i)))
+            scoreOfRank(Integer.parseInt(table.cellAsString(0, i)))
 }
 
 def grouped = indexedTable.groupBy { keyOfString it.key as String }
