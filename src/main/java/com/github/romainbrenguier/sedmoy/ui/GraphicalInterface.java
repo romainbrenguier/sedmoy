@@ -75,11 +75,13 @@ public class GraphicalInterface {
   }
 
   private void evaluate() {
+    mainPanel.setVisible(false);
     mainPanel.removeAll();
     updateDocument();
     final Document evaluatedDocument = tableEvaluator.evaluate(document);
     System.out.println("evaluate");
     addDocumentComponents(mainPanel, document, evaluatedDocument);
+    mainPanel.setVisible(true);
   }
 
   private void addDocumentComponents(Container frame, Document document, Document evaluation) {
