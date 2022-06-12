@@ -6,14 +6,19 @@ import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.Document;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import com.github.romainbrenguier.sedmoy.model.Table;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -32,23 +37,27 @@ public class GraphicalInterface {
   public void run() {
     final JFrame frame = new JFrame("Sedmoy");
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setLayout(new BorderLayout());
+
+    final JPanel toolPanel = new JPanel(new FlowLayout());
+    final JButton save = new JButton("Save");
+    toolPanel.add(save);
+    final JButton evaluate = new JButton("Evaluate");
+    toolPanel.add(evaluate);
+    frame.add(BorderLayout.NORTH, toolPanel);
+
     final GridLayout layoutManager = new GridLayout(0, document.tableNames.size(), 1, 1);
-    frame.setLayout(layoutManager);
-
-//    final JButton save = new JButton("Save");
-//    frame.add(save);
-//    final JButton evaluate = new JButton("Evaluate");
-//    frame.add(evaluate);
-
+    final JPanel panel = new JPanel(layoutManager);
     final Document evaluatedDocument = tableEvaluator.evaluate(document);
-    addDocumentComponents(frame, document, evaluatedDocument);
+    addDocumentComponents(panel, document, evaluatedDocument);
 
+    frame.add(BorderLayout.CENTER, panel);
     frame.setLocationRelativeTo(null);
     frame.pack();
     frame.setVisible(true);
   }
 
-  private void addDocumentComponents(JFrame frame, Document document, Document evaluation) {
+  private void addDocumentComponents(Container frame, Document document, Document evaluation) {
     for (String title : document.tableNames) {
       final Table table = document.tables.get(title);
       if (table instanceof FormulaTable) {
