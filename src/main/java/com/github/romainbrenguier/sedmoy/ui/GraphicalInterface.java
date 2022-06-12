@@ -15,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
@@ -39,19 +40,26 @@ public class GraphicalInterface {
 //    final JButton evaluate = new JButton("Evaluate");
 //    frame.add(evaluate);
 
-    addDocumentComponents(frame, document);
     final Document evaluatedDocument = tableEvaluator.evaluate(document);
-    addDocumentComponents(frame, evaluatedDocument);
+    addDocumentComponents(frame, document, evaluatedDocument);
 
     frame.setLocationRelativeTo(null);
     frame.pack();
     frame.setVisible(true);
   }
 
-  private void addDocumentComponents(JFrame frame, Document document) {
+  private void addDocumentComponents(JFrame frame, Document document, Document evaluation) {
     for (String title : document.tableNames) {
       final Table table = document.tables.get(title);
-      frame.add(tableComponent(table));
+      if (table instanceof FormulaTable) {
+        final Table evaluatedTable = evaluation.tables.get(title);
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+            tableComponent(table),
+            tableComponent(evaluatedTable));
+        frame.add(splitPane);
+      } else {
+        frame.add(tableComponent(table));
+      }
     }
   }
 
@@ -60,7 +68,7 @@ public class GraphicalInterface {
     if (table instanceof FormulaTable) {
       JTextArea textArea = new JTextArea();
       textArea.append(((FormulaTable) table).getGroovyScript());
-      textArea.setMargin(new Insets(0,2, 0, 2));
+      textArea.setMargin(new Insets(0, 2, 0, 2));
       textArea.setBorder(BorderFactory.createLineBorder(Color.black));
       component = textArea;
     } else if (table instanceof DataTable) {
