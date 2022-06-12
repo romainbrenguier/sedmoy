@@ -14,6 +14,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -29,6 +31,9 @@ public class GraphicalInterface {
   private final Document document;
 
   private final TableEvaluator tableEvaluator = new TableEvaluator(new GroovyInterpreter());
+  private JPanel mainPanel;
+
+  private Map<String, JTextArea> formulaAreas = new HashMap<>();
 
   public GraphicalInterface(Document document) {
     this.document = document;
@@ -42,19 +47,39 @@ public class GraphicalInterface {
     final JPanel toolPanel = new JPanel(new FlowLayout());
     final JButton save = new JButton("Save");
     toolPanel.add(save);
-    final JButton evaluate = new JButton("Evaluate");
-    toolPanel.add(evaluate);
+    final JButton evaluateButton = new JButton("Evaluate");
+    evaluateButton.addActionListener(actionEvent -> evaluate());
+    toolPanel.add(evaluateButton);
     frame.add(BorderLayout.NORTH, toolPanel);
 
     final GridLayout layoutManager = new GridLayout(0, document.tableNames.size(), 1, 1);
-    final JPanel panel = new JPanel(layoutManager);
+    mainPanel = new JPanel(layoutManager);
     final Document evaluatedDocument = tableEvaluator.evaluate(document);
-    addDocumentComponents(panel, document, evaluatedDocument);
+    addDocumentComponents(mainPanel, document, evaluatedDocument);
 
-    frame.add(BorderLayout.CENTER, panel);
+    frame.add(BorderLayout.CENTER, mainPanel);
     frame.setLocationRelativeTo(null);
     frame.pack();
     frame.setVisible(true);
+  }
+
+  private void updateDocument() {
+    formulaAreas.forEach((title, textArea) ->
+        {
+          final Table table = document.tables.get(title);
+          if (table instanceof FormulaTable) {
+            ((FormulaTable) table).setGroovyScript(textArea.getText());
+          }
+        }
+    );
+  }
+
+  private void evaluate() {
+    mainPanel.removeAll();
+    updateDocument();
+    final Document evaluatedDocument = tableEvaluator.evaluate(document);
+    System.out.println("evaluate");
+    addDocumentComponents(mainPanel, document, evaluatedDocument);
   }
 
   private void addDocumentComponents(Container frame, Document document, Document evaluation) {
@@ -63,16 +88,16 @@ public class GraphicalInterface {
       if (table instanceof FormulaTable) {
         final Table evaluatedTable = evaluation.tables.get(title);
         final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
-            tableComponent(table),
-            tableComponent(evaluatedTable));
+            tableComponent(title, table),
+            tableComponent(null, evaluatedTable));
         frame.add(splitPane);
       } else {
-        frame.add(tableComponent(table));
+        frame.add(tableComponent(title, table));
       }
     }
   }
 
-  private Component tableComponent(Table table) {
+  private Component tableComponent(String title, Table table) {
     final JComponent component;
     if (table instanceof FormulaTable) {
       JTextArea textArea = new JTextArea();
@@ -80,6 +105,9 @@ public class GraphicalInterface {
       textArea.setMargin(new Insets(0, 2, 0, 2));
       textArea.setBorder(BorderFactory.createLineBorder(Color.black));
       component = textArea;
+      if (title != null) {
+        formulaAreas.put(title, textArea);
+      }
     } else if (table instanceof DataTable) {
       final DataTableModel model = new DataTableModel((DataTable) table);
       final JTable jTable = new JTable(model);
