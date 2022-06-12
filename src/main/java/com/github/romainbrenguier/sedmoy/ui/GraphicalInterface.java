@@ -14,6 +14,7 @@ import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
@@ -66,13 +67,13 @@ public class GraphicalInterface {
       final DataTableModel model = new DataTableModel((DataTable) table);
       final JTable jTable = new JTable(model);
       component = jTable;
-    } else
-    {
+    } else {
       JTextArea textArea = new JTextArea();
       textArea.append(table.toString());
       component = textArea;
     }
-    component.setPreferredSize(new Dimension(200, 200));
-    return component;
+    final JScrollPane pane = new JScrollPane(component);
+    pane.setPreferredSize(new Dimension(200, 200));
+    return pane;
   }
 }
