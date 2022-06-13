@@ -1,0 +1,85 @@
+package com.github.romainbrenguier.sedmoy.ui;
+
+import com.github.romainbrenguier.sedmoy.model.Document;
+import com.github.romainbrenguier.sedmoy.model.FormulaTable;
+import com.github.romainbrenguier.sedmoy.model.Table;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
+
+public class GraphicalComponents {
+
+  private Map<String, JTextComponent> formulaAreas = new HashMap<>();
+  private Map<String, JTextComponent> formulaSizeTextComponents = new HashMap<>();
+  private Map<String, JTextComponent> titleTextComponents = new HashMap<>();
+  private Map<String, JTable> tableComponents = new HashMap<>();
+
+  public JTextComponent getFormulaComponent(String title) {
+    return formulaAreas.get(title);
+  }
+
+  public JTextComponent getFormulaSizeComponent(String title) {
+    return formulaSizeTextComponents.get(title);
+  }
+
+  public JTextComponent getTitleComponent(String title) {
+    return titleTextComponents.get(title);
+  }
+
+  public JTable getTableComponent(String title) {
+    return tableComponents.get(title);
+  }
+
+  public void initialize(Container frame, Document document) {
+    for (String title : document.tableNames) {
+      final JPanel panel = new JPanel(new BorderLayout());
+      final JPanel headerPanel = new JPanel(new FlowLayout());
+      final JTextComponent titleText = new JTextField(title);
+      headerPanel.add(titleText);
+      titleText.setPreferredSize(new Dimension(200, 20));
+      titleTextComponents.put(title, titleText);
+
+      final JTextComponent lines = new JTextField();
+      lines.setPreferredSize(new Dimension(60, 20));
+      headerPanel.add(lines);
+      formulaSizeTextComponents.put(title, lines);
+      panel.add(BorderLayout.NORTH, headerPanel);
+
+      final JComponent component;
+      final Table table = document.tables.get(title);
+      if (table instanceof FormulaTable) {
+
+        final JTextArea textArea = new JTextArea();
+        formulaAreas.put(title, textArea);
+        final JTable tableComponent = new JTable(new EmptyTableModel());
+        tableComponents.put(title, tableComponent);
+        component = new JSplitPane(JSplitPane.VERTICAL_SPLIT, wrapComponent(textArea),
+            wrapComponent(tableComponent));
+      } else {
+        final JTable tableComponent = new JTable(new EmptyTableModel());
+        tableComponents.put(title, tableComponent);
+        component = wrapComponent(tableComponent);
+      }
+
+      panel.add(BorderLayout.CENTER, component);
+      frame.add(panel);
+    }
+  }
+
+  private JComponent wrapComponent(JComponent table) {
+    final JScrollPane pane = new JScrollPane(table);
+    pane.setPreferredSize(new Dimension(200, 200));
+    return pane;
+  }
+}
