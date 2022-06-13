@@ -9,6 +9,10 @@ import com.github.romainbrenguier.sedmoy.model.Table;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,8 +36,9 @@ public class GraphicalInterface {
     frame.setLayout(new BorderLayout());
 
     final JPanel toolPanel = new JPanel(new FlowLayout());
-    final JButton save = new JButton("Save");
-    toolPanel.add(save);
+    final JButton saveButton = new JButton("Save");
+    saveButton.addActionListener(actionEvent -> save());
+    toolPanel.add(saveButton);
     final JButton evaluateButton = new JButton("Evaluate");
     evaluateButton.addActionListener(actionEvent -> evaluate());
     toolPanel.add(evaluateButton);
@@ -50,6 +55,22 @@ public class GraphicalInterface {
     frame.setLocationRelativeTo(null);
     frame.pack();
     frame.setVisible(true);
+  }
+
+  private void save() {
+//    final JFrame frame = new JFrame("Sedmoy");
+//    final FileDialog fileDialog = new FileDialog(frame);
+//    frame.add(fileDialog);
+//    frame.setVisible(true);
+//    final String file = fileDialog.getFile();
+    try {
+      final Path tempFile = Files.createTempFile("sedmoy-save-", ".sdm");
+      final FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
+      document.toJson(outputStream);
+      System.out.println("Document saved to " + tempFile);
+    } catch (IOException exception) {
+      exception.printStackTrace();
+    }
   }
 
   private void updateDocument() {
