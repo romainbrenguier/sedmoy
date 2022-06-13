@@ -25,6 +25,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 public class GraphicalInterface {
 
@@ -33,7 +35,9 @@ public class GraphicalInterface {
   private final TableEvaluator tableEvaluator = new TableEvaluator(new GroovyInterpreter());
   private JPanel mainPanel;
 
-  private Map<String, JTextArea> formulaAreas = new HashMap<>();
+  private Map<String, JTextComponent> formulaAreas = new HashMap<>();
+  private Map<String, JTextComponent> formulaSizeTextComponents = new HashMap<>();
+  private Map<String, JTextComponent> titleTextComponents = new HashMap<>();
 
   public GraphicalInterface(Document document) {
     this.document = document;
@@ -72,6 +76,17 @@ public class GraphicalInterface {
           }
         }
     );
+    formulaSizeTextComponents.forEach((title, textComponent) ->
+        {
+          final Table table = document.tables.get(title);
+          if (table instanceof FormulaTable) {
+            final FormulaTable formulaTable = (FormulaTable) table;
+            formulaTable.withDimension(new com.github.romainbrenguier.sedmoy.model.Dimension(
+                Integer.parseInt(textComponent.getText()),
+                formulaTable.getDimension().numberOfColumns));
+          }
+        }
+    );
   }
 
   private void evaluate() {
@@ -86,16 +101,29 @@ public class GraphicalInterface {
 
   private void addDocumentComponents(Container frame, Document document, Document evaluation) {
     for (String title : document.tableNames) {
+      final JPanel panel = new JPanel(new BorderLayout());
+      final JTextComponent titleText = new JTextField(title);
+      panel.add(BorderLayout.NORTH, titleText);
+      titleTextComponents.put(title, titleText);
+
+      final Component component;
       final Table table = document.tables.get(title);
+
       if (table instanceof FormulaTable) {
+        final JTextComponent lines = new JTextField(
+            Integer.toString(((FormulaTable) table).getDimension().numberOfLines));
+        panel.add(BorderLayout.NORTH, lines);
+        formulaSizeTextComponents.put(title, lines);
         final Table evaluatedTable = evaluation.tables.get(title);
-        final JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+        component = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
             tableComponent(title, table),
             tableComponent(null, evaluatedTable));
-        frame.add(splitPane);
       } else {
-        frame.add(tableComponent(title, table));
+        component = tableComponent(title, table);
       }
+
+      panel.add(BorderLayout.CENTER, component);
+      frame.add(panel);
     }
   }
 
