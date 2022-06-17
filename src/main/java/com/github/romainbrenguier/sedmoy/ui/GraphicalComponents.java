@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JComponent;
@@ -20,10 +21,12 @@ import javax.swing.text.JTextComponent;
 
 public class GraphicalComponents {
 
-  private Map<String, JTextComponent> formulaAreas = new HashMap<>();
-  private Map<String, JTextComponent> formulaSizeTextComponents = new HashMap<>();
-  private Map<String, JTextComponent> titleTextComponents = new HashMap<>();
-  private Map<String, JTable> tableComponents = new HashMap<>();
+  private final Map<String, JTextComponent> formulaAreas = new HashMap<>();
+  private final Map<String, JTextComponent> formulaSizeTextComponents =
+      new HashMap<>();
+  private final Map<String, JTextComponent> titleTextComponents =
+      new HashMap<>();
+  private final Map<String, JTable> tableComponents = new HashMap<>();
 
   public JTextComponent getFormulaComponent(String title) {
     return formulaAreas.get(title);
@@ -42,6 +45,12 @@ public class GraphicalComponents {
   }
 
   public void initialize(Container frame, Document document) {
+    formulaAreas.clear();
+    formulaSizeTextComponents.clear();
+    titleTextComponents.clear();
+    tableComponents.clear();
+    frame.removeAll();
+    frame.setLayout(new GridLayout(0, document.tableNames.size(), 1, 1));
     for (String title : document.tableNames) {
       final JPanel panel = new JPanel(new BorderLayout());
       final JPanel headerPanel = new JPanel(new FlowLayout());

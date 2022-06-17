@@ -9,11 +9,11 @@ import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import com.github.romainbrenguier.sedmoy.model.Table;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -52,12 +52,9 @@ public class GraphicalInterface {
 
     frame.add(BorderLayout.NORTH, toolPanel);
 
-    final GridLayout layoutManager = new GridLayout(0, document.tableNames.size(), 1, 1);
-    mainPanel = new JPanel(layoutManager);
-
+    mainPanel = new JPanel();
     graphicalComponents.initialize(mainPanel, document);
-    final Document evaluatedDocument = tableEvaluator.evaluate(document);
-    fillDocumentComponents(document, evaluatedDocument);
+    fillDocumentComponents(document, tableEvaluator.evaluate(document));
 
     frame.add(BorderLayout.CENTER, mainPanel);
     frame.setLocationRelativeTo(null);
@@ -68,6 +65,8 @@ public class GraphicalInterface {
   private void addFormula() {
     document.add(freshTableName(),
         new FormulaTable(new Dimension(10, 1), "0"));
+    graphicalComponents.initialize(mainPanel, document);
+    fillDocumentComponents(document, tableEvaluator.evaluate(document));
   }
 
   private String freshTableName() {
@@ -106,9 +105,17 @@ public class GraphicalInterface {
         }
         final JTextComponent sizeComponent = graphicalComponents.getFormulaSizeComponent(title);
         formulaTable.withDimension(new com.github.romainbrenguier.sedmoy.model.Dimension(
-            Integer.parseInt(sizeComponent.getText()),
+            safeParseInt(sizeComponent.getText()).orElse(1),
             formulaTable.getDimension().numberOfColumns));
       }
+    }
+  }
+
+  private Optional<Integer> safeParseInt(String text) {
+    try {
+      return Optional.of(Integer.parseInt(text));
+    } catch (NumberFormatException e) {
+      return Optional.empty();
     }
   }
 
