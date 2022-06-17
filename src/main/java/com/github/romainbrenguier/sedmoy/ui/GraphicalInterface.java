@@ -63,17 +63,19 @@ public class GraphicalInterface {
   }
 
   private void addFormula() {
+    mainPanel.setVisible(false);
     document.add(freshTableName(),
         new FormulaTable(new Dimension(10, 1), "0"));
     graphicalComponents.initialize(mainPanel, document);
     fillDocumentComponents(document, tableEvaluator.evaluate(document));
+    mainPanel.setVisible(true);
   }
 
   private String freshTableName() {
     int index = 0;
     String name = "table";
     while (document.tables.get(name) != null) {
-      name = "table" + (index++);
+      name = "table" + (++index);
     }
     return name;
   }
