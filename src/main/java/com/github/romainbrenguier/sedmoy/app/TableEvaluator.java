@@ -20,8 +20,12 @@ public class TableEvaluator {
       return (DataTable) table;
     }
     if (table instanceof FormulaTable) {
-      return new FormulaTableEvaluator().evaluate(
-          groovyInterpreter, environment, (FormulaTable) table);
+      try {
+        return new FormulaTableEvaluator().evaluate(
+            groovyInterpreter, environment, (FormulaTable) table);
+      } catch (GroovyException e) {
+        return new DataTable(((FormulaTable) table).getDimension());
+      }
     }
     throw new IllegalArgumentException("Table of unknown type: " + table.getClass());
   }

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 public class FormulaTableEvaluatorTest {
 
   @Test
-  public void testEvaluate() {
+  public void testEvaluate() throws GroovyException {
     GroovyInterpreter interpreter = new MockInterpreter();
     final DataTable dataTable = new DataTable(new Dimension(2, 2));
     dataTable.set(0, 0, "a");

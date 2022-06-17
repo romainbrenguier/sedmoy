@@ -8,7 +8,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 public class FormulaTableEvaluator {
 
   public DataTable evaluate(GroovyInterpreter interpreter, Map<String, DataTable> environment,
-      FormulaTable table) {
+      FormulaTable table) throws GroovyException {
     interpreter.setFromMap(environment);
     final DataTable result = new DataTable(table.getDimension());
     interpreter.set("current", result);
@@ -20,7 +20,7 @@ public class FormulaTableEvaluator {
           final Object cellResult = interpreter.run(table.getGroovyScript());
           result.set(column, line, cellResult.toString());
         } catch (CompilationFailedException e) {
-          throw e;
+          throw new GroovyException(table.getGroovyScript(), e);
         } catch (Exception e) {
           result.set(column, line, e.toString());
         }
