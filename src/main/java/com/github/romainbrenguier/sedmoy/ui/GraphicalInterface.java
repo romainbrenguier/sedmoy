@@ -3,6 +3,7 @@ package com.github.romainbrenguier.sedmoy.ui;
 import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
 import com.github.romainbrenguier.sedmoy.app.TableEvaluator;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
+import com.github.romainbrenguier.sedmoy.model.Dimension;
 import com.github.romainbrenguier.sedmoy.model.Document;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import com.github.romainbrenguier.sedmoy.model.Table;
@@ -36,12 +37,19 @@ public class GraphicalInterface {
     frame.setLayout(new BorderLayout());
 
     final JPanel toolPanel = new JPanel(new FlowLayout());
+
     final JButton saveButton = new JButton("Save");
-    saveButton.addActionListener(actionEvent -> save());
     toolPanel.add(saveButton);
+    saveButton.addActionListener(actionEvent -> save());
+
     final JButton evaluateButton = new JButton("Evaluate");
     evaluateButton.addActionListener(actionEvent -> evaluate());
     toolPanel.add(evaluateButton);
+
+    final JButton addFormulaButton = new JButton("Add formula");
+    addFormulaButton.addActionListener(actionEvent -> addFormula());
+    toolPanel.add(addFormulaButton);
+
     frame.add(BorderLayout.NORTH, toolPanel);
 
     final GridLayout layoutManager = new GridLayout(0, document.tableNames.size(), 1, 1);
@@ -55,6 +63,20 @@ public class GraphicalInterface {
     frame.setLocationRelativeTo(null);
     frame.pack();
     frame.setVisible(true);
+  }
+
+  private void addFormula() {
+    document.add(freshTableName(),
+        new FormulaTable(new Dimension(10, 1), "0"));
+  }
+
+  private String freshTableName() {
+    int index = 0;
+    String name = "table";
+    while (document.tables.get(name) != null) {
+      name = "table" + (index++);
+    }
+    return name;
   }
 
   private void save() {
@@ -112,7 +134,8 @@ public class GraphicalInterface {
         graphicalComponents.getTableComponent(title)
             .setModel(new DataTableModel((DataTable) evaluation.tables.get(title)));
       } else {
-        graphicalComponents.getTableComponent(title).setModel(new DataTableModel(((DataTable) table)));
+        graphicalComponents.getTableComponent(title)
+            .setModel(new DataTableModel(((DataTable) table)));
       }
     }
   }
