@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -154,6 +155,10 @@ public class GraphicalInterface {
           .setText(Integer.toString(table.getDimension().numberOfLines));
       graphicalComponents.getNumberColumnsComponent(title)
           .setText(Integer.toString(table.getDimension().numberOfColumns));
+      graphicalComponents.getDeleteButton(title)
+          .addActionListener(actionEvent -> deleteTable(title));
+      graphicalComponents.getExportButton(title)
+          .addActionListener(actionEvent -> exportTable(title));
 
       if (table instanceof FormulaTable) {
         graphicalComponents.getFormulaComponent(title)
@@ -167,5 +172,29 @@ public class GraphicalInterface {
         graphicalComponents.getTableComponent(title).setModel(model);
       }
     }
+  }
+
+  private void exportTable(String title) {
+    try {
+      final Path tempFile = Files.createTempFile("sedmoy-save-", ".csv");
+      final Table table;
+      if (document.tables.get(title) instanceof FormulaTable) {
+        table = tableEvaluator.evaluate(document).tables.get(title);
+      } else {
+        table = document.tables.get(title);
+      }
+      Files.write(tempFile, Collections.singleton(table.toString()));
+      System.out.println("Document saved to " + tempFile);
+    } catch (IOException exception) {
+      exception.printStackTrace();
+    }
+  }
+
+  private void deleteTable(String title) {
+    mainPanel.setVisible(false);
+    document.deleteTable(title);
+    graphicalComponents.initialize(mainPanel, document);
+    fillDocumentComponents(document, tableEvaluator.evaluate(document));
+    mainPanel.setVisible(true);
   }
 }

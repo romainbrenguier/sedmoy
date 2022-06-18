@@ -10,6 +10,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,6 +30,8 @@ public class GraphicalComponents {
   private final Map<String, JTextComponent> titleTextComponents =
       new HashMap<>();
   private final Map<String, JTable> tableComponents = new HashMap<>();
+  private final Map<String, JButton> deleteButtons = new HashMap<>();
+  private final Map<String, JButton> exportButtons = new HashMap<>();
 
   public JTextComponent getFormulaComponent(String title) {
     return formulaAreas.get(title);
@@ -48,6 +51,14 @@ public class GraphicalComponents {
 
   public JTable getTableComponent(String title) {
     return tableComponents.get(title);
+  }
+
+  public JButton getDeleteButton(String title) {
+    return deleteButtons.get(title);
+  }
+
+  public JButton getExportButton(String title) {
+    return exportButtons.get(title);
   }
 
   public void initialize(Container frame, Document document) {
@@ -82,7 +93,15 @@ public class GraphicalComponents {
     headerPanel.add(columns);
     numberColumnsTextComponent.put(title, columns);
 
-    panel.add(BorderLayout.NORTH, headerPanel);
+    final JButton deleteButton = new JButton("Delete");
+    headerPanel.add(deleteButton);
+    deleteButtons.put(title, deleteButton);
+
+    final JButton exportButton = new JButton("Export");
+    headerPanel.add(exportButton);
+    exportButtons.put(title, exportButton);
+
+    panel.add(BorderLayout.NORTH, wrapComponent(headerPanel));
 
     final JComponent component;
     if (tableIsFormula) {
@@ -105,7 +124,7 @@ public class GraphicalComponents {
 
   private JComponent wrapComponent(JComponent table) {
     final JScrollPane pane = new JScrollPane(table);
-    pane.setPreferredSize(new Dimension(200, 200));
+    pane.setPreferredSize(new Dimension(200, 60));
     return pane;
   }
 
@@ -115,5 +134,7 @@ public class GraphicalComponents {
     Maps.renameKey(numberColumnsTextComponent, oldName, newName);
     Maps.renameKey(titleTextComponents, oldName, newName);
     Maps.renameKey(tableComponents, oldName, newName);
+    Maps.renameKey(deleteButtons, oldName, newName);
+    Maps.renameKey(exportButtons, oldName, newName);
   }
 }

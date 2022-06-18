@@ -50,4 +50,9 @@ public class Document {
     }
     return builder.toString();
   }
+
+  public void deleteTable(String title) {
+    tables.remove(title);
+    tableNames.remove(title);
+  }
 }
