@@ -14,4 +14,5 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = FormulaTable.class, name = "formula")
 })
 public interface Table {
+  void setDimension(Dimension dimension);
 }

@@ -22,7 +22,9 @@ import javax.swing.text.JTextComponent;
 public class GraphicalComponents {
 
   private final Map<String, JTextComponent> formulaAreas = new HashMap<>();
-  private final Map<String, JTextComponent> formulaSizeTextComponents =
+  private final Map<String, JTextComponent> numberLinesTextComponent =
+      new HashMap<>();
+  private final Map<String, JTextComponent> numberColumnsTextComponent =
       new HashMap<>();
   private final Map<String, JTextComponent> titleTextComponents =
       new HashMap<>();
@@ -32,8 +34,12 @@ public class GraphicalComponents {
     return formulaAreas.get(title);
   }
 
-  public JTextComponent getFormulaSizeComponent(String title) {
-    return formulaSizeTextComponents.get(title);
+  public JTextComponent getNumberLinesComponent(String title) {
+    return numberLinesTextComponent.get(title);
+  }
+
+  public JTextComponent getNumberColumnsComponent(String title) {
+    return numberColumnsTextComponent.get(title);
   }
 
   public JTextComponent getTitleComponent(String title) {
@@ -46,7 +52,7 @@ public class GraphicalComponents {
 
   public void initialize(Container frame, Document document) {
     formulaAreas.clear();
-    formulaSizeTextComponents.clear();
+    numberLinesTextComponent.clear();
     titleTextComponents.clear();
     tableComponents.clear();
     frame.removeAll();
@@ -62,7 +68,13 @@ public class GraphicalComponents {
       final JTextComponent lines = new JTextField();
       lines.setPreferredSize(new Dimension(60, 20));
       headerPanel.add(lines);
-      formulaSizeTextComponents.put(title, lines);
+      numberLinesTextComponent.put(title, lines);
+
+      final JTextComponent columns = new JTextField();
+      columns.setPreferredSize(new Dimension(60, 20));
+      headerPanel.add(columns);
+      numberColumnsTextComponent.put(title, columns);
+
       panel.add(BorderLayout.NORTH, headerPanel);
 
       final JComponent component;

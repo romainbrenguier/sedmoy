@@ -32,9 +32,8 @@ public class FormulaTable implements Table {
     return dimension;
   }
 
-  public FormulaTable withDimension(Dimension dimension) {
+  public void setDimension(Dimension dimension) {
     this.dimension = dimension;
-    return this;
   }
 
   @Override

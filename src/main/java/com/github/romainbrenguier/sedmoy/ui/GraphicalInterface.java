@@ -99,16 +99,19 @@ public class GraphicalInterface {
   private void updateDocument() {
     for (String title : document.tableNames) {
       final Table table = document.tables.get(title);
+      final JTextComponent numberLinesComponent =
+          graphicalComponents.getNumberLinesComponent(title);
+      final JTextComponent numberColumnsComponent =
+          graphicalComponents.getNumberColumnsComponent(title);
+      table.setDimension(new com.github.romainbrenguier.sedmoy.model.Dimension(
+          safeParseInt(numberLinesComponent.getText()).orElse(1),
+          safeParseInt(numberColumnsComponent.getText()).orElse(1)));
       if (table instanceof FormulaTable) {
         final JTextComponent component = graphicalComponents.getFormulaComponent(title);
         final FormulaTable formulaTable = (FormulaTable) table;
         if (component != null) {
           formulaTable.setGroovyScript(component.getText());
         }
-        final JTextComponent sizeComponent = graphicalComponents.getFormulaSizeComponent(title);
-        formulaTable.withDimension(new com.github.romainbrenguier.sedmoy.model.Dimension(
-            safeParseInt(sizeComponent.getText()).orElse(1),
-            formulaTable.getDimension().numberOfColumns));
       }
     }
   }
@@ -138,7 +141,7 @@ public class GraphicalInterface {
       if (table instanceof FormulaTable) {
         graphicalComponents.getFormulaComponent(title)
             .setText(((FormulaTable) table).getGroovyScript());
-        graphicalComponents.getFormulaSizeComponent(title)
+        graphicalComponents.getNumberLinesComponent(title)
             .setText(Integer.toString(((FormulaTable) table).getDimension().numberOfLines));
         graphicalComponents.getTableComponent(title)
             .setModel(new DataTableModel((DataTable) evaluation.tables.get(title)));

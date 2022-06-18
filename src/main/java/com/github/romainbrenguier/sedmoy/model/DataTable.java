@@ -11,10 +11,11 @@ import java.util.stream.IntStream;
 public class DataTable implements Table {
 
   private final static Pattern INT_PATTERN = Pattern.compile("[0-9]+");
-  private final static Pattern FLOAT_PATTERN = Pattern.compile("[0-9]*\\.[0-9]*");
+  private final static Pattern FLOAT_PATTERN = Pattern
+      .compile("[0-9]*\\.[0-9]*");
 
   private final List<List<String>> lines;
-  private final Dimension dimension;
+  private Dimension dimension;
 
   @JsonCreator
   public DataTable(
@@ -37,13 +38,46 @@ public class DataTable implements Table {
     this.dimension = dimension;
     this.lines = new ArrayList<>();
     for (int line = 0; line < dimension.numberOfLines; ++line) {
-      lines.add(IntStream.range(0, dimension.numberOfColumns).mapToObj(i -> "")
-          .collect(Collectors.toList()));
+      lines.add(emptyLine(dimension.numberOfColumns));
     }
+  }
+
+  private List<String> emptyLine(int numberOfColumns) {
+    return IntStream.range(0, numberOfColumns).mapToObj(i -> "")
+        .collect(Collectors.toList());
   }
 
   public Dimension getDimension() {
     return dimension;
+  }
+
+  @Override
+  public void setDimension(Dimension dimension) {
+    if (dimension.numberOfLines < this.dimension.numberOfLines) {
+      lines.subList(dimension.numberOfLines, this.dimension.numberOfLines)
+          .clear();
+    } else {
+      for (int i = this.dimension.numberOfLines; i < dimension.numberOfLines;
+          ++i) {
+        lines.add(emptyLine(dimension.numberOfColumns));
+      }
+    }
+    if (dimension.numberOfColumns < this.dimension.numberOfColumns) {
+      for (int i = 0; i < Math.min(this.dimension.numberOfLines,
+          dimension.numberOfLines); ++i) {
+        lines.get(i)
+            .subList(dimension.numberOfColumns, this.dimension.numberOfColumns)
+            .clear();
+      }
+    } else {
+      for (int i = 0; i < Math.min(this.dimension.numberOfLines,
+          dimension.numberOfLines); ++i) {
+        final int numberOfColumns =
+            dimension.numberOfColumns - this.dimension.numberOfColumns;
+        lines.get(i).addAll(emptyLine(numberOfColumns));
+      }
+    }
+    this.dimension = dimension;
   }
 
   public List<List<String>> getLines() {
@@ -102,7 +136,8 @@ public class DataTable implements Table {
   public DataTable upFrom(int columnIndex, int lineIndex) {
     return new DataTable(
         lines.stream().limit(lineIndex + 1)
-            .map(row -> Row.subList(row, 0, Math.min(row.size(), columnIndex + 1)))
+            .map(row -> Row
+                .subList(row, 0, Math.min(row.size(), columnIndex + 1)))
             .collect(Collectors.toList()));
   }
 
