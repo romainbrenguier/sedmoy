@@ -1,6 +1,7 @@
 package com.github.romainbrenguier.sedmoy.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.romainbrenguier.sedmoy.app.Maps;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,6 +27,12 @@ public class Document {
     assert !tables.containsKey(tableName);
     tableNames.add(tableName);
     tables.put(tableName, table);
+  }
+
+  public void renameTable(String oldName, String newName) {
+    if (oldName.equals(newName)) return;
+    Maps.renameKey(tables, oldName, newName);
+    tableNames.replaceAll(s -> s.equals(oldName) ? newName : s);
   }
 
   public void toJson(OutputStream out) throws IOException {

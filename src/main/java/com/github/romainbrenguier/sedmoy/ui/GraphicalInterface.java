@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Optional;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -99,6 +100,14 @@ public class GraphicalInterface {
   }
 
   private void updateDocument() {
+    final ArrayList<String> titlesCopy = new ArrayList<>(document.tableNames);
+    for (String title : titlesCopy) {
+      final String newName =
+          graphicalComponents.getTitleComponent(title).getText();
+      document.renameTable(title, newName);
+      graphicalComponents.renameTable(title, newName);
+    }
+
     for (String title : document.tableNames) {
       final Table table = document.tables.get(title);
       final JTextComponent numberLinesComponent =

@@ -1,5 +1,6 @@
 package com.github.romainbrenguier.sedmoy.ui;
 
+import com.github.romainbrenguier.sedmoy.app.Maps;
 import com.github.romainbrenguier.sedmoy.model.Document;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import com.github.romainbrenguier.sedmoy.model.Table;
@@ -102,5 +103,13 @@ public class GraphicalComponents {
     final JScrollPane pane = new JScrollPane(table);
     pane.setPreferredSize(new Dimension(200, 200));
     return pane;
+  }
+
+  void renameTable(String oldName, String newName) {
+    Maps.renameKey(formulaAreas, oldName, newName);
+    Maps.renameKey(numberLinesTextComponent, oldName, newName);
+    Maps.renameKey(numberColumnsTextComponent, oldName, newName);
+    Maps.renameKey(titleTextComponents, oldName, newName);
+    Maps.renameKey(tableComponents, oldName, newName);
   }
 }
