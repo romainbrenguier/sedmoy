@@ -47,6 +47,7 @@ public class DataTable implements Table {
         .collect(Collectors.toList());
   }
 
+  @Override
   public Dimension getDimension() {
     return dimension;
   }

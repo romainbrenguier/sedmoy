@@ -138,11 +138,14 @@ public class GraphicalInterface {
       graphicalComponents.getTitleComponent(title).setText(title);
       final Table table = document.tables.get(title);
 
+      graphicalComponents.getNumberLinesComponent(title)
+          .setText(Integer.toString(table.getDimension().numberOfLines));
+      graphicalComponents.getNumberColumnsComponent(title)
+          .setText(Integer.toString(table.getDimension().numberOfColumns));
+
       if (table instanceof FormulaTable) {
         graphicalComponents.getFormulaComponent(title)
             .setText(((FormulaTable) table).getGroovyScript());
-        graphicalComponents.getNumberLinesComponent(title)
-            .setText(Integer.toString(((FormulaTable) table).getDimension().numberOfLines));
         graphicalComponents.getTableComponent(title)
             .setModel(new DataTableModel((DataTable) evaluation.tables.get(title)));
       } else {

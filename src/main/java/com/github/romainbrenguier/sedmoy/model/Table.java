@@ -15,4 +15,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface Table {
   void setDimension(Dimension dimension);
+
+  Dimension getDimension();
 }

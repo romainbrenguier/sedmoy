@@ -28,6 +28,7 @@ public class FormulaTable implements Table {
     this.groovyScript = groovyScript;
   }
 
+  @Override
   public Dimension getDimension() {
     return dimension;
   }
