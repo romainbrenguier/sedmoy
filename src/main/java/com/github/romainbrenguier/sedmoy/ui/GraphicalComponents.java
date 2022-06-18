@@ -3,7 +3,6 @@ package com.github.romainbrenguier.sedmoy.ui;
 import com.github.romainbrenguier.sedmoy.app.Maps;
 import com.github.romainbrenguier.sedmoy.model.Document;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
-import com.github.romainbrenguier.sedmoy.model.Table;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -59,44 +58,49 @@ public class GraphicalComponents {
     frame.removeAll();
     frame.setLayout(new GridLayout(0, document.tableNames.size(), 1, 1));
     for (String title : document.tableNames) {
-      final JPanel panel = new JPanel(new BorderLayout());
-      final JPanel headerPanel = new JPanel(new FlowLayout());
-      final JTextComponent titleText = new JTextField(title);
-      headerPanel.add(titleText);
-      titleText.setPreferredSize(new Dimension(200, 20));
-      titleTextComponents.put(title, titleText);
-
-      final JTextComponent lines = new JTextField();
-      lines.setPreferredSize(new Dimension(60, 20));
-      headerPanel.add(lines);
-      numberLinesTextComponent.put(title, lines);
-
-      final JTextComponent columns = new JTextField();
-      columns.setPreferredSize(new Dimension(60, 20));
-      headerPanel.add(columns);
-      numberColumnsTextComponent.put(title, columns);
-
-      panel.add(BorderLayout.NORTH, headerPanel);
-
-      final JComponent component;
-      final Table table = document.tables.get(title);
-      if (table instanceof FormulaTable) {
-
-        final JTextArea textArea = new JTextArea();
-        formulaAreas.put(title, textArea);
-        final JTable tableComponent = new JTable(new EmptyTableModel());
-        tableComponents.put(title, tableComponent);
-        component = new JSplitPane(JSplitPane.VERTICAL_SPLIT, wrapComponent(textArea),
-            wrapComponent(tableComponent));
-      } else {
-        final JTable tableComponent = new JTable(new EmptyTableModel());
-        tableComponents.put(title, tableComponent);
-        component = wrapComponent(tableComponent);
-      }
-
-      panel.add(BorderLayout.CENTER, component);
-      frame.add(panel);
+      initializeTable(frame, title,
+          document.tables.get(title) instanceof FormulaTable);
     }
+  }
+
+  private void initializeTable(
+      Container frame, String title, boolean tableIsFormula) {
+    final JPanel panel = new JPanel(new BorderLayout());
+    final JPanel headerPanel = new JPanel(new FlowLayout());
+    final JTextComponent titleText = new JTextField(title);
+    headerPanel.add(titleText);
+    titleText.setPreferredSize(new Dimension(200, 20));
+    titleTextComponents.put(title, titleText);
+
+    final JTextComponent lines = new JTextField();
+    lines.setPreferredSize(new Dimension(60, 20));
+    headerPanel.add(lines);
+    numberLinesTextComponent.put(title, lines);
+
+    final JTextComponent columns = new JTextField();
+    columns.setPreferredSize(new Dimension(60, 20));
+    headerPanel.add(columns);
+    numberColumnsTextComponent.put(title, columns);
+
+    panel.add(BorderLayout.NORTH, headerPanel);
+
+    final JComponent component;
+    if (tableIsFormula) {
+
+      final JTextArea textArea = new JTextArea();
+      formulaAreas.put(title, textArea);
+      final JTable tableComponent = new JTable(new EmptyTableModel());
+      tableComponents.put(title, tableComponent);
+      component = new JSplitPane(JSplitPane.VERTICAL_SPLIT, wrapComponent(textArea),
+          wrapComponent(tableComponent));
+    } else {
+      final JTable tableComponent = new JTable(new EmptyTableModel());
+      tableComponents.put(title, tableComponent);
+      component = wrapComponent(tableComponent);
+    }
+
+    panel.add(BorderLayout.CENTER, component);
+    frame.add(panel);
   }
 
   private JComponent wrapComponent(JComponent table) {
