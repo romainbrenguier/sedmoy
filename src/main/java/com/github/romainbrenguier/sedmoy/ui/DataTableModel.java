@@ -10,9 +10,19 @@ import javax.swing.table.AbstractTableModel;
 public class DataTableModel extends AbstractTableModel {
 
   private final DataTable dataTable;
+  private final boolean editable;
 
-  public DataTableModel(DataTable dataTable) {
+  private DataTableModel(DataTable dataTable, boolean editable) {
     this.dataTable = dataTable;
+    this.editable = editable;
+  }
+
+  public static DataTableModel editable(DataTable dataTable) {
+    return new DataTableModel(dataTable, true);
+  }
+
+  public static DataTableModel nonEditable(DataTable dataTable) {
+    return new DataTableModel(dataTable, false);
   }
 
   @Override
@@ -28,5 +38,15 @@ public class DataTableModel extends AbstractTableModel {
   @Override
   public Object getValueAt(int row, int col) {
     return dataTable.cell(col, row);
+  }
+
+  @Override
+  public boolean isCellEditable(int lineIndex, int columnIndex) {
+    return editable;
+  }
+
+  @Override
+  public void setValueAt(Object value, int lineIndex, int columnIndex) {
+    dataTable.set(columnIndex, lineIndex, value.toString());
   }
 }

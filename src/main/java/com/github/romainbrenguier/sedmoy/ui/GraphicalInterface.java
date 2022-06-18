@@ -23,7 +23,8 @@ public class GraphicalInterface {
 
   private final Document document;
 
-  private final TableEvaluator tableEvaluator = new TableEvaluator(new GroovyInterpreter());
+  private final TableEvaluator tableEvaluator = new TableEvaluator(
+      new GroovyInterpreter());
   private JPanel mainPanel;
   private GraphicalComponents graphicalComponents = new GraphicalComponents();
 
@@ -88,7 +89,8 @@ public class GraphicalInterface {
 //    final String file = fileDialog.getFile();
     try {
       final Path tempFile = Files.createTempFile("sedmoy-save-", ".sdm");
-      final FileOutputStream outputStream = new FileOutputStream(tempFile.toFile());
+      final FileOutputStream outputStream = new FileOutputStream(
+          tempFile.toFile());
       document.toJson(outputStream);
       System.out.println("Document saved to " + tempFile);
     } catch (IOException exception) {
@@ -107,7 +109,8 @@ public class GraphicalInterface {
           safeParseInt(numberLinesComponent.getText()).orElse(1),
           safeParseInt(numberColumnsComponent.getText()).orElse(1)));
       if (table instanceof FormulaTable) {
-        final JTextComponent component = graphicalComponents.getFormulaComponent(title);
+        final JTextComponent component = graphicalComponents
+            .getFormulaComponent(title);
         final FormulaTable formulaTable = (FormulaTable) table;
         if (component != null) {
           formulaTable.setGroovyScript(component.getText());
@@ -146,11 +149,13 @@ public class GraphicalInterface {
       if (table instanceof FormulaTable) {
         graphicalComponents.getFormulaComponent(title)
             .setText(((FormulaTable) table).getGroovyScript());
-        graphicalComponents.getTableComponent(title)
-            .setModel(new DataTableModel((DataTable) evaluation.tables.get(title)));
+        final DataTableModel model = DataTableModel
+            .nonEditable((DataTable) evaluation.tables.get(title));
+        graphicalComponents.getTableComponent(title).setModel(model);
       } else {
-        graphicalComponents.getTableComponent(title)
-            .setModel(new DataTableModel(((DataTable) table)));
+        final DataTableModel model =
+            DataTableModel.editable(((DataTable) table));
+        graphicalComponents.getTableComponent(title).setModel(model);
       }
     }
   }
