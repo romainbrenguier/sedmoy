@@ -26,7 +26,10 @@ import picocli.CommandLine.Option;
 @Command
 public class Main implements Runnable {
 
-  @Option(names = {"--input", "-i"}, required = true)
+  private static final String DEFAULT_CONTENT =
+      "Welcome to Sedmoy. This is a dummy table with 1 cell.";
+
+  @Option(names = {"--input", "-i"})
   Path input;
 
   @Option(names = {"--output", "-o"})
@@ -79,8 +82,13 @@ public class Main implements Runnable {
     }
     Document document;
     try {
-      if (input.toString().endsWith("csv")) {
-      System.out.println("Convert csv to sedmoy document");
+      if (input == null) {
+        document = new Document();
+        final DataTable table = new DataTable(new Dimension(1, 1));
+        table.set(0, 0, DEFAULT_CONTENT);
+        document.add(tableName, table);
+      } else if (input.toString().endsWith("csv")) {
+        System.out.println("Convert csv to sedmoy document");
         final DataTable table = new CsvParser(separator).parseLines(Files.readAllLines(input));
         document = new Document();
         document.add(tableName, table);
