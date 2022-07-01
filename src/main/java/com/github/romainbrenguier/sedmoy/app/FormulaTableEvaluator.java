@@ -56,6 +56,16 @@ public class FormulaTableEvaluator {
       return resultTable;
     }
 
+    if (result instanceof String) {
+      String[] lines = ((String) result).split("\n");
+      final DataTable resultTable =
+          new DataTable(new Dimension(lines.length, 1));
+      for (int line = 0; line < lines.length; ++line) {
+        resultTable.set(0, line, lines[line]);
+      }
+      return resultTable;
+    }
+
     if (result instanceof Map) {
       Map<?, ?> map = (Map<?, ?>) result;
       final DataTable resultTable =
