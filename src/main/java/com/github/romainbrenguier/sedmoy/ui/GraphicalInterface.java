@@ -35,9 +35,11 @@ public class GraphicalInterface {
       new GroovyInterpreter());
   private JPanel mainPanel;
   private GraphicalComponents graphicalComponents = new GraphicalComponents();
+  private final JFileChooser fileChooser;
 
   public GraphicalInterface(Document document) {
     this.document = document;
+    fileChooser = new JFileChooser();
   }
 
   public void run() {
@@ -49,7 +51,7 @@ public class GraphicalInterface {
 
     final JButton saveButton = new JButton("Save");
     toolPanel.add(saveButton);
-    saveButton.addActionListener(actionEvent -> save());
+    saveButton.addActionListener(actionEvent -> save(frame));
 
     final JButton importButton = new JButton("Import");
     toolPanel.add(importButton);
@@ -76,7 +78,6 @@ public class GraphicalInterface {
   }
 
   private void importCallback(Component parentComponent) {
-    final JFileChooser fileChooser = new JFileChooser();
     int dialogResult = fileChooser.showOpenDialog(parentComponent);
     if (dialogResult == JFileChooser.APPROVE_OPTION) {
       File file = fileChooser.getSelectedFile();
@@ -89,7 +90,7 @@ public class GraphicalInterface {
         mainPanel.setVisible(true);
       } catch (IOException exception) {
         JOptionPane.showMessageDialog(parentComponent,
-            "File " + file + " could not be imported: " + exception,
+            "File " + file + " could not be imported:\n" + exception,
             "Import error",
             JOptionPane.ERROR_MESSAGE);
       }
@@ -126,20 +127,20 @@ public class GraphicalInterface {
     return name;
   }
 
-  private void save() {
-//    final JFrame frame = new JFrame("Sedmoy");
-//    final FileDialog fileDialog = new FileDialog(frame);
-//    frame.add(fileDialog);
-//    frame.setVisible(true);
-//    final String file = fileDialog.getFile();
-    try {
-      final Path tempFile = Files.createTempFile("sedmoy-save-", ".sdm");
-      final FileOutputStream outputStream = new FileOutputStream(
-          tempFile.toFile());
-      document.toJson(outputStream);
-      System.out.println("Document saved to " + tempFile);
-    } catch (IOException exception) {
-      exception.printStackTrace();
+  private void save(Component parentComponent) {
+    int dialogResult = fileChooser.showSaveDialog(parentComponent);
+    if (dialogResult == JFileChooser.APPROVE_OPTION) {
+      final File file = fileChooser.getSelectedFile();
+      try {
+        final FileOutputStream outputStream = new FileOutputStream(file);
+        document.toJson(outputStream);
+        System.out.println("Document saved to " + file);
+      } catch (IOException exception) {
+        JOptionPane.showMessageDialog(parentComponent,
+            "File " + file + " could not be saved:\n" + exception,
+            "Save error",
+            JOptionPane.ERROR_MESSAGE);
+      }
     }
   }
 
