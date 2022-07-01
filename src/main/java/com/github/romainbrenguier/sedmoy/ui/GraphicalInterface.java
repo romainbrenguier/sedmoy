@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -202,7 +201,7 @@ public class GraphicalInterface {
       graphicalComponents.getDeleteButton(title)
           .addActionListener(actionEvent -> deleteTable(title));
       graphicalComponents.getExportButton(title)
-          .addActionListener(actionEvent -> exportTable(title));
+          .addActionListener(actionEvent -> exportTable(title, mainPanel));
 
       if (table instanceof FormulaTable) {
         graphicalComponents.getFormulaComponent(title)
@@ -218,19 +217,30 @@ public class GraphicalInterface {
     }
   }
 
-  private void exportTable(String title) {
+  private void exportTable(String title, Component parentComponent) {
+    int dialogResult = fileChooser.showSaveDialog(parentComponent);
+    if (dialogResult != JFileChooser.APPROVE_OPTION) return;
     try {
-      final Path tempFile = Files.createTempFile("sedmoy-save-", ".csv");
-      final Table table;
-      if (document.tables.get(title) instanceof FormulaTable) {
-        table = tableEvaluator.evaluate(document).tables.get(title);
+      final File file = fileChooser.getSelectedFile();
+      final String toWrite;
+      final Table table = document.tables.get(title);
+      if (table instanceof FormulaTable) {
+        if (file.getName().endsWith(".groovy")) {
+          toWrite = ((FormulaTable) table).getGroovyScript();
+        } else {
+          toWrite = tableEvaluator.evaluate(document).tables.get(title)
+              .toString();
+        }
       } else {
-        table = document.tables.get(title);
+        toWrite = table.toString();
       }
-      Files.write(tempFile, Collections.singleton(table.toString()));
-      System.out.println("Document saved to " + tempFile);
+      Files.write(file.toPath(), Collections.singleton(toWrite));
+      System.out.println("Document saved to " + file);
     } catch (IOException exception) {
-      exception.printStackTrace();
+      JOptionPane.showMessageDialog(parentComponent,
+          "Could not export table " + title + "\n" + exception,
+          "Export error",
+          JOptionPane.ERROR_MESSAGE);
     }
   }
 
