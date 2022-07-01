@@ -44,7 +44,12 @@ public class FormulaTableEvaluator {
    */
   private DataTable evaluateCollector(GroovyInterpreter interpreter,
       FormulaTable table) {
-    final Object result = interpreter.run(table.getGroovyScript());
+    Object result;
+    try {
+      result = interpreter.run(table.getGroovyScript());
+    } catch (GroovyException e) {
+      result = e.getCause();
+    }
 
     if (result instanceof List) {
       List<?> list = (List<?>) result;

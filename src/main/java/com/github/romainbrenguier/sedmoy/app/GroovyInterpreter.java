@@ -3,9 +3,9 @@ package com.github.romainbrenguier.sedmoy.app;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import groovy.lang.MissingPropertyException;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 public class GroovyInterpreter {
@@ -24,8 +24,15 @@ public class GroovyInterpreter {
     map.forEach(this::set);
   }
 
-  public Object run(String groovyScript) {
-    return new GroovyShell(binding).evaluate(groovyScript);
+  public Object run(String groovyScript) throws GroovyException {
+    try {
+      return new GroovyShell(binding).evaluate(groovyScript);
+    } catch (MissingPropertyException exception) {
+      throw new GroovyException("Missing property in " + groovyScript,
+          exception);
+    } catch (Exception exception) {
+      throw new GroovyException(groovyScript, exception);
+    }
   }
 
   public void run(File groovyScript) throws GroovyException {
