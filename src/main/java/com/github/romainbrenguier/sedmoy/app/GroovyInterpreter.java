@@ -4,11 +4,15 @@ package com.github.romainbrenguier.sedmoy.app;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.MissingPropertyException;
+import groovy.lang.Script;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
 public class GroovyInterpreter {
+
+  private final GroovyShell shell = new GroovyShell();
 
   private final Binding binding;
 
@@ -26,7 +30,9 @@ public class GroovyInterpreter {
 
   public Object run(String groovyScript) throws GroovyException {
     try {
-      return new GroovyShell(binding).evaluate(groovyScript);
+      final Script script = shell.parse(groovyScript);
+      binding.getVariables().forEach((key, value) -> shell.setVariable((String) key, value));
+      return script.run();
     } catch (MissingPropertyException exception) {
       throw new GroovyException("Missing property in " + groovyScript,
           exception);
