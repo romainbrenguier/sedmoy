@@ -18,6 +18,8 @@ public class FormulaTableEvaluator {
       return evaluateCollector(interpreter, table);
     }
     final DataTable result = new DataTable(table.getDimension());
+    final String groovyScript = table.getGroovyScript();
+    interpreter.setScript(groovyScript);
     interpreter.set("current", result);
     for (int line = 0; line < table.getDimension().numberOfLines; ++line) {
       interpreter.set("line", line);
@@ -25,10 +27,10 @@ public class FormulaTableEvaluator {
           ++column) {
         interpreter.set("column", column);
         try {
-          final Object cellResult = interpreter.run(table.getGroovyScript());
+          final Object cellResult = interpreter.run();
           result.set(column, line, cellResult.toString());
         } catch (CompilationFailedException e) {
-          throw new GroovyException(table.getGroovyScript(), e);
+          throw new GroovyException(groovyScript, e);
         } catch (Exception e) {
           result.set(column, line, e.toString());
         }
@@ -46,7 +48,8 @@ public class FormulaTableEvaluator {
       FormulaTable table) {
     Object result;
     try {
-      result = interpreter.run(table.getGroovyScript());
+      interpreter.setScript(table.getGroovyScript());
+      result = interpreter.run();
     } catch (GroovyException e) {
       result = e.getCause();
     }

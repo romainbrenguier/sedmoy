@@ -16,31 +16,36 @@ public class GroovyInterpreter {
 
   private final Binding binding;
 
+  private Script script;
+
   public GroovyInterpreter() {
     binding = new Binding();
   }
 
   public void set(String variable, Object value) {
-    binding.setProperty(variable, value);
+    shell.setProperty(variable, value);
   }
 
   public void setFromMap(Map<String, ?> map) {
     map.forEach(this::set);
   }
 
-  public Object run(String groovyScript) throws GroovyException {
+  public void setScript(String groovyScript) {
+    script = shell.parse(groovyScript);
+  }
+
+  public Object run() throws GroovyException {
     try {
-      final Script script = shell.parse(groovyScript);
-      binding.getVariables().forEach((key, value) -> shell.setVariable((String) key, value));
       return script.run();
     } catch (MissingPropertyException exception) {
-      throw new GroovyException("Missing property in " + groovyScript,
+      throw new GroovyException("Missing property in " + script,
           exception);
     } catch (Exception exception) {
-      throw new GroovyException(groovyScript, exception);
+      throw new GroovyException(script.toString(), exception);
     }
   }
 
+  @Deprecated
   public void run(File groovyScript) throws GroovyException {
     final GroovyShell shell = new GroovyShell(binding);
     System.out.println("=== Sedmoy ===");
