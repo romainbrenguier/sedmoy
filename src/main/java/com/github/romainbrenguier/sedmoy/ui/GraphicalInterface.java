@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.JTextComponent;
 
 public class GraphicalInterface {
@@ -39,6 +37,19 @@ public class GraphicalInterface {
   public GraphicalInterface(Document document) {
     this.document = document;
     fileChooser = new JFileChooser();
+  }
+
+  class EvaluateCaretListener implements Runnable{
+    Long lastUpdate = System.nanoTime();
+
+    @Override
+    public void run() {
+      long currentTime = System.nanoTime();
+      if (currentTime - lastUpdate > 100_000) {
+        evaluate();
+        lastUpdate = currentTime;
+      }
+    }
   }
 
   public void run() {
@@ -57,7 +68,7 @@ public class GraphicalInterface {
     importButton.addActionListener(actionEvent -> importCallback(frame));
 
     final JButton evaluateButton = new JButton("Evaluate");
-    evaluateButton.addActionListener(actionEvent -> evaluate());
+    evaluateButton.addActionListener(actionEvent -> fullEvaluate());
     toolPanel.add(evaluateButton);
 
     final JButton addFormulaButton = new JButton("Add formula");
@@ -69,6 +80,14 @@ public class GraphicalInterface {
     mainPanel = new JPanel();
     graphicalComponents.initialize(mainPanel, document);
     fillDocumentComponents(document, tableEvaluator.evaluate(document));
+    final EvaluateCaretListener caretListener = new EvaluateCaretListener();
+    for (String title : document.tableNames) {
+      final JTextComponent formulaComponent = graphicalComponents.getFormulaComponent(title);
+      if (formulaComponent != null) {
+        formulaComponent.getCaret().addChangeListener(changeEvent ->
+                SwingUtilities.invokeLater(caretListener));
+      }
+    }
 
     frame.add(BorderLayout.CENTER, mainPanel);
     frame.setLocationRelativeTo(null);
@@ -171,6 +190,19 @@ public class GraphicalInterface {
       }
     }
   }
+  private void updateFormulas() {
+    for (String title : document.tableNames) {
+      final Table table = document.tables.get(title);
+      if (table instanceof FormulaTable) {
+        final JTextComponent component = graphicalComponents
+                .getFormulaComponent(title);
+        final FormulaTable formulaTable = (FormulaTable) table;
+        if (component != null) {
+          formulaTable.setGroovyScript(component.getText());
+        }
+      }
+    }
+  }
 
   private Optional<Integer> safeParseInt(String text) {
     try {
@@ -181,11 +213,18 @@ public class GraphicalInterface {
   }
 
   private void evaluate() {
+    System.out.println("Evaluate");
+    updateFormulas();
+    final Document evaluatedDocument = tableEvaluator.evaluate(document);
+    fillFormulaResults(document, evaluatedDocument);
+  }
+
+  private void fullEvaluate() {
+    System.out.println("Full evaluate");
     mainPanel.setVisible(false);
     updateDocument();
     final Document evaluatedDocument = tableEvaluator.evaluate(document);
-    System.out.println("evaluate");
-    fillDocumentComponents(document, evaluatedDocument);
+    fillFormulaResults(document, evaluatedDocument);
     mainPanel.setVisible(true);
   }
 
@@ -212,6 +251,18 @@ public class GraphicalInterface {
       } else {
         final DataTableModel model =
             DataTableModel.editable(((DataTable) table));
+        graphicalComponents.getTableComponent(title).setModel(model);
+      }
+    }
+  }
+
+  private void fillFormulaResults(Document document, Document evaluation) {
+    for (String title : document.tableNames) {
+      graphicalComponents.getTitleComponent(title).setText(title);
+      final Table table = document.tables.get(title);
+      if (table instanceof FormulaTable) {
+        final DataTableModel model = DataTableModel
+            .nonEditable((DataTable) evaluation.tables.get(title));
         graphicalComponents.getTableComponent(title).setModel(model);
       }
     }
