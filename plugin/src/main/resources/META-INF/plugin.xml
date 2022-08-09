@@ -5,10 +5,11 @@
 
     <!-- Public plugin name should be written in Title Case.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
-    <name>Plugin</name>
+    <name>Sedmoy</name>
 
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
-    <vendor email="support@yourcompany.com" url="https://www.yourcompany.com">
+    <vendor email="romain.brenguier@gmail.com"
+            url="https://romainbrenguier.github.com">
         YourCompany
     </vendor>
 
@@ -29,4 +30,14 @@
     <extensions defaultExtensionNs="com.intellij">
 
     </extensions>
+    <actions>
+        <group id="SedmoyPlugin.TopMenu" text="Sedmoy"
+               description="This is a plugin to manipulate tables using groovy">
+            <add-to-group group-id="MainMenu" anchor="last"/>
+            <action id="MyNotificationAction"
+                    class="com.github.romainbrenguier.plugin.NotificationAction"
+                    text="Trigger Notification"
+                    description="Click to display notification"/>
+        </group>
+    </actions>
 </idea-plugin>
