@@ -16,7 +16,6 @@ class MockInterpreter extends GroovyInterpreter {
     variables.put(variable, value);
   }
 
-  @Override
   public Object run(String groovyScript) {
     final int i = (int) variables.get("line");
     final int j = (int) variables.get("column");
