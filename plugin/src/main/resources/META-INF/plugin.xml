@@ -25,9 +25,10 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
 
-    <!-- Extension points defined by the plugin.
-         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Sedmoy" secondary="true"
+                    icon="AllIcons.General.Modified" anchor="right"
+                    factoryClass="com.github.romainbrenguier.plugin.SedmoyToolWindowFactory"/>
 
     </extensions>
     <actions>
@@ -40,4 +41,5 @@
                     description="Click to display notification"/>
         </group>
     </actions>
+
 </idea-plugin>
