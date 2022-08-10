@@ -35,3 +35,7 @@ The table variables have type `DataTable`, which define in particular the method
 For example, here is to compute the total of all entries in the first column of the table named `table`:
 
 `./sedmoy.sh --input=test1.sdm --add-formula "int t=0; for(int i=0;i<table.height();++i) t += Integer.parseInt(table.cell(0,i)); return t" --table-name "total"  --output test1.csv`
+
+## Intellij plugin
+
+To test the plugin, go to module parent and run: `gradle :plugin:runIde`.

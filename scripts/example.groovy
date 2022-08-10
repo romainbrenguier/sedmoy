@@ -1,4 +1,4 @@
-import com.github.romainbrenguier.sedmoy.model.DataTable
+import DataTable
 
 def table = input as DataTable
 
