@@ -15,7 +15,7 @@ public class NotificationAction extends AnAction {
         // Setup handler
         EditorActionManager actionManager = EditorActionManager.getInstance();
         TypedAction typedAction = actionManager.getTypedAction();
-        typedAction.setupHandler(new EditHandler());
+        typedAction.setupHandler(new EditHandler(typedAction.getHandler()));
 
         // Notification
         final NotificationGroup notificationGroup = new NotificationGroup("Sedmoy",
