@@ -24,6 +24,7 @@ public class SedmoyToolWindowFactory implements ToolWindowFactory {
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(toolPanel, SEDMOY_TOOL_WINDOW, false);
         toolWindow.getContentManager().addContent(content);
+        NotificationAction.setupEditHandler(project);
     }
 
     public static JTable getTableComponent(Project project) {
