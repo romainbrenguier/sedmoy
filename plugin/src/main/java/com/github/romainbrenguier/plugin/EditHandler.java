@@ -29,12 +29,13 @@ class EditHandler extends TypedActionHandlerBase {
     public void execute(@NotNull Editor editor,
                         char c,
                         @NotNull DataContext dataContext) {
+        myOriginalHandler.execute(editor, c, dataContext);
         Document document = editor.getDocument();
-        Project project = editor.getProject();
         final String name = FileDocumentManager.getInstance().getFile(document).getName();
         if (name.endsWith("csv")) {
-            final String text = document.getText();
+            final Project project = editor.getProject();
             final JTable tableComponent = SedmoyToolWindowFactory.getTableComponent(project);
+            final String text = document.getText();
             Runnable runnable = () ->
             {
                 final DataTable dataTable =
