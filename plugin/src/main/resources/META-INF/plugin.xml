@@ -31,15 +31,4 @@
                     factoryClass="com.github.romainbrenguier.plugin.SedmoyToolWindowFactory"/>
 
     </extensions>
-    <actions>
-        <group id="SedmoyPlugin.TopMenu" text="Sedmoy"
-               description="This is a plugin to manipulate tables using groovy">
-            <add-to-group group-id="MainMenu" anchor="last"/>
-            <action id="MyNotificationAction"
-                    class="com.github.romainbrenguier.plugin.NotificationAction"
-                    text="Trigger Notification"
-                    description="Click to display notification"/>
-        </group>
-    </actions>
-
 </idea-plugin>

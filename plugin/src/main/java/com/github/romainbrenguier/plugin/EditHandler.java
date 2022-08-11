@@ -11,8 +11,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.EditorNotificationPanel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
