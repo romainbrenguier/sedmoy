@@ -30,6 +30,10 @@ class EditHandler extends TypedActionHandlerBase {
                         char c,
                         @NotNull DataContext dataContext) {
         myOriginalHandler.execute(editor, c, dataContext);
+        updateToolWindow(editor);
+    }
+
+    public static void updateToolWindow(@NotNull Editor editor) {
         Document document = editor.getDocument();
         final String name = FileDocumentManager.getInstance().getFile(document).getName();
         if (name.endsWith("csv")) {

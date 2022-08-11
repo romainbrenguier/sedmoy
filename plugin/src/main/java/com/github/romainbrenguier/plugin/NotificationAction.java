@@ -5,6 +5,7 @@ import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.openapi.editor.actionSystem.TypedAction;
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +14,7 @@ public class NotificationAction extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         // Setup handler
-        EditorActionManager actionManager = EditorActionManager.getInstance();
-        TypedAction typedAction = actionManager.getTypedAction();
+        TypedAction typedAction = TypedAction.getInstance();
         typedAction.setupHandler(new EditHandler(typedAction.getHandler()));
 
         // Notification
