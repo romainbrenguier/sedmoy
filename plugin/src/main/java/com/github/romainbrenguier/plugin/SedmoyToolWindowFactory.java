@@ -15,6 +15,7 @@ import com.github.romainbrenguier.sedmoy.ui.EmptyTableModel;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 
 public class SedmoyToolWindowFactory implements ToolWindowFactory {
@@ -24,7 +25,9 @@ public class SedmoyToolWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         final JPanel toolPanel = new JPanel(new FlowLayout());
+        final JTextField statusText = new JTextField("Loading...");
         final JTable tableComponent = new JTable(new EmptyTableModel());
+        toolPanel.add(statusText);
         toolPanel.add(tableComponent);
         ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
         Content content = contentFactory.createContent(toolPanel, SEDMOY_TOOL_WINDOW, false);
@@ -47,11 +50,19 @@ public class SedmoyToolWindowFactory implements ToolWindowFactory {
                 .notify(project);
     }
 
-    public static JTable getTableComponent(Project project) {
+    public static JTextComponent getStatusComponent(Project project) {
         final Component component = ToolWindowManager.getInstance(project).getToolWindow(
                         "Sedmoy")
                 .getContentManager().findContent(SedmoyToolWindowFactory.SEDMOY_TOOL_WINDOW).getComponent()
                 .getComponent(0);
+        return (JTextComponent) component;
+    }
+
+    public static JTable getTableComponent(Project project) {
+        final Component component = ToolWindowManager.getInstance(project).getToolWindow(
+                        "Sedmoy")
+                .getContentManager().findContent(SedmoyToolWindowFactory.SEDMOY_TOOL_WINDOW).getComponent()
+                .getComponent(1);
         return (JTable) component;
     }
 }

@@ -18,6 +18,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,6 +39,17 @@ class EditHandler extends TypedActionHandlerBase {
         updateToolWindow(editor);
     }
 
+    static class EvaluationResult {
+        @Nullable
+        final DataTable dataTable;
+        final String statusText;
+
+        EvaluationResult(DataTable dataTable, String statusText) {
+            this.dataTable = dataTable;
+            this.statusText = statusText;
+        }
+    }
+
     public static void updateToolWindow(@NotNull Editor editor) {
         Document document = editor.getDocument();
         final String name = FileDocumentManager.getInstance().getFile(document).getName();
@@ -45,28 +57,40 @@ class EditHandler extends TypedActionHandlerBase {
             return;
 
         final Project project = editor.getProject();
-        final JTable tableComponent = SedmoyToolWindowFactory.getTableComponent(project);
         final String text = document.getText();
-        Supplier<DataTable> dataTableSupplier;
+        Supplier<EvaluationResult> dataTableSupplier;
         if (name.endsWith("csv")) {
             dataTableSupplier = () ->
-                    new CsvParser().parseLines(Arrays.stream(text.split("\n"))
-                            .collect(Collectors.toList()));
+                    new EvaluationResult(
+                            new CsvParser().parseLines(Arrays.stream(text.split("\n"))
+                                    .collect(Collectors.toList())),
+                            "Csv file loaded");
         } else if (name.endsWith(".groovy")) {
             dataTableSupplier = () -> {
                 final GroovyInterpreter groovyInterpreter = new GroovyInterpreter();
                 final FormulaTable formula = new FormulaTable(new Dimension(1, 1), text);
                 try {
-                    return new FormulaTableEvaluator().evaluate(groovyInterpreter, Collections.emptyMap(), formula);
+                    final DataTable table = new FormulaTableEvaluator()
+                            .evaluateCollector(groovyInterpreter, formula);
+                    return new EvaluationResult(
+                            table, "Groovy script OK");
                 } catch (GroovyException e) {
-                    return new DataTable(Collections.singletonList(Collections.singletonList(e.getMessage())));
+                    return new EvaluationResult(
+                            null,
+                            "Groovy error: " + e.getMessage());
                 }
             };
         } else {
             throw new AssertionError("Unhandled file extension " + name);
         }
         Runnable action = () -> {
-            tableComponent.setModel(DataTableModel.nonEditable(dataTableSupplier.get()));
+            final EvaluationResult result = dataTableSupplier.get();
+            SedmoyToolWindowFactory.getStatusComponent(project).setText(
+                    result.statusText);
+            if (result.dataTable != null) {
+                SedmoyToolWindowFactory.getTableComponent(project)
+                        .setModel(DataTableModel.nonEditable(result.dataTable));
+            }
         };
         WriteCommandAction.runWriteCommandAction(project, action);
     }

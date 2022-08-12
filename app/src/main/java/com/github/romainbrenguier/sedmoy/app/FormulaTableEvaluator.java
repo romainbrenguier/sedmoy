@@ -16,8 +16,12 @@ public class FormulaTableEvaluator {
     interpreter.setFromMap(environment);
     if (table.getDimension().numberOfLines == 1
         && table.getDimension().numberOfColumns == 1) {
-      return evaluateCollector(interpreter, table);
-    }
+      try {
+        return evaluateCollector(interpreter, table);
+      } catch (GroovyException e) {
+        return singletonTable(e.getCause());
+      }
+  }
     final DataTable result = new DataTable(table.getDimension());
     final String groovyScript = table.getGroovyScript();
     interpreter.setScript(groovyScript);
@@ -45,15 +49,11 @@ public class FormulaTableEvaluator {
    * once (size 1 by 1) and can return an object that is either a String, a
    * List, a Map or a DataTable.
    */
-  private DataTable evaluateCollector(GroovyInterpreter interpreter,
-      FormulaTable table) {
+  public DataTable evaluateCollector(GroovyInterpreter interpreter,
+      FormulaTable table) throws GroovyException {
     Object result;
-    try {
-      interpreter.setScript(table.getGroovyScript());
-      result = interpreter.run();
-    } catch (GroovyException e) {
-      result = e.getCause();
-    }
+    interpreter.setScript(table.getGroovyScript());
+    result = interpreter.run();
 
     if (result instanceof List) {
       List<?> list = (List<?>) result;
@@ -92,6 +92,10 @@ public class FormulaTableEvaluator {
       return (DataTable) result;
     }
 
+    return singletonTable(result);
+  }
+
+  private DataTable singletonTable(Object result) {
     final DataTable resultTable =
         new DataTable(new Dimension(1, 1));
     resultTable.set(0, 0, result.toString());
