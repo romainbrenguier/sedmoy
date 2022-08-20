@@ -1,5 +1,0 @@
-rootProject.name = 'parent'
-includeFlat 'app', 'plugin'
-
-
-
