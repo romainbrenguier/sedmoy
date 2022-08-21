@@ -2,8 +2,6 @@ package com.github.romainbrenguier.sedmoy.app;
 
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.github.romainbrenguier.sedmoy.model.DataTable;
@@ -11,8 +9,6 @@ import com.github.romainbrenguier.sedmoy.model.Dimension;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import java.util.Collections;
 import java.util.Map;
-
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
@@ -34,7 +30,7 @@ public class FormulaTableEvaluatorTest {
         .evaluate(interpreter, environment, formulaTable);
 
     // Assert
-    MatcherAssert.assertThat(result, Matchers.not(Matchers.nullValue()));
+    assertThat(result, Matchers.not(Matchers.nullValue()));
     assertEquals(2, result.width());
     assertEquals(2, result.height());
     // FIXME order of line and column differs which is confusing

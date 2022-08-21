@@ -1,6 +1,5 @@
 package com.github.romainbrenguier.sedmoy.app;
 
-import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,8 @@ class MockInterpreter extends GroovyInterpreter {
     variables.put(variable, value);
   }
 
-  public Object run(String groovyScript) {
+  @Override
+  public Object run() {
     final int i = (int) variables.get("line");
     final int j = (int) variables.get("column");
     final DataTable foo = (DataTable) variables.get("foo");

@@ -1,8 +1,6 @@
 package com.github.romainbrenguier.sedmoy.app;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
 
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.Dimension;
@@ -37,6 +35,7 @@ public class TableEvaluatorTest {
     assertThat(((DataTable)foo).cellAsString(0, 0), Matchers.equalTo("a"));
     final Table bar = result.tables.get("bar");
     MatcherAssert.assertThat(bar, Matchers.instanceOf(DataTable.class));
-    assertThat(((DataTable)bar).cellAsString(0, 0), Matchers.equalTo("foo[0,0]=a"));
+    assertThat(((DataTable)bar).cellAsString(0, 0), Matchers.equalTo("foo[0,"
+        + "0]=a"));
   }
 }
