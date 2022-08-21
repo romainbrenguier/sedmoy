@@ -2,17 +2,22 @@ package com.github.romainbrenguier.sedmoy.app;
 
 
 import groovy.lang.Binding;
+import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyShell;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
-
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Path;
 import java.util.Map;
+import org.codehaus.groovy.control.CompilationFailedException;
 
 public class GroovyInterpreter {
 
-  private final GroovyShell shell = new GroovyShell();
+  private final GroovyShell shell;
 
   private final Binding binding;
 
@@ -20,6 +25,18 @@ public class GroovyInterpreter {
 
   public GroovyInterpreter() {
     binding = new Binding();
+    shell = new GroovyShell();
+  }
+
+  public GroovyInterpreter(ClassLoader classLoader) {
+    binding = new Binding();
+    shell = new GroovyShell(new GroovyClassLoader(classLoader));
+  }
+
+  public GroovyInterpreter(Path directory) throws MalformedURLException {
+    this(new URLClassLoader(
+        new URL[]{directory.toUri().toURL()},
+        GroovyInterpreter.class.getClassLoader()));
   }
 
   public void set(String variable, Object value) {
@@ -30,8 +47,12 @@ public class GroovyInterpreter {
     map.forEach(this::set);
   }
 
-  public void setScript(String groovyScript) {
-    script = shell.parse(groovyScript);
+  public void setScript(String groovyScript) throws GroovyException {
+    try {
+      script = shell.parse(groovyScript);
+    } catch (CompilationFailedException e) {
+      throw new GroovyException("Compilation failed: " + groovyScript, e);
+    }
   }
 
   public Object run() throws GroovyException {

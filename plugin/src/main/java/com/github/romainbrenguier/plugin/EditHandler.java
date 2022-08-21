@@ -16,14 +16,15 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import javax.swing.*;
+import com.intellij.openapi.vfs.VirtualFile;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 class EditHandler extends TypedActionHandlerBase {
 
@@ -52,7 +53,9 @@ class EditHandler extends TypedActionHandlerBase {
 
     public static void updateToolWindow(@NotNull Editor editor) {
         Document document = editor.getDocument();
-        final String name = FileDocumentManager.getInstance().getFile(document).getName();
+      final VirtualFile virtualFile = FileDocumentManager.getInstance()
+          .getFile(document);
+      final String name = virtualFile.getName();
         if (!name.endsWith(".csv") && !name.endsWith(".groovy"))
             return;
 
@@ -67,7 +70,15 @@ class EditHandler extends TypedActionHandlerBase {
                             "Csv file loaded");
         } else if (name.endsWith(".groovy")) {
             dataTableSupplier = () -> {
-                final GroovyInterpreter groovyInterpreter = new GroovyInterpreter();
+              final Path directory = Paths.get(virtualFile.getPath()).getParent();
+              System.out.println("Directory : " + directory);
+              GroovyInterpreter groovyInterpreter;
+              try {
+                groovyInterpreter = new GroovyInterpreter(directory);
+                } catch (MalformedURLException e) {
+                  e.printStackTrace();
+                  groovyInterpreter = new GroovyInterpreter();
+                }
                 final FormulaTable formula = new FormulaTable(new Dimension(1, 1), text);
                 try {
                     final DataTable table = new FormulaTableEvaluator()
@@ -75,9 +86,11 @@ class EditHandler extends TypedActionHandlerBase {
                     return new EvaluationResult(
                             table, "Groovy script OK");
                 } catch (GroovyException e) {
-                    return new EvaluationResult(
-                            null,
-                            "Groovy error: " + e.getMessage());
+                  System.out.println("Compilation failed:");
+                  e.printStackTrace();
+                  return new EvaluationResult(
+                      null,
+                      "Groovy error: " + e.getMessage());
                 }
             };
         } else {
