@@ -3,16 +3,18 @@ package com.github.romainbrenguier.sedmoy.app;
 import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.Dimension;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
-
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 public class FormulaTableEvaluator {
 
   public DataTable evaluate(GroovyInterpreter interpreter,
-                            Map<String, DataTable> environment,
-                            FormulaTable table) throws GroovyException {
+      Map<String, DataTable> environment,
+      FormulaTable table) throws GroovyException {
     interpreter.setFromMap(environment);
     if (table.getDimension().numberOfLines == 1
         && table.getDimension().numberOfColumns == 1) {
@@ -21,7 +23,7 @@ public class FormulaTableEvaluator {
       } catch (GroovyException e) {
         return singletonTable(e.getCause());
       }
-  }
+    }
     final DataTable result = new DataTable(table.getDimension());
     final String groovyScript = table.getGroovyScript();
     interpreter.setScript(groovyScript);
@@ -55,6 +57,10 @@ public class FormulaTableEvaluator {
     interpreter.setScript(table.getGroovyScript());
     result = interpreter.run();
 
+    return convertObjectToTable(result);
+  }
+
+  private DataTable convertObjectToTable(Object result) {
     if (result instanceof List) {
       List<?> list = (List<?>) result;
       final DataTable resultTable =
@@ -90,6 +96,15 @@ public class FormulaTableEvaluator {
 
     if (result instanceof DataTable) {
       return (DataTable) result;
+    }
+
+    if (result.getClass().isArray()) {
+      final Object[] objects = Arrays
+          .copyOf((Object[]) result.getClass().cast(result),
+              Array.getLength(result));
+      final List<Object> objectList = Arrays.stream(objects)
+          .collect(Collectors.toList());
+      return convertObjectToTable(objectList);
     }
 
     return singletonTable(result);
