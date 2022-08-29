@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 @Service
@@ -36,6 +37,7 @@ public final class SedmoyService {
   Document currentDocument;
 
   private Map<Project, JTextArea> statusText = new HashMap<>();
+  private Map<Project, JTable> tableComponents = new HashMap<>();
 
   public static SedmoyService getInstance() {
     return ApplicationManager.getApplication()
@@ -48,6 +50,10 @@ public final class SedmoyService {
 
   public void registerStatusTextArea(Project project, JTextArea textArea) {
     statusText.put(project, textArea);
+  }
+
+  public void registerTableComponent(Project project, JTable table) {
+    tableComponents.put(project, table);
   }
 
   public void setStatus(Project project, String text) {
@@ -83,7 +89,7 @@ public final class SedmoyService {
       final EvaluationResult result = dataTableSupplier.get();
       setStatus(project, result.statusText);
       if (result.dataTable != null) {
-        SedmoyToolWindowFactory.getTableComponent(project)
+        tableComponents.get(project)
             .setModel(DataTableModel.nonEditable(result.dataTable));
       }
     };
