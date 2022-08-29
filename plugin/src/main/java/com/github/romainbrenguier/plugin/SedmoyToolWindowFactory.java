@@ -1,5 +1,6 @@
 package com.github.romainbrenguier.plugin;
 
+import com.github.romainbrenguier.sedmoy.ui.EmptyTableModel;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
@@ -10,13 +11,15 @@ import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
+import java.awt.Component;
+import java.awt.GridLayout;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import org.jetbrains.annotations.NotNull;
-import com.github.romainbrenguier.sedmoy.ui.EmptyTableModel;
 import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.text.JTextComponent;
-import java.awt.*;
 
 public class SedmoyToolWindowFactory implements ToolWindowFactory {
 
@@ -25,8 +28,9 @@ public class SedmoyToolWindowFactory implements ToolWindowFactory {
     @Override
     public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
         final JPanel toolPanel = new JPanel(new GridLayout(0, 1));
-        final JTextField statusText = new JTextField("Loading...");
-        toolPanel.add(statusText);
+        final JTextArea statusText = new JTextArea("Loading...");
+        SedmoyService.getInstance().registerStatusTextArea(project, statusText);
+        toolPanel.add(new JScrollPane(statusText));
         final JTable tableComponent = new JTable(new EmptyTableModel());
         toolPanel.add(tableComponent);
         final JButton updateButton = new JButton("Update");
@@ -54,15 +58,7 @@ public class SedmoyToolWindowFactory implements ToolWindowFactory {
                 .notify(project);
     }
 
-    public static JTextComponent getStatusComponent(Project project) {
-        final Component component = ToolWindowManager.getInstance(project).getToolWindow(
-                        "Sedmoy")
-                .getContentManager().findContent(SedmoyToolWindowFactory.SEDMOY_TOOL_WINDOW).getComponent()
-                .getComponent(0);
-        return (JTextComponent) component;
-    }
-
-    public static JTable getTableComponent(Project project) {
+  public static JTable getTableComponent(Project project) {
         final Component component = ToolWindowManager.getInstance(project).getToolWindow(
                         "Sedmoy")
                 .getContentManager().findContent(SedmoyToolWindowFactory.SEDMOY_TOOL_WINDOW).getComponent()

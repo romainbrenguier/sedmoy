@@ -16,19 +16,26 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+import javax.swing.JTextArea;
 
 @Service
 public final class SedmoyService {
 
   @Nullable
   Document currentDocument;
+
+  private Map<Project, JTextArea> statusText = new HashMap<>();
 
   public static SedmoyService getInstance() {
     return ApplicationManager.getApplication()
@@ -39,8 +46,12 @@ public final class SedmoyService {
     currentDocument = document;
   }
 
+  public void registerStatusTextArea(Project project, JTextArea textArea) {
+    statusText.put(project, textArea);
+  }
+
   public void setStatus(Project project, String text) {
-    SedmoyToolWindowFactory.getStatusComponent(project).setText(text);
+    statusText.get(project).setText(text);
   }
 
   public void updateToolWindow(Project project) {
@@ -97,10 +108,12 @@ public final class SedmoyService {
           table, "Groovy script OK");
     } catch (GroovyException e) {
       System.out.println("Compilation failed:");
-      e.printStackTrace();
+      final StringWriter stringWriter = new StringWriter();
+      e.printStackTrace(new PrintWriter(stringWriter));
       return new EvaluationResult(
           null,
-          "Groovy error: " + e.getMessage());
+          "Groovy error: " + e.getMessage() + "\n"
+              + stringWriter.toString());
     }
   }
 }
