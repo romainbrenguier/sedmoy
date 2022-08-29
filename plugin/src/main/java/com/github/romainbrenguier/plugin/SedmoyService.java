@@ -30,13 +30,13 @@ public final class SedmoyService {
   @Nullable
   Document currentDocument;
 
-  public void setCurrentDocument(Document document) {
-    currentDocument = document;
-  }
-
   public static SedmoyService getInstance() {
     return ApplicationManager.getApplication()
         .getService(SedmoyService.class);
+  }
+
+  public void setCurrentDocument(Document document) {
+    currentDocument = document;
   }
 
   public void setStatus(Project project, String text) {
@@ -51,8 +51,9 @@ public final class SedmoyService {
     final VirtualFile virtualFile = FileDocumentManager.getInstance()
         .getFile(currentDocument);
     final String name = virtualFile.getName();
-    if (!name.endsWith(".csv") && !name.endsWith(".groovy"))
+    if (!name.endsWith(".csv") && !name.endsWith(".groovy")) {
       return;
+    }
 
     final String text = currentDocument.getText();
     Supplier<EvaluationResult> dataTableSupplier;
@@ -63,42 +64,43 @@ public final class SedmoyService {
                   .collect(Collectors.toList())),
               "Csv file loaded");
     } else if (name.endsWith(".groovy")) {
-      dataTableSupplier = () -> {
-        final Path directory = Paths.get(virtualFile.getPath()).getParent();
-        System.out.println("Directory : " + directory);
-        GroovyInterpreter groovyInterpreter;
-        try {
-          groovyInterpreter = new GroovyInterpreter(directory);
-        } catch (MalformedURLException e) {
-          e.printStackTrace();
-          groovyInterpreter = new GroovyInterpreter();
-        }
-        final FormulaTable formula = new FormulaTable(new Dimension(1, 1), text);
-        try {
-          final DataTable table = new FormulaTableEvaluator()
-              .evaluateCollector(groovyInterpreter, formula);
-          return new EvaluationResult(
-              table, "Groovy script OK");
-        } catch (GroovyException e) {
-          System.out.println("Compilation failed:");
-          e.printStackTrace();
-          return new EvaluationResult(
-              null,
-              "Groovy error: " + e.getMessage());
-        }
-      };
+      dataTableSupplier = () -> evaluateGroovy(virtualFile, text);
     } else {
       throw new AssertionError("Unhandled file extension " + name);
     }
     Runnable action = () -> {
       final EvaluationResult result = dataTableSupplier.get();
-      SedmoyToolWindowFactory.getStatusComponent(project).setText(
-          result.statusText);
+      setStatus(project, result.statusText);
       if (result.dataTable != null) {
         SedmoyToolWindowFactory.getTableComponent(project)
             .setModel(DataTableModel.nonEditable(result.dataTable));
       }
     };
     WriteCommandAction.runWriteCommandAction(project, action);
+  }
+
+  EvaluationResult evaluateGroovy(VirtualFile virtualFile, String text) {
+    final Path directory = Paths.get(virtualFile.getPath()).getParent();
+    System.out.println("Directory : " + directory);
+    GroovyInterpreter groovyInterpreter;
+    try {
+      groovyInterpreter = new GroovyInterpreter(directory);
+    } catch (MalformedURLException e) {
+      e.printStackTrace();
+      groovyInterpreter = new GroovyInterpreter();
+    }
+    final FormulaTable formula = new FormulaTable(new Dimension(1, 1), text);
+    try {
+      final DataTable table = new FormulaTableEvaluator()
+          .evaluateCollector(groovyInterpreter, formula);
+      return new EvaluationResult(
+          table, "Groovy script OK");
+    } catch (GroovyException e) {
+      System.out.println("Compilation failed:");
+      e.printStackTrace();
+      return new EvaluationResult(
+          null,
+          "Groovy error: " + e.getMessage());
+    }
   }
 }
