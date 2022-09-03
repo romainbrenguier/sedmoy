@@ -10,10 +10,12 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
-import java.awt.GridLayout;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import org.jetbrains.annotations.NotNull;
@@ -41,22 +43,32 @@ public class SedmoyToolWindowFactory implements ToolWindowFactory {
   @Override
   public void createToolWindowContent(@NotNull Project project,
       @NotNull ToolWindow toolWindow) {
-    final JPanel toolPanel = new JPanel(new GridLayout(0, 1));
-    final JTextArea statusText = new JTextArea("Loading...");
+
+    final JPanel toolPanel = new JPanel(new BorderLayout());
     final SedmoyService sedmoyService = SedmoyService.getInstance();
-    sedmoyService.registerStatusTextArea(project, statusText);
-    toolPanel.add(new JScrollPane(statusText));
+
+    final JPanel buttons = new JPanel(new FlowLayout());
+    final JButton updateButton = new JButton("Update");
+    updateButton.addActionListener(actionEvent ->
+        sedmoyService.updateToolWindow(project));
+    buttons.add(updateButton);
+    toolPanel.add(BorderLayout.NORTH, buttons);
+
     final JTable tableComponent = new JTable(new EmptyTableModel());
     sedmoyService.registerTableComponent(project, tableComponent);
-    toolPanel.add(tableComponent);
-    final JButton updateButton = new JButton("Update");
-    toolPanel.add(updateButton);
+
+    final JTextArea statusText = new JTextArea("Loading...");
+    sedmoyService.registerStatusTextArea(project, statusText);
+
+    final JSplitPane mainPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT,
+        new JScrollPane(tableComponent),
+        new JScrollPane(statusText));
+    toolPanel.add(mainPanel);
+
     ContentFactory contentFactory = ContentFactory.SERVICE.getInstance();
     Content content = contentFactory
         .createContent(toolPanel, SEDMOY_TOOL_WINDOW, false);
     toolWindow.getContentManager().addContent(content);
     setupEditHandler(project);
-    updateButton.addActionListener(actionEvent ->
-        sedmoyService.updateToolWindow(project));
   }
 }
