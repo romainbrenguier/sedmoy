@@ -4,9 +4,11 @@ import com.github.romainbrenguier.sedmoy.model.DataTable;
 import com.github.romainbrenguier.sedmoy.model.Dimension;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.codehaus.groovy.control.CompilationFailedException;
 
@@ -111,9 +113,25 @@ public class FormulaTableEvaluator {
   }
 
   private DataTable singletonTable(Object result) {
+    final List<Field> fields =
+        Arrays.stream(result.getClass().getDeclaredFields()).filter(
+            field -> !field.isSynthetic()
+        ).collect(Collectors.toList());
     final DataTable resultTable =
-        new DataTable(new Dimension(1, 1));
-    resultTable.set(0, 0, result.toString());
+        new DataTable(new Dimension(fields.size(), 2));
+    for (int i = 0; i < fields.size(); ++i) {
+      final Field field = fields.get(i);
+      field.setAccessible(true);
+      resultTable.set(0, i, field.getName());
+      String valueString;
+      try {
+        valueString = Objects.toString(field.get(result), "null");
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+        valueString = e.getMessage();
+      }
+      resultTable.set(1, i, valueString);
+    }
     return resultTable;
   }
 }
