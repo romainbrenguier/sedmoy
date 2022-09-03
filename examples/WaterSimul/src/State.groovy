@@ -3,11 +3,21 @@ import java.util.stream.Collectors
 
 class State {
 
-    Map<Tank, Integer> level = new HashMap<>()
+    // Keys are tank ids
+    private Map<Integer, Length> level = new HashMap<>()
 
-    void add(Tank t, int level) {
-        this.level.put(t, level);
+    void add(Tank t, Volume level) {
+        this.level.put(t.id, level.divide(t.surface()));
         null
+    }
+
+    void addToExisting(Tank t, Volume volume, Volume onCreate) {
+        def existing = level.getOrDefault(t.id, onCreate.divide(t.surface()))
+        level.put(t.id, existing + volume.divide(t.surface()))
+    }
+
+    Length getLevel(Integer tankId) {
+        level.getOrDefault(tankId, Length.ofMeter(0.0))
     }
 
     @Override
