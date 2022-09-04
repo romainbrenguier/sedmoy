@@ -3,16 +3,18 @@ package com.github.romainbrenguier.sedmoy.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DataTable implements Table {
 
-  private final static Pattern INT_PATTERN = Pattern.compile("[0-9]+");
+  private final static Pattern INT_PATTERN = Pattern.compile("[0-9]{1,6}");
   private final static Pattern FLOAT_PATTERN = Pattern
-      .compile("[0-9]*\\.[0-9]*");
+      .compile("[0-9]{0,2}\\.[0-9]{1,6}");
 
   private final List<List<String>> lines;
   private Dimension dimension;
@@ -156,6 +158,29 @@ public class DataTable implements Table {
 
   public DataTable rightFrom(int columnIndex) {
     return downFrom(columnIndex, 0);
+  }
+
+  public static DataTable mergeByFirstColumn(List<DataTable> tables) {
+    Map<String, List<String>> map = new LinkedHashMap<>();
+    for (DataTable table : tables) {
+      for (List<String> line : table.lines) {
+        if (!line.isEmpty()) {
+          final String key = line.get(0);
+          final List<String> value = map
+              .computeIfAbsent(key, k -> new ArrayList<>());
+          value.addAll(line.subList(1, line.size()));
+        }
+      }
+    }
+    final List<List<String>> listList = map.entrySet().stream().map(entry ->
+        {
+          final ArrayList<String> list = new ArrayList<>();
+          list.add(entry.getKey());
+          list.addAll(entry.getValue());
+          return list;
+        }
+    ).collect(Collectors.toList());
+    return new DataTable(listList);
   }
 
   @Override

@@ -65,12 +65,9 @@ public class FormulaTableEvaluator {
   private DataTable convertObjectToTable(Object result) {
     if (result instanceof List) {
       List<?> list = (List<?>) result;
-      final DataTable resultTable =
-          new DataTable(new Dimension(list.size(), 1));
-      for (int line = 0; line < list.size(); ++line) {
-        resultTable.set(0, line, list.get(line).toString());
-      }
-      return resultTable;
+      final List<DataTable> tables = list.stream()
+          .map(this::convertObjectToTable).collect(Collectors.toList());
+      return DataTable.mergeByFirstColumn(tables);
     }
 
     if (result instanceof String) {
@@ -117,6 +114,12 @@ public class FormulaTableEvaluator {
         Arrays.stream(result.getClass().getDeclaredFields()).filter(
             field -> !field.isSynthetic()
         ).collect(Collectors.toList());
+    if (fields.isEmpty()) {
+      final DataTable resultTable = new DataTable(new Dimension(1, 1));
+      resultTable.set(0, 0, result.toString());
+      return resultTable;
+    }
+
     final DataTable resultTable =
         new DataTable(new Dimension(fields.size(), 2));
     for (int i = 0; i < fields.size(); ++i) {
