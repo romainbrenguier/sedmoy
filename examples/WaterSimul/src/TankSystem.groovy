@@ -29,7 +29,7 @@ class TankSystem {
                 def destTank = tanks.get(t.tankDestId)
                 newState.addToExisting(
                         destTank,
-                        volume,
+                        Volume.cube(Length.ofMeter(0.1)),
                         destTank.surface().times(destLevel))
             }
         }

@@ -13,10 +13,10 @@ system.addTube(tube1)
 system
 
 def state = new State();
-state.add(tank1, Volume.cube(Length.ofMeter(0.9)))
-state.add(tank2, Volume.cube(Length.ofMeter(0.9)))
+state.add(tank1, Surface.square(Length.meter()).times(Length.ofMeter(1.5)))
+state.add(tank2, Volume.cube(Length.meter()))
 
-def simulation = new ArrayList()
+def simulation = new ArrayList<State>()
 simulation.add(state)
 for (int i = 0; i < 10; ++i) {
     simulation.add(system.update(simulation.get(i)))

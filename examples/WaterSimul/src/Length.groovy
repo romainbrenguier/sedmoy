@@ -13,6 +13,10 @@ class Length {
         length
     }
 
+    static Length meter() {
+        return ofMeter(1.0d);
+    }
+
     Length plus(Length other) {
         ofMeter(inMeter + other.inMeter)
     }
