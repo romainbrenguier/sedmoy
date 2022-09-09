@@ -33,6 +33,7 @@ import javax.swing.JTextArea;
 @Service
 public final class SedmoyService {
 
+  private final FormulaTableEvaluator tableEvaluator = new FormulaTableEvaluator();
   @Nullable
   Document currentDocument;
 
@@ -108,7 +109,8 @@ public final class SedmoyService {
     }
     final FormulaTable formula = new FormulaTable(new Dimension(1, 1), text);
     try {
-      final DataTable table = new FormulaTableEvaluator()
+      groovyInterpreter.set("currentDirectory", directory);
+      final DataTable table = tableEvaluator
           .evaluateCollector(groovyInterpreter, formula);
       return new EvaluationResult(
           table, "Groovy script OK");

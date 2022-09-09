@@ -39,3 +39,8 @@ For example, here is to compute the total of all entries in the first column of 
 ## Intellij plugin
 
 To test the plugin, go to module parent and run: `gradle :plugin:runIde`.
+
+It interprets groovy files and attempt to convert the value they compute as 
+tables.
+The plugin interprets groovy files with the special variables:
+`currentDirectory` and `cachedFileReader`.

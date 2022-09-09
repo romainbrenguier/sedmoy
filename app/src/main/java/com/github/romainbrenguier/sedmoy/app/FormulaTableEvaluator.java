@@ -14,6 +14,8 @@ import org.codehaus.groovy.control.CompilationFailedException;
 
 public class FormulaTableEvaluator {
 
+  private final CachedFileReader cachedFileReader = new CachedFileReader();
+
   public DataTable evaluate(GroovyInterpreter interpreter,
       Map<String, DataTable> environment,
       FormulaTable table) throws GroovyException {
@@ -57,6 +59,7 @@ public class FormulaTableEvaluator {
       FormulaTable table) throws GroovyException {
     Object result;
     interpreter.setScript(table.getGroovyScript());
+    interpreter.set("cachedFileReader", cachedFileReader);
     result = interpreter.run();
 
     return convertObjectToTable(result);
