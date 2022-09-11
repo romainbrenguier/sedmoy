@@ -52,6 +52,7 @@ public class SedmoyToolWindowFactory implements ToolWindowFactory {
     updateButton.addActionListener(actionEvent ->
         sedmoyService.updateToolWindow(project));
     buttons.add(updateButton);
+    // TODO: add 'lock' button and 'save' buttons, and reload files
     toolPanel.add(BorderLayout.NORTH, buttons);
 
     final JTable tableComponent = new JTable(new EmptyTableModel());

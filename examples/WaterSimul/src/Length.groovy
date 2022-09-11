@@ -21,6 +21,10 @@ class Length {
         ofMeter(inMeter + other.inMeter)
     }
 
+    Length minus(Length other) {
+        ofMeter(inMeter - other.inMeter)
+    }
+
     int compare(Length other) {
         def diff = inMeter - other.inMeter
         if (diff > 0.0) return 1;

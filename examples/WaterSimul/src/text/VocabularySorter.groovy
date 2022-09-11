@@ -1,21 +1,20 @@
 package text
 
 import java.nio.file.Path
-import java.util.stream.Collectors
 
-def table = cachedFileReader.readCsv(((Path) currentDirectory).resolve("voc-example.csv").normalize().toString())
+def table = cachedFileReader.readCsv(((Path) currentDirectory).resolve("voc-example1.csv").normalize().toString())
 
 def indexedTable = [:]
 def scores = [:]
 
 static String keyOfString(String s) {
-    (s.size() > 2 ? s.substring(0, 2) : s).toLowerCase()
+    (s.size() > 1 ? s.substring(0, 1) : s).toLowerCase()
 }
 
 static int scoreOfRank(int rank) { 10000 / rank }
 
 int offset = 1
-for (int i = offset; i < Math.min(10, 50); ++i) {
+for (int i = offset; i < 51; ++i) {
     def key = table.cellAsString(1, i)
     def value = table.cellAsString(2, i)
     indexedTable[key] = value
@@ -25,7 +24,7 @@ for (int i = offset; i < Math.min(10, 50); ++i) {
 }
 
 static String formatSection(Map<String, String> map) {
-    map.collect { "$it.key : $it.value" }.join("\n  * ")
+    map.collect { "$it.key : $it.value" }.join("\n  ")
 }
 
 def grouped = indexedTable.groupBy { keyOfString it.key as String }
