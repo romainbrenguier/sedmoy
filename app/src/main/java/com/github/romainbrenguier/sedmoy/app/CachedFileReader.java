@@ -24,7 +24,7 @@ public class CachedFileReader {
     } catch (IOException exception) {
       exception.printStackTrace();
       final DataTable table = new DataTable(new Dimension(1, 1));
-      table.set(1, 1, exception.getMessage());
+      table.set(0, 0, exception.getMessage());
       return table;
     }
   }
