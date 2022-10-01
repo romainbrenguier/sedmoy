@@ -2,7 +2,9 @@ package text
 
 import java.nio.file.Path
 
-def table = cachedFileReader.readCsv(((Path) currentDirectory).resolve("voc-example1.csv").normalize().toString())
+
+def inputFile = "voc-example.csv"
+def table = cachedFileReader.readCsv(((Path) currentDirectory).resolve(inputFile).normalize().toString())
 
 def indexedTable = [:]
 def scores = [:]
@@ -13,23 +15,25 @@ static String keyOfString(String s) {
 
 static int scoreOfRank(int rank) { 10000 / rank }
 
-int offset = 1
-for (int i = offset; i < 51; ++i) {
-    def key = table.cellAsString(1, i)
-    def value = table.cellAsString(2, i)
-    indexedTable[key] = value
-    def shortKey = keyOfString(key)
-    scores[shortKey] = scores.getOrDefault(shortKey, 0) +
-            scoreOfRank(Integer.parseInt(table.cellAsString(0, i).trim()))
-}
-
 static String formatSection(Map<String, String> map) {
     map.collect { "$it.key : $it.value" }.join("\n  ")
 }
 
-def grouped = indexedTable.groupBy { keyOfString it.key as String }
+static void makeIndexAndScore(table, indexedTable, scores) {
+    int offset = 1
+    for (int i = offset; i < Math.min(table.getDimension().numberOfLines, 50); ++i) {
+        def key = table.cellAsString(1, i)
+        def value = table.cellAsString(2, i)
+        indexedTable[key] = value
+        def shortKey = keyOfString(key)
+        scores[shortKey] = scores.getOrDefault(shortKey, 0) +
+                scoreOfRank(Integer.parseInt(table.cellAsString(0, i).trim()))
+    }
+}
 
-//grouped.entrySet()
+makeIndexAndScore(table, indexedTable, scores)
+
+def grouped = indexedTable.groupBy { keyOfString it.key as String }
 grouped
    .sort { entry -> -scores[entry.key] }
    .collect {
@@ -37,4 +41,3 @@ grouped
                 "# $entry.key [${scores[entry.key]}]\n\n" +
                         "  ${formatSection(entry.value as Map<String, String>)}"
         }.join("\n\n")
-
