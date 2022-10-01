@@ -13,6 +13,10 @@ public class CachedFileReader {
   private final Map<String, DataTable> cache = new HashMap<>();
   private final CsvParser defaultCsvParser = new CsvParser(CsvParser.DEFAULT_SEPARATOR);
 
+  public void setSeparator(String separator) {
+    defaultCsvParser.setSeparator(separator);
+  }
+
   public DataTable readCsv(String fileName) {
     return cache.computeIfAbsent(fileName, this::readCsvUncached);
   }

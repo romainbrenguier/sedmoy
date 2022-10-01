@@ -13,6 +13,10 @@ public class CsvParser {
     this.separator = separator;
   }
 
+  public void setSeparator(String separator) {
+    this.separator = separator;
+  }
+
   public CsvParser() {
     this(DEFAULT_SEPARATOR);
   }
