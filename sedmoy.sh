@@ -6,4 +6,4 @@ JVM_ARGS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
 #java $JVM_ARGS -jar $DIR/target/sedmoy-1.0-SNAPSHOT.jar "$@"
 cd app
 echo $@
-gradle run --args "$@"
+java -jar build/libs/app-1.0-SNAPSHOT-all.jar "$@"
