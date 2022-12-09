@@ -77,10 +77,11 @@ public class Main implements Runnable {
                 groovyInterpreter.set("htmlToMobi", new HtmlToMobi());
                 groovyInterpreter.setCurrentDirectory(Paths.get(System.getProperty("user.dir")));
                 groovyInterpreter.setCachedFileReader(new CachedFileReader());
-                System.out.println("Reading from file: " + groovyScript);
+//                System.out.println("Reading from file: " + groovyScript);
                 final String script = String.join("\n", Files.readAllLines(groovyScript));
                 groovyInterpreter.setScript(script);
                 groovyInterpreter.run();
+                return;
             } catch (MalformedInputException e) {
                 System.out.println("Failure reading the file. Before running the script, ensure the\n"
                         + "input file is using utf-8 encoding. On linux use `file -i <filname>` to find the\n"
