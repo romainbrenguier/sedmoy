@@ -5,8 +5,13 @@ import java.nio.file.Path
 def inputFile = "/home/rbrenguier/Documents/1000_most_common_Danish.csv"
 def linesToSelect = 100
 
+def table = input
+if (input == null) {
+    toRead = ((Path) currentDirectory).resolve(inputFile).normalize().toString()
+    table = cachedFileReader.readCsv(toRead)
+}
+
 cachedFileReader.setSeparator("\t")
-def table = cachedFileReader.readCsv(((Path) currentDirectory).resolve(inputFile).normalize().toString())
 
 def indexedTable = [:]
 def scores = [:]
@@ -36,10 +41,12 @@ static void makeIndexAndScore(table, indexedTable, scores, limitLines) {
 makeIndexAndScore(table, indexedTable, scores, linesToSelect)
 
 def grouped = indexedTable.groupBy { keyOfString it.key as String }
-grouped
+def result = grouped
    .sort { entry -> -scores[entry.key] }
    .collect {
             entry ->
                 "# $entry.key [${scores[entry.key]}]\n\n" +
                         "  ${formatSection(entry.value as Map<String, String>)}"
         }.join("\n\n")
+
+println(result)
