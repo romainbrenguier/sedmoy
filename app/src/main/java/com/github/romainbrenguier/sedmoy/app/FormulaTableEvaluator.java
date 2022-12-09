@@ -59,7 +59,7 @@ public class FormulaTableEvaluator {
       FormulaTable table) throws GroovyException {
     Object result;
     interpreter.setScript(table.getGroovyScript());
-    interpreter.set("cachedFileReader", cachedFileReader);
+    interpreter.setCachedFileReader(cachedFileReader);
     result = interpreter.run();
 
     return convertObjectToTable(result);

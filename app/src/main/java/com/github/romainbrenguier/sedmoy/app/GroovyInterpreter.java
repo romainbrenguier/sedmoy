@@ -55,6 +55,10 @@ public class GroovyInterpreter {
     }
   }
 
+  public void setCachedFileReader(CachedFileReader cachedFileReader) {
+    set("cachedFileReader", cachedFileReader);
+  }
+
   public Object run() throws GroovyException {
     try {
       return script.run();

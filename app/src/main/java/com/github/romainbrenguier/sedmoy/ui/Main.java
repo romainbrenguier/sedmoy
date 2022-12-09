@@ -1,5 +1,6 @@
 package com.github.romainbrenguier.sedmoy.ui;
 
+import com.github.romainbrenguier.sedmoy.app.CachedFileReader;
 import com.github.romainbrenguier.sedmoy.app.GroovyInterpreter;
 import com.github.romainbrenguier.sedmoy.app.TableEvaluator;
 import com.github.romainbrenguier.sedmoy.model.CsvParser;
@@ -11,6 +12,7 @@ import com.github.romainbrenguier.sedmoy.app.GroovyException;
 import com.github.romainbrenguier.sedmoy.app.HtmlToMobi;
 import com.github.romainbrenguier.sedmoy.app.TableToHtml;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,6 +22,8 @@ import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.stream.Collectors;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -55,7 +59,7 @@ public class Main implements Runnable {
   Path groovyScript;
 
   @Option(names = {"--gui"})
-  Boolean useGraphicalInterface;
+  boolean useGraphicalInterface;
 
   public static void main(String[] args) {
     CommandLine.run(new Main(), args);
@@ -70,7 +74,10 @@ public class Main implements Runnable {
         groovyInterpreter.set("input", table);
         groovyInterpreter.set("tableToHtml", new TableToHtml());
         groovyInterpreter.set("htmlToMobi", new HtmlToMobi());
-        groovyInterpreter.run(groovyScript.toFile());
+        groovyInterpreter.setCachedFileReader(new CachedFileReader());
+        final String script = String.join("\n", Files.readAllLines(groovyScript));
+        groovyInterpreter.setScript(script);
+        groovyInterpreter.run();
       } catch (MalformedInputException e) {
         System.out.println("Failure reading the file. Before running the script, ensure the\n"
             + "input file is using utf-8 encoding. On linux use `file -i <filname>` to find the\n"
