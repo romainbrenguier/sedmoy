@@ -21,6 +21,10 @@ public class CachedFileReader {
     return cache.computeIfAbsent(fileName, this::readCsvUncached);
   }
 
+  public void resetCache() {
+    cache.clear();
+  }
+
   private DataTable readCsvUncached(String fileName) {
     try {
       return defaultCsvParser
