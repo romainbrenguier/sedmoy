@@ -2,8 +2,10 @@ package text
 
 import java.nio.file.Path
 
+def inputFile = "/home/rbrenguier/Documents/1000_most_common_Danish.csv"
+def linesToSelect = 100
 
-def inputFile = "voc-example.csv"
+cachedFileReader.setSeparator("\t")
 def table = cachedFileReader.readCsv(((Path) currentDirectory).resolve(inputFile).normalize().toString())
 
 def indexedTable = [:]
@@ -16,12 +18,12 @@ static String keyOfString(String s) {
 static int scoreOfRank(int rank) { 10000 / rank }
 
 static String formatSection(Map<String, String> map) {
-    map.collect { "$it.key : $it.value" }.join("\n  ")
+    map.collect { "  * $it.key : $it.value" }.join("\n  ")
 }
 
-static void makeIndexAndScore(table, indexedTable, scores) {
+static void makeIndexAndScore(table, indexedTable, scores, limitLines) {
     int offset = 1
-    for (int i = offset; i < Math.min(table.getDimension().numberOfLines, 50); ++i) {
+    for (int i = offset; i < Math.min(table.getDimension().numberOfLines, limitLines); ++i) {
         def key = table.cellAsString(1, i)
         def value = table.cellAsString(2, i)
         indexedTable[key] = value
@@ -31,7 +33,7 @@ static void makeIndexAndScore(table, indexedTable, scores) {
     }
 }
 
-makeIndexAndScore(table, indexedTable, scores)
+makeIndexAndScore(table, indexedTable, scores, linesToSelect)
 
 def grouped = indexedTable.groupBy { keyOfString it.key as String }
 grouped
