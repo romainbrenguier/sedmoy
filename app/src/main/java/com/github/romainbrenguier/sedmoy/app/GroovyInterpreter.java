@@ -59,6 +59,10 @@ public class GroovyInterpreter {
     set("cachedFileReader", cachedFileReader);
   }
 
+  public void setCurrentDirectory(Path directory) {
+    set("currentDirectory", directory);
+  }
+
   public Object run() throws GroovyException {
     try {
       return script.run();

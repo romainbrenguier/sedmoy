@@ -109,7 +109,7 @@ public final class SedmoyService {
     }
     final FormulaTable formula = new FormulaTable(new Dimension(1, 1), text);
     try {
-      groovyInterpreter.set("currentDirectory", directory);
+      groovyInterpreter.setCurrentDirectory(directory);
       final DataTable table = tableEvaluator
           .evaluateCollector(groovyInterpreter, formula);
       return new EvaluationResult(
