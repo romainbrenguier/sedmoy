@@ -26,6 +26,10 @@ static String formatSection(Map<String, String> map) {
     map.collect { "  * $it.key : $it.value" }.join("\n  ")
 }
 
+static String formatSectionKeyOnly(Map<String, String> map) {
+    map.collect { "  * $it.key" }.join("\n")
+}
+
 static void makeIndexAndScore(table, indexedTable, scores, limitLines) {
     int offset = 1
     for (int i = offset; i < Math.min(table.getDimension().numberOfLines, limitLines); ++i) {
@@ -41,7 +45,7 @@ static void makeIndexAndScore(table, indexedTable, scores, limitLines) {
 makeIndexAndScore(table, indexedTable, scores, linesToSelect)
 
 def grouped = indexedTable.groupBy { keyOfString it.key as String }
-def result = grouped
+def toLearn = grouped
    .sort { entry -> -scores[entry.key] }
    .collect {
             entry ->
@@ -49,4 +53,15 @@ def result = grouped
                         "  ${formatSection(entry.value as Map<String, String>)}"
         }.join("\n\n")
 
-println(result)
+println(toLearn)
+
+println("\n\n# Test")
+def toTest = grouped
+    .sort { entry -> -scores[entry.key] }
+       .collect {
+            entry ->
+                "${formatSectionKeyOnly(entry.value as Map<String, String>)}"
+        }.join("\n")
+
+println(toTest)
+

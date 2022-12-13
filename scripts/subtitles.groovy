@@ -1,8 +1,9 @@
-import com.github.romainbrenguier.sedmoy.csv.Table
+//import com.github.romainbrenguier.sedmoy.csv.Table
 
 // Take an srt file and remove non text
 
-def table = input as Table
+def table = input
+        // as Table
 
 println()
 int to_skip = 2
