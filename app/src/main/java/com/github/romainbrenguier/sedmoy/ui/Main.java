@@ -22,7 +22,9 @@ import java.nio.charset.MalformedInputException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import picocli.CommandLine;
@@ -36,7 +38,7 @@ public class Main implements Runnable {
             "Welcome to Sedmoy. This is a dummy table with 1 cell.";
 
     @Option(names = {"--input", "-i"})
-    Path input;
+    List<Path> input;
 
     @Option(names = {"--output", "-o"})
     Path output;
@@ -68,11 +70,18 @@ public class Main implements Runnable {
 
     @Override
     public void run() {
+        final CsvParser csvParser = new CsvParser(separator);
         if (groovyScript != null) {
             try {
-                final DataTable table = new CsvParser(separator).parseLines(Files.readAllLines(input));
+                final ArrayList<DataTable> dataTables = new ArrayList<>();
+                for (Path path : input) {
+                    dataTables.add(csvParser.parseLines(Files.readAllLines(path)));
+                }
                 final GroovyInterpreter groovyInterpreter = new GroovyInterpreter();
-                groovyInterpreter.set("input", table);
+                groovyInterpreter.set("input", dataTables.get(0));
+                for (int i=1; i < dataTables.size(); ++i) {
+                    groovyInterpreter.set("input" + i, dataTables.get(i));
+                }
                 groovyInterpreter.set("tableToHtml", new TableToHtml());
                 groovyInterpreter.set("htmlToMobi", new HtmlToMobi());
                 groovyInterpreter.setCurrentDirectory(Paths.get(System.getProperty("user.dir")));
@@ -99,14 +108,14 @@ public class Main implements Runnable {
                 final DataTable table = new DataTable(new Dimension(1, 1));
                 table.set(0, 0, DEFAULT_CONTENT);
                 document.add(tableName, table);
-            } else if (input.toString().endsWith("csv")) {
+            } else if (input.get(0).toString().endsWith("csv")) {
                 System.out.println("Convert csv to sedmoy document");
-                final DataTable table = new CsvParser(separator).parseLines(Files.readAllLines(input));
+                final DataTable table = csvParser.parseLines(Files.readAllLines(input.get(0)));
                 document = new Document();
                 document.add(tableName, table);
-            } else if (input.toString().endsWith("sdm")) {
+            } else if (input.get(0).toString().endsWith("sdm")) {
                 System.out.println("Read sedmoy document");
-                document = Document.ofJson(new FileInputStream(input.toFile()));
+                document = Document.ofJson(new FileInputStream(input.get(0).toFile()));
             } else {
                 document = new Document();
             }
