@@ -12,12 +12,13 @@ static Map<String, String> mapOfInput(table) {
 }
 
 def filterMap = mapOfInput(input)
-def map1 = mapOfInput(input1)
-def map2 = mapOfInput(input2)
-def map3 = mapOfInput(input3)
-def map4 = mapOfInput(input4)
+def mapList = new ArrayList<Map<String, String>>()
+for (int i = 1; i < inputs.size(); ++i) {
+    mapList.add(mapOfInput(inputs.get(i)))
+}
 
+int i = 0;
 filterMap.forEach((key, value) ->
-    println(map1.get(key) + " | " + map2.get(key) + " | " +
-            map3.get(key) + " | " + map4.get(key) + " | " + key )
-)
+        println(Integer.toString(i++) + ";" + mapList.collect {it.get(key)}.
+                join(";") +
+                ";" + key))

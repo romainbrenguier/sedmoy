@@ -79,9 +79,11 @@ public class Main implements Runnable {
                 }
                 final GroovyInterpreter groovyInterpreter = new GroovyInterpreter();
                 groovyInterpreter.set("input", dataTables.get(0));
-                for (int i=1; i < dataTables.size(); ++i) {
-                    groovyInterpreter.set("input" + i, dataTables.get(i));
+                final ArrayList<Object> inputList = new ArrayList<>();
+                for (int i=0; i < dataTables.size(); ++i) {
+                    inputList.add(dataTables.get(i));
                 }
+                groovyInterpreter.set("inputs", inputList);
                 groovyInterpreter.set("tableToHtml", new TableToHtml());
                 groovyInterpreter.set("htmlToMobi", new HtmlToMobi());
                 groovyInterpreter.setCurrentDirectory(Paths.get(System.getProperty("user.dir")));
@@ -95,7 +97,8 @@ public class Main implements Runnable {
                 System.out.println("Failure reading the file. Before running the script, ensure the\n"
                         + "input file is using utf-8 encoding. On linux use `file -i <filname>` to find the\n"
                         + "current encoding and:\n"
-                        + "`iconv -f <current encoding> -t UTF-8 <filename> -o <outpute_file>` to convert it");
+                        + "`iconv -f <current encoding> -t UTF-8 <filename> -o <outpute_file>` to" +
+                                " convert it.\nRun `iconv -l` for a list of supported encoding.");
                 e.printStackTrace();
             } catch (GroovyException | IOException e) {
                 e.printStackTrace();

@@ -3,7 +3,7 @@ package text
 import java.nio.file.Path
 
 def inputFile = "/home/rbrenguier/Documents/1000_most_common_Danish.csv"
-def linesToSelect = 100
+def linesToSelect = 200
 
 def table = input
 if (input == null) {
@@ -16,14 +16,37 @@ cachedFileReader.setSeparator("\t")
 def indexedTable = [:]
 def scores = [:]
 
+static def vowels() {
+    return "[aeiouyаеиоуяъ]"
+}
+
+static String firstVowel(String s) {
+    for (int i = 0; i < s.length(); ++i) {
+        if (java.util.regex.Pattern.matches(vowels(), s.charAt(i).
+                toString()))
+            return s.charAt(i).toString()
+    }
+    return "_"
+}
+
+static String firstConsonnent(String s) {
+    for (int i = 0; i < s.length(); ++i) {
+        if (!(java.util.regex.Pattern.matches(vowels(), s.charAt(i).
+                toString())))
+            return s.charAt(i).toString()
+    }
+    return "_"
+}
+
 static String keyOfString(String s) {
-    (s.size() > 1 ? s.substring(0, 1) : s).toLowerCase()
+//    (s.size() > 1 ? s.substring(0, 1) : s).toLowerCase()
+    firstVowel(s)+firstConsonnent(s)
 }
 
 static int scoreOfRank(int rank) { 10000 / rank }
 
 static String formatSection(Map<String, String> map) {
-    map.collect { "  * $it.key : $it.value" }.join("\n  ")
+    map.sort {it.key} .collect { "  * $it.key : $it.value" }.join("\n  ")
 }
 
 static String formatSectionKeyOnly(Map<String, String> map) {
@@ -46,7 +69,8 @@ makeIndexAndScore(table, indexedTable, scores, linesToSelect)
 
 def grouped = indexedTable.groupBy { keyOfString it.key as String }
 def toLearn = grouped
-   .sort { entry -> -scores[entry.key] }
+   .sort { entry -> entry.key }
+//-scores[entry.key] }
    .collect {
             entry ->
                 "# $entry.key [${scores[entry.key]}]\n\n" +
@@ -65,3 +89,13 @@ def toTest = grouped
 
 println(toTest)
 
+
+println("\n\n# Solution")
+def solution = grouped
+    .sort { entry -> -scores[entry.key] }
+       .collect {
+            entry ->
+                "  ${formatSection(entry.value as Map<String, String>)}"
+        }.join("\n")
+
+println(solution)
