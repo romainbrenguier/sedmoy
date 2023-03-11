@@ -1,6 +1,7 @@
 package com.github.romainbrenguier.sedmoy.app;
 
 import com.github.romainbrenguier.sedmoy.model.DataTable;
+import com.github.romainbrenguier.sedmoy.model.DatasawTable;
 import com.github.romainbrenguier.sedmoy.model.Dimension;
 import com.github.romainbrenguier.sedmoy.model.FormulaTable;
 import java.lang.reflect.Array;
@@ -11,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import org.codehaus.groovy.control.CompilationFailedException;
+import tech.tablesaw.api.Table;
 
 public class FormulaTableEvaluator {
 
@@ -112,6 +114,57 @@ public class FormulaTableEvaluator {
     return singletonTable(result);
   }
 
+  private Table convertObjectToTablesaw(Object result) {
+    if (result instanceof List) {
+      List<?> list = (List<?>) result;
+      final List<Table> tables = list.stream()
+              .map(this::convertObjectToTablesaw).collect(Collectors.toList());
+      return DatasawTable
+              .mergeByFirstColumn(tables);
+    }
+
+//
+//    if (result instanceof String) {
+//      String[] lines = ((String) result).split("\n");
+//      final DataTable resultTable =
+//          new DataTable(new Dimension(lines.length, 1));
+//      for (int line = 0; line < lines.length; ++line) {
+//        resultTable.set(0, line, lines[line]);
+//      }
+//      return resultTable;
+//    }
+//
+//    if (result instanceof Map) {
+//      Map<?, ?> map = (Map<?, ?>) result;
+//      final DataTable resultTable =
+//          new DataTable(new Dimension(map.size(), 2));
+//      int line = 0;
+//      for (Map.Entry<?, ?> entry : map.entrySet()) {
+//        resultTable.set(0, line, entry.getKey().toString());
+//        resultTable.set(1, line, entry.getValue().toString());
+//        line++;
+//      }
+//      return resultTable;
+//    }
+//
+//    if (result instanceof DataTable) {
+//      return (DataTable) result;
+//    }
+//
+//    if (result.getClass().isArray()) {
+//      final Object[] objects = Arrays
+//          .copyOf((Object[]) result.getClass().cast(result),
+//              Array.getLength(result));
+//      final List<Object> objectList = Arrays.stream(objects)
+//          .collect(Collectors.toList());
+//      return convertObjectToTable(objectList);
+//    }
+//
+//    return singletonTable(result);
+//  }
+
+    return null;
+  }
   private DataTable singletonTable(Object result) {
     final List<Field> fields =
         Arrays.stream(result.getClass().getDeclaredFields()).filter(

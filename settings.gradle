@@ -2,3 +2,5 @@ rootProject.name = 'sedmoy'
 
 include 'app'
 include 'plugin'
+include 'story'
+
