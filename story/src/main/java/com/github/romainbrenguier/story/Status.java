@@ -1,6 +1,5 @@
 package com.github.romainbrenguier.story;
 
-import java.io.Writer;
 import java.util.Random;
 
 public enum Status {
