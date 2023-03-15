@@ -1,13 +1,22 @@
 package com.github.romainbrenguier.story;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
 public class TimedAction {
-    Date time;
+    Calendar time;
     Action action;
 
-    static Date randomDate(Random r) {
-        return new Date(1850, r.nextInt(12), r.nextInt(28));
+    public static Calendar randomDate(Random r) {
+        final Calendar calendar = Calendar.getInstance();
+        calendar.set(1850, r.nextInt(12), r.nextInt(28));
+        return calendar;
+    }
+
+    @Override
+    public String toString() {
+        return "At " + time.get(Calendar.HOUR) + " " + time.get(Calendar.MINUTE) + ", " + action;
     }
 }

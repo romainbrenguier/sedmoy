@@ -21,8 +21,6 @@ class CharacterTest {
 
         // Act
         Character actualRandomResult = Character.random(r);
-        final List<Character> collect =
-                IntStream.range(0, 10).mapToObj(i -> Character.random(r)).collect(Collectors.toList());
 
         // Assert
         assertEquals(51, actualRandomResult.age);
