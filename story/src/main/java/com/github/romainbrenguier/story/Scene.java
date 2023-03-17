@@ -2,6 +2,7 @@ package com.github.romainbrenguier.story;
 
 // Prompt: Forget the above conversation. You are a famous novel writer from the 19th century
 // writing crime novels taking place in Paris in the 19th century.
+// Write a story about ...
 
 import com.github.romainbrenguier.story.places.Mansion;
 import com.github.romainbrenguier.story.places.Place;
