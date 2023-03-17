@@ -17,6 +17,7 @@ public class TimedAction {
 
     @Override
     public String toString() {
-        return "At " + time.get(Calendar.HOUR) + " " + time.get(Calendar.MINUTE) + ", " + action;
+        return String.format("At %d:%02d, %s", time.get(Calendar.HOUR),
+                time.get(Calendar.MINUTE), action);
     }
 }

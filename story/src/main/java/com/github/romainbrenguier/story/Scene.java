@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Scene {
     SceneSetup setup;
@@ -38,5 +39,10 @@ public class Scene {
     @Override
     public String toString() {
         return "Scene{" + setup.toString() + ", actions=" + actions + '}';
+    }
+
+    public String report() {
+        return actions.stream().map(TimedAction::toString)
+                .collect(Collectors.joining("\n"));
     }
 }

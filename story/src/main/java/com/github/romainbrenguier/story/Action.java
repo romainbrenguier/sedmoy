@@ -23,9 +23,7 @@ public interface Action {
 
         @Override
         public String toString() {
-            return character + " goes " +
-                    " from " + from +
-                    " to " + to + ".";
+            return character + " goes from " + from + " to " + to + ".";
         }
     }
 
