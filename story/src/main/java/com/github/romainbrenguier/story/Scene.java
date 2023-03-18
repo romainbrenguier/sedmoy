@@ -6,6 +6,7 @@ package com.github.romainbrenguier.story;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -17,23 +18,45 @@ public class Scene {
     public static Scene make(Random r) {
         final Scene scene = new Scene();
         scene.setup = SceneSetup.make(r);
-        Calendar start = TimedAction.randomDate(r);
+        final SceneState state = new SceneState(scene.setup);
+        Calendar date = TimedAction.randomDate(r);
         for (int i = 0; i < 10; ++i) {
             final TimedAction timedAction = new TimedAction();
-            timedAction.time = Calendar.getInstance();
-            timedAction.time.set(start.get(Calendar.YEAR), start.get(Calendar.MONTH),
-                    start.get(Calendar.DAY_OF_MONTH));
-            timedAction.time.set(Calendar.HOUR, 19);
-            timedAction.time.set(Calendar.MINUTE, i);
-            final Action.Move move = new Action.Move();
-            move.character =
-                    scene.setup.characters.get(r.nextInt(scene.setup.characters.size()));
-            move.from = scene.setup.place.rooms.get(r.nextInt(scene.setup.place.rooms.size()));
-            move.to = scene.setup.place.rooms.get(r.nextInt(scene.setup.place.rooms.size()));
-            timedAction.action = move;
+            setTimeOfDay(timedAction, date, 19, i);
+            timedAction.action = scene.makeAction(r, state);
             scene.actions.add(timedAction);
         }
         return scene;
+    }
+
+    private Action makeAction(Random r, SceneState state) {
+        Character character = setup.characters.get(r.nextInt(setup.characters.size()));
+        final Integer position = state.getPositionIndex(character);
+        if (position == null) {
+            final Action.Arrive arrive = new Action.Arrive();
+            arrive.character = character;
+            arrive.in = setup.place.rooms.get(RandomUtil.nextInList(r, setup.place.entrances));
+            return arrive;
+        }
+        final Integer nextPosition = RandomUtil.nextInList(r, setup.place.connectedFrom(position));
+        if (nextPosition != null) {
+            final Action.Move move = new Action.Move();
+            move.character = character;
+            move.fromRoom = position;
+            move.toRoom = nextPosition;
+            return move;
+        }
+        final Action.Talk talk = new Action.Talk();
+        talk.talking = Collections.singletonList(character);
+        return talk;
+    }
+
+    private static void setTimeOfDay(TimedAction timedAction, Calendar day, int hours, int minutes) {
+        timedAction.time = Calendar.getInstance();
+        timedAction.time.set(day.get(Calendar.YEAR), day.get(Calendar.MONTH),
+                day.get(Calendar.DAY_OF_MONTH));
+        timedAction.time.set(Calendar.HOUR, hours);
+        timedAction.time.set(Calendar.MINUTE, minutes);
     }
 
     @Override

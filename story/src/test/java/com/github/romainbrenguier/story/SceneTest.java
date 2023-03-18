@@ -29,7 +29,9 @@ class SceneTest {
 
         // Assert
         List<TimedAction> timedActionList = actualMakeResult.actions;
+        String report = actualMakeResult.report();
         assertEquals(10, timedActionList.size());
+        assertNotNull(report);
     }
 }
 
