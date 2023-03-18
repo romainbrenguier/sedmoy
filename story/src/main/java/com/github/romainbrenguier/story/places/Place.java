@@ -4,11 +4,15 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Place {
     PlaceType type;
     public List<Room> rooms = new ArrayList<>();
+
+    /** Correspond to indexes in {@link #rooms} */
+    public List<Integer> entrances = Collections.singletonList(0);
     ListMultimap<Integer, Integer> connections = ArrayListMultimap.create();
 
     Place(PlaceType type) {
@@ -21,8 +25,16 @@ public class Place {
     }
 
     void connect(int roomIndex1, int roomIndex2) {
-        if (roomIndex1 < roomIndex2) connections.put(roomIndex1, roomIndex2);
-        else connections.put(roomIndex2, roomIndex1);
+        connections.put(roomIndex1, roomIndex2);
+        connections.put(roomIndex2, roomIndex1);
+    }
+
+    public boolean areConnected(int roomIndex1, int roomIndex2) {
+        return connections.get(roomIndex1).contains(roomIndex2);
+    }
+
+    public List<Integer> connectedFrom(int roomIndex) {
+        return connections.get(roomIndex);
     }
 
     @Override
