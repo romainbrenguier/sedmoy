@@ -1,7 +1,5 @@
 package com.github.romainbrenguier.story;
 
-import com.github.romainbrenguier.story.places.Room;
-
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,5 +21,15 @@ public class SceneState {
     @Nullable
     public Integer getPositionIndex(Character c) {
         return positions.get(c);
+    }
+
+    public void applyAction(Action action) {
+        if (action instanceof Action.Move) {
+            final Action.Move move = (Action.Move) action;
+            move(move.character, move.toRoom);
+        } else if (action instanceof Action.Arrive) {
+            final Action.Arrive arrive = (Action.Arrive) action;
+            positions.put(arrive.character, arrive.inRoom);
+        }
     }
 }
