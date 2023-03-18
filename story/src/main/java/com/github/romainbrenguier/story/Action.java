@@ -8,11 +8,11 @@ public interface Action {
 
     class Arrive implements Action {
         Character character;
-        Room in;
+        Integer inRoom;
 
         @Override
         public String toString() {
-            return character + " arrives in " + in + ".";
+            return character + " arrives in " + inRoom + ".";
         }
     }
 
