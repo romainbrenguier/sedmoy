@@ -18,16 +18,16 @@ public interface Action {
 
     class Move implements Action {
         public Character character;
-        public Room from;
-        public Room to;
+        public Integer fromRoom;
+        public Integer toRoom;
 
         @Override
         public String toString() {
-            return character + " goes from " + from + " to " + to + ".";
+            return character + " goes from " + fromRoom + " to " + toRoom + ".";
         }
     }
 
-    class Talk {
+    class Talk implements Action {
         List<Character> talking;
     }
 
