@@ -25,6 +25,7 @@ public class Scene {
             setTimeOfDay(timedAction, date, 19, i);
             timedAction.action = scene.makeAction(r, state);
             scene.actions.add(timedAction);
+            state.applyAction(timedAction.action);
         }
         return scene;
     }
@@ -35,7 +36,7 @@ public class Scene {
         if (position == null) {
             final Action.Arrive arrive = new Action.Arrive();
             arrive.character = character;
-            arrive.in = setup.place.rooms.get(RandomUtil.nextInList(r, setup.place.entrances));
+            arrive.inRoom = RandomUtil.nextInList(r, setup.place.entrances);
             return arrive;
         }
         final Integer nextPosition = RandomUtil.nextInList(r, setup.place.connectedFrom(position));
