@@ -31,6 +31,17 @@ public class Scene {
     }
 
     private Action makeAction(Random r, SceneState state) {
+        final List<Character> inKilledRoom = state.killed.stream()
+                .map(c -> state.getPositionIndex(c))
+                .flatMap(pos -> state.charactersInRoom(pos).stream())
+                .collect(Collectors.toList());
+
+        if (!inKilledRoom.isEmpty()) {
+            final Action.Shout shout = new Action.Shout();
+            shout.by = inKilledRoom.get(0);
+            return shout;
+        }
+
         Character character = setup.characters.get(r.nextInt(setup.characters.size()));
         final Integer position = state.getPositionIndex(character);
         if (position == null) {

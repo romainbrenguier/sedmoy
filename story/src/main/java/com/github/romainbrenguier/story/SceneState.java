@@ -10,10 +10,15 @@ import java.util.stream.Collectors;
 public class SceneState {
     private final SceneSetup setup;
 
-    /** Indexes corresponds to room indexes, or null if not present*/
+    /**
+     * Indexes corresponds to room indexes, or null if not present
+     */
     private final Map<Character, Integer> positions = new LinkedHashMap<>();
 
-    private final List<Character> killed = new ArrayList<>();
+    public final List<Character> killed = new ArrayList<>();
+
+    @Nullable
+    Integer roomWhereShoutHeard;
 
     public SceneState(SceneSetup setup) {
         this.setup = setup;
@@ -44,6 +49,8 @@ public class SceneState {
             positions.put(arrive.character, arrive.inRoom);
         } else if (action instanceof Action.Kill) {
             killed.add(((Action.Kill) action).target);
+        } else if (action instanceof Action.Shout) {
+            roomWhereShoutHeard = positions.get(((Action.Shout) action).by);
         }
     }
 }
