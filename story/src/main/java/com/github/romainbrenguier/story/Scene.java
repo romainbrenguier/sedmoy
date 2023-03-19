@@ -39,6 +39,13 @@ public class Scene {
             arrive.inRoom = RandomUtil.nextInList(r, setup.place.entrances);
             return arrive;
         }
+
+        List<Character> charactersInRoom = state.charactersInRoom(position);
+        if (charactersInRoom.size() > 1 && r.nextInt(10) > 7) {
+            final Action.Talk talk = new Action.Talk();
+            talk.talking = charactersInRoom;
+            return talk;
+        }
         final Integer nextPosition = RandomUtil.nextInList(r, setup.place.connectedFrom(position));
         if (nextPosition != null) {
             final Action.Move move = new Action.Move();
@@ -47,9 +54,7 @@ public class Scene {
             move.toRoom = nextPosition;
             return move;
         }
-        final Action.Talk talk = new Action.Talk();
-        talk.talking = Collections.singletonList(character);
-        return talk;
+        return null;
     }
 
     private static void setTimeOfDay(TimedAction timedAction, Calendar day, int hours, int minutes) {

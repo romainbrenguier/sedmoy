@@ -2,7 +2,9 @@ package com.github.romainbrenguier.story;
 
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SceneState {
     private final SceneSetup setup;
@@ -21,6 +23,13 @@ public class SceneState {
     @Nullable
     public Integer getPositionIndex(Character c) {
         return positions.get(c);
+    }
+
+    public List<Character> charactersInRoom(Integer roomIndex) {
+        return positions.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(roomIndex))
+                .map(entry -> entry.getKey())
+                .collect(Collectors.toList());
     }
 
     public void applyAction(Action action) {
