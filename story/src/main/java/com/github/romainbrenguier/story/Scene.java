@@ -75,4 +75,11 @@ public class Scene {
                 .map(action -> action.format(roomIndex -> setup.place.rooms.get(roomIndex).toString()))
                 .collect(Collectors.joining("\n"));
     }
+
+    public String reportFromPointOfView(Character character) {
+        return actions.stream()
+                .filter(action -> action.action.actors().contains(character))
+                .map(action -> action.format(roomIndex -> setup.place.rooms.get(roomIndex).toString()))
+                .collect(Collectors.joining("\n"));
+    }
 }

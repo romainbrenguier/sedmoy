@@ -7,6 +7,11 @@ public class Main {
         final Random random = new Random();
         final Scene scene = Scene.make(random, 60);
         System.out.println("Setup: " + scene.setup);
-        System.out.println(scene.report());
+
+        for (Character c : scene.setup.characters) {
+            System.out.println("Report from: " + c);
+            System.out.println(scene.reportFromPointOfView(c));
+            System.out.println("\n");
+        }
     }
 }
