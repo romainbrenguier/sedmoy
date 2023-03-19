@@ -24,8 +24,8 @@ public class SceneSetup {
 
     @Override
     public String toString() {
-        return "place=" + place +
-                ", characters=" + characters.stream()
-                .map(c -> c.name.toString() + ":" + c.details()).collect(Collectors.joining(", "));
+        return "place:\n  " + place +
+                "\ncharacters:\n  " + characters.stream()
+                .map(c -> c.name.toString() + ":" + c.details()).collect(Collectors.joining("\n  "));
     }
 }

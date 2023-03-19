@@ -40,21 +40,10 @@ public class Place {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        final Room firstRoom = rooms.get(0);
-        builder.append(firstRoom);
-        List<Integer> toVisit = connections.get(0);
+        builder.append("[->]").append(entrances);
         for (int i = 0; i < rooms.size(); ++i) {
             builder.append(" (" + i + ") ").append(rooms.get(i));
         }
-//        while (!toVisit.isEmpty()) {
-//            builder.append('\n');
-//            List<Integer> newToVisit = new ArrayList<>();
-//            toVisit.forEach(i -> {
-//                builder.append(" " + rooms.get(i));
-//                newToVisit.addAll(connections.get(i));
-//            } );
-//            toVisit = newToVisit;
-//        }
         return builder.toString();
     }
 }
