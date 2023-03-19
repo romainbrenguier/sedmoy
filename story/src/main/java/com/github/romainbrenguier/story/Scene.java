@@ -15,12 +15,12 @@ public class Scene {
     SceneSetup setup;
     List<TimedAction> actions = new ArrayList<>();
 
-    public static Scene make(Random r) {
+    public static Scene make(Random r, int length) {
         final Scene scene = new Scene();
         scene.setup = SceneSetup.make(r);
         final SceneState state = new SceneState(scene.setup);
         Calendar date = TimedAction.randomDate(r);
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < length; ++i) {
             final TimedAction timedAction = new TimedAction();
             setTimeOfDay(timedAction, date, 19, i);
             timedAction.action = scene.makeAction(r, state);

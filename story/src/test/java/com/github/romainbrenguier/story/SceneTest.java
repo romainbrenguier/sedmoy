@@ -25,7 +25,7 @@ class SceneTest {
         Random r = new Random(42L);
 
         // Act
-        Scene actualMakeResult = Scene.make(r);
+        Scene actualMakeResult = Scene.make(r, 10);
 
         // Assert
         List<TimedAction> timedActionList = actualMakeResult.actions;

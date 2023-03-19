@@ -48,7 +48,7 @@ public interface Action {
         @Override
         public String format(Function<Integer, String> roomToString) {
             return talking.stream().map(Character::toString)
-                    .collect(Collectors.joining(", ")) + "are talking";
+                    .collect(Collectors.joining(", ")) + " are talking";
         }
     }
 
