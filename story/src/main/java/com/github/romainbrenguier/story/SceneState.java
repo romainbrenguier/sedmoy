@@ -1,6 +1,7 @@
 package com.github.romainbrenguier.story;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,8 @@ public class SceneState {
 
     /** Indexes corresponds to room indexes, or null if not present*/
     private final Map<Character, Integer> positions = new LinkedHashMap<>();
+
+    private final List<Character> killed = new ArrayList<>();
 
     public SceneState(SceneSetup setup) {
         this.setup = setup;
@@ -39,6 +42,8 @@ public class SceneState {
         } else if (action instanceof Action.Arrive) {
             final Action.Arrive arrive = (Action.Arrive) action;
             positions.put(arrive.character, arrive.inRoom);
+        } else if (action instanceof Action.Kill) {
+            killed.add(((Action.Kill) action).target);
         }
     }
 }

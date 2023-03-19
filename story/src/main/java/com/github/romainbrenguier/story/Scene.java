@@ -46,6 +46,12 @@ public class Scene {
             talk.talking = charactersInRoom;
             return talk;
         }
+        if (charactersInRoom.size() == 2 && r.nextInt(10) > 8) {
+            final Action.Kill kill = new Action.Kill();
+            kill.by = character;
+            kill.target = charactersInRoom.stream().filter(c -> c != character).findAny().get();
+            return kill;
+        }
         final Integer nextPosition = RandomUtil.nextInList(r, setup.place.connectedFrom(position));
         if (nextPosition != null) {
             final Action.Move move = new Action.Move();
