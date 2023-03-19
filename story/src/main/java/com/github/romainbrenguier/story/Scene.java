@@ -66,7 +66,8 @@ public class Scene {
     }
 
     public String report() {
-        return actions.stream().map(TimedAction::toString)
+        return actions.stream()
+                .map(action -> action.format(roomIndex -> setup.place.rooms.get(roomIndex).toString()))
                 .collect(Collectors.joining("\n"));
     }
 }
