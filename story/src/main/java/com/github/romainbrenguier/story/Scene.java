@@ -15,17 +15,19 @@ public class Scene {
     SceneSetup setup;
     List<TimedAction> actions = new ArrayList<>();
 
-    public static Scene make(Random r, int length) {
+    public static Scene make(Random r, int maxLength) {
         final Scene scene = new Scene();
         scene.setup = SceneSetup.make(r);
         final SceneState state = new SceneState(scene.setup);
         Calendar date = TimedAction.randomDate(r);
-        for (int i = 0; i < length; ++i) {
+        int minutes = 0;
+        while (state.roomWhereShoutHeard == null && minutes < maxLength) {
             final TimedAction timedAction = new TimedAction();
-            setTimeOfDay(timedAction, date, 19, i);
+            setTimeOfDay(timedAction, date, 19, minutes);
             timedAction.action = scene.makeAction(r, state);
             scene.actions.add(timedAction);
             state.applyAction(timedAction.action);
+            minutes++;
         }
         return scene;
     }
@@ -36,7 +38,18 @@ public class Scene {
                 .flatMap(pos -> state.charactersInRoom(pos).stream())
                 .collect(Collectors.toList());
 
-        if (!inKilledRoom.isEmpty()) {
+        if (state.roomWhereShoutHeard != null) {
+            final List<Character> notInRoom =
+                    setup.characters.stream().filter(c -> state.getPositionIndex(c) != state.roomWhereShoutHeard).collect(Collectors.toList());
+            if (!notInRoom.isEmpty()) {
+                final Action.Move move = new Action.Move();
+                move.character = notInRoom.get(0);
+                move.fromRoom = state.getPositionIndex(move.character);
+                move.toRoom = state.roomWhereShoutHeard;
+                return move;
+            }
+        }
+        if (!inKilledRoom.isEmpty() && state.roomWhereShoutHeard == null) {
             final Action.Shout shout = new Action.Shout();
             shout.by = inKilledRoom.get(0);
             return shout;
@@ -57,7 +70,7 @@ public class Scene {
             talk.talking = charactersInRoom;
             return talk;
         }
-        if (charactersInRoom.size() == 2 && r.nextInt(10) > 8) {
+        if (charactersInRoom.size() == 2 && r.nextInt(10) >= 9) {
             final Action.Kill kill = new Action.Kill();
             kill.by = character;
             kill.target = charactersInRoom.stream().filter(c -> c != character).findAny().get();

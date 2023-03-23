@@ -20,10 +20,10 @@ public class Mansion {
         Place mansion = new Place(PlaceType.Mansion);
         for (int i = 0; i < RoomType.values().length; ++i) {
             RoomType roomType = RoomType.values()[i];
-            if (r.nextBoolean()) {
+//            if (r.nextBoolean()) {
                 roomIndex.put(roomType,
                         mansion.addRoom(new Room(roomType)));
-            }
+//            }
         }
         addConnectionIfPresent(mansion, RoomType.Foyer, RoomType.LivingRoom);
         addConnectionIfPresent(mansion, RoomType.Foyer, RoomType.DiningRoom);

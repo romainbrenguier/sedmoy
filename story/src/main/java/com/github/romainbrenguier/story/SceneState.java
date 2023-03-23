@@ -13,7 +13,7 @@ public class SceneState {
     /**
      * Indexes corresponds to room indexes, or null if not present
      */
-    private final Map<Character, Integer> positions = new LinkedHashMap<>();
+    private final Map<Character, CharacterState> characterStates = new LinkedHashMap<>();
 
     public final List<Character> killed = new ArrayList<>();
 
@@ -25,18 +25,19 @@ public class SceneState {
     }
 
     public void move(Character c, @Nullable Integer roomIndex) {
-        positions.replace(c, roomIndex);
+        characterStates.get(c).position = roomIndex;
     }
 
     @Nullable
     public Integer getPositionIndex(Character c) {
-        return positions.get(c);
+        final CharacterState state = characterStates.get(c);
+        return state != null ? state.position : null;
     }
 
     public List<Character> charactersInRoom(Integer roomIndex) {
-        return positions.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(roomIndex))
-                .map(entry -> entry.getKey())
+        return characterStates.entrySet().stream()
+                .filter(entry -> roomIndex.equals(entry.getValue().position))
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
     }
 
@@ -46,11 +47,15 @@ public class SceneState {
             move(move.character, move.toRoom);
         } else if (action instanceof Action.Arrive) {
             final Action.Arrive arrive = (Action.Arrive) action;
-            positions.put(arrive.character, arrive.inRoom);
+            final CharacterState newState = new CharacterState();
+            newState.position = arrive.inRoom;
+            characterStates.put(arrive.character, newState);
         } else if (action instanceof Action.Kill) {
-            killed.add(((Action.Kill) action).target);
+            final Action.Kill kill = (Action.Kill) action;
+            killed.add(kill.target);
+            characterStates.get(kill.by).fleeing = true;
         } else if (action instanceof Action.Shout) {
-            roomWhereShoutHeard = positions.get(((Action.Shout) action).by);
+            roomWhereShoutHeard = characterStates.get(((Action.Shout) action).by).position;
         }
     }
 }
