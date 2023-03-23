@@ -85,7 +85,7 @@ public class Scene {
         }
 
         List<Character> charactersInRoom = state.charactersInRoom(position);
-        if (charactersInRoom.size() > 1 && r.nextInt(10) > 7) {
+        if (charactersInRoom.size() > 1 && r.nextInt(10) >= 4) {
             final Action.Talk talk = new Action.Talk();
             talk.talking = charactersInRoom;
             return talk;
