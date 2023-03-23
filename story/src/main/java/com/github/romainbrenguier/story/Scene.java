@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -22,11 +23,14 @@ public class Scene {
         Calendar date = TimedAction.randomDate(r);
         int minutes = 0;
         while (state.roomWhereShoutHeard == null && minutes < maxLength) {
-            final TimedAction timedAction = new TimedAction();
-            setTimeOfDay(timedAction, date, 19, minutes);
-            timedAction.action = scene.makeAction(r, state);
-            scene.actions.add(timedAction);
-            state.applyAction(timedAction.action);
+            final Action action = scene.makeAction(r, state);
+            if (action != null) {
+                final TimedAction timedAction = new TimedAction();
+                setTimeOfDay(timedAction, date, 19, minutes);
+                timedAction.action = action;
+                scene.actions.add(timedAction);
+                state.applyAction(timedAction.action);
+            }
             minutes++;
         }
         return scene;
@@ -36,7 +40,21 @@ public class Scene {
         final List<Character> inKilledRoom = state.killed.stream()
                 .map(c -> state.getPositionIndex(c))
                 .flatMap(pos -> state.charactersInRoom(pos).stream())
+                .filter(c -> !state.killed.contains(c))
                 .collect(Collectors.toList());
+
+        final Optional<Character> fleeing = inKilledRoom.stream().filter(c -> state.getState(c).fleeing)
+                .findFirst();
+        if (fleeing.isPresent()) {
+            final Integer currentPosition = state.getState(fleeing.get()).position;
+            final Integer nextPosition = RandomUtil.nextInList(r,
+                    setup.place.connectedFrom(currentPosition));
+            final Action.Move move = new Action.Move();
+            move.character = fleeing.get();
+            move.fromRoom = currentPosition;
+            move.toRoom = nextPosition;
+            return move;
+        }
 
         if (state.roomWhereShoutHeard != null) {
             final List<Character> notInRoom =
@@ -56,6 +74,8 @@ public class Scene {
         }
 
         Character character = setup.characters.get(r.nextInt(setup.characters.size()));
+        if (state.killed.contains(character)) return null;
+
         final Integer position = state.getPositionIndex(character);
         if (position == null) {
             final Action.Arrive arrive = new Action.Arrive();

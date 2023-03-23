@@ -41,6 +41,11 @@ public class SceneState {
                 .collect(Collectors.toList());
     }
 
+    @Nullable
+    public CharacterState getState(Character character) {
+        return characterStates.get(character);
+    }
+
     public void applyAction(Action action) {
         if (action instanceof Action.Move) {
             final Action.Move move = (Action.Move) action;
