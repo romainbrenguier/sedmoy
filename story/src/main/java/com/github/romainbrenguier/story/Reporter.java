@@ -2,6 +2,7 @@ package com.github.romainbrenguier.story;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Reporter {
@@ -45,8 +46,35 @@ public class Reporter {
                 .filter(timedAction -> timedAction.action.actors().contains(character))
                 .collect(Collectors.toList());
         final List<TimedAction> mergedActions = mergeActions(hideCrimeAction(filtered));
+        final Function<Integer, String> roomFormatter = roomIndex -> scene.setup.place.rooms.get(roomIndex).toString();
         return mergedActions.stream()
-                .map(action -> action.format(roomIndex -> scene.setup.place.rooms.get(roomIndex).toString()))
+                .map(action -> reportFromPointOfView(action, character, roomFormatter))
                 .collect(Collectors.joining("\n"));
+    }
+
+    String reportFromPointOfView(TimedAction timedAction, Character character, Function<Integer,
+         String> roomFormatter) {
+        final Action action = timedAction.action;
+        if (action instanceof Action.Arrive) {
+            return String.format("I arrived at %s in %s.",
+                    TimedAction.formatTime(timedAction.timeStart),
+                    roomFormatter.apply(((Action.Arrive) action).inRoom));
+        }
+        if (action instanceof Action.Move) {
+            final Action.Move move = (Action.Move) action;
+            return String.format("I went to %s.", roomFormatter.apply(move.toRoom));
+        }
+        if (action instanceof Action.Talk) {
+            final Action.Talk talk = (Action.Talk) action;
+            final String others = talk.talking.stream()
+                    .filter(c -> !c.equals(character))
+                    .map(Character::toString)
+                    .collect(Collectors.joining(", "));
+            return String.format("I talked with %s.", others);
+        }
+        if (action instanceof Action.Shout) {
+            return "I saw the body and shout.";
+        }
+        return timedAction.format(roomFormatter);
     }
 }

@@ -22,24 +22,25 @@ public class TimedAction {
         return calendar;
     }
 
+    public static String formatTime(Calendar calendar) {
+        final int startHour = calendar.get(Calendar.HOUR);
+        final int startMinute = calendar.get(Calendar.MINUTE);
+        return String.format("%d:%02d", startHour, startMinute);
+    }
+
     @Override
     public String toString() {
-        final int startHour = timeStart.get(Calendar.HOUR);
-        final int startMinute = timeStart.get(Calendar.MINUTE);
-        int endHour = timeEnd != null ? timeEnd.get(Calendar.HOUR) : startHour;
-        int endMinute = timeEnd != null ? timeEnd.get(Calendar.MINUTE) : startMinute;
-        return String.format("From %d:%02d to %d:%02d, %s", startHour,
-                startMinute, endHour, endMinute, action);
+        Calendar endTime = timeEnd != null ? timeEnd : timeStart;
+        return String.format("From %s to %s, %s", formatTime(timeStart),
+                formatTime(endTime), action);
     }
 
     public String format(Function<Integer, String> roomFormatter) {
         if (timeEnd == null) {
-            return String.format("At %d:%02d, %s", timeStart.get(Calendar.HOUR),
-                    timeStart.get(Calendar.MINUTE), action.format(roomFormatter));
+            return String.format("At %s, %s", formatTime(timeStart), action.format(roomFormatter));
         }
-        return String.format("From %d:%02d to %d:%02d, %s", timeStart.get(Calendar.HOUR),
-                timeStart.get(Calendar.MINUTE), timeEnd.get(Calendar.HOUR),
-                timeEnd.get(Calendar.MINUTE), action.format(roomFormatter));
+        return String.format("From %d:%02d to %d:%02d, %s",
+                formatTime(timeStart), formatTime(timeEnd), action.format(roomFormatter));
 
     }
 }
