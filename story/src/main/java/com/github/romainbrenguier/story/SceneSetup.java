@@ -13,10 +13,9 @@ public class SceneSetup {
     Place place;
     List<Character> characters = new ArrayList<>();
 
-    public static SceneSetup make(Random r) {
+    public static SceneSetup make(Random r, int nbCharacters) {
         final SceneSetup setup = new SceneSetup();
         setup.place = new Mansion().make(r);
-        int nbCharacters = r.nextInt(5) + 5;
         setup.characters = IntStream.range(0, nbCharacters)
                 .mapToObj(i -> Character.random(r)).collect(Collectors.toList());
         return setup;

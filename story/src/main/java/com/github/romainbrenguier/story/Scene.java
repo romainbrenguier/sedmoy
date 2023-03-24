@@ -15,9 +15,11 @@ public class Scene {
     SceneSetup setup;
     List<TimedAction> actions = new ArrayList<>();
 
-    public static Scene make(Random r, int maxLength) {
+    SceneState endState;
+
+    public static Scene make(Random r, int maxLength, int nbCharacters) {
         final Scene scene = new Scene();
-        scene.setup = SceneSetup.make(r);
+        scene.setup = SceneSetup.make(r, nbCharacters);
         final SceneState state = new SceneState(scene.setup);
         Calendar date = TimedAction.randomDate(r);
         int minutes = 0;
@@ -32,6 +34,7 @@ public class Scene {
             }
             minutes++;
         }
+        scene.endState = state;
         return scene;
     }
 

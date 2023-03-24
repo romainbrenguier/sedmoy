@@ -1,8 +1,6 @@
 package com.github.romainbrenguier.story;
 
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,11 +28,23 @@ public class Reporter {
         return result;
     }
 
+    List<TimedAction> hideCrimeAction(List<TimedAction> timedActions) {
+        final ArrayList<TimedAction> result = new ArrayList<>();
+        for (int i = 0; i < timedActions.size(); ++i) {
+            if (!(timedActions.get(i).action instanceof Action.Kill
+                    || (i > 0 && timedActions.get(i - 1).action instanceof Action.Kill)
+                    || (i < timedActions.size() - 1 && timedActions.get(i + 1).action instanceof Action.Kill))) {
+                result.add(timedActions.get(i));
+            }
+        }
+        return result;
+    }
+
     public String reportFromPointOfView(Scene scene, Character character) {
         final List<TimedAction> filtered = scene.actions.stream()
                 .filter(timedAction -> timedAction.action.actors().contains(character))
                 .collect(Collectors.toList());
-        final List<TimedAction> mergedActions = mergeActions(filtered);
+        final List<TimedAction> mergedActions = mergeActions(hideCrimeAction(filtered));
         return mergedActions.stream()
                 .map(action -> action.format(roomIndex -> scene.setup.place.rooms.get(roomIndex).toString()))
                 .collect(Collectors.joining("\n"));

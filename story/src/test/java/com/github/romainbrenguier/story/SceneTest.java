@@ -1,11 +1,8 @@
 package com.github.romainbrenguier.story;
 
-import com.github.romainbrenguier.story.places.Room;
-
 import java.util.List;
 import java.util.Random;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +22,7 @@ class SceneTest {
         Random r = new Random(42L);
 
         // Act
-        Scene actualMakeResult = Scene.make(r, 10);
+        Scene actualMakeResult = Scene.make(r, 10, r.nextInt(5) + 5);
 
         // Assert
         List<TimedAction> timedActionList = actualMakeResult.actions;
