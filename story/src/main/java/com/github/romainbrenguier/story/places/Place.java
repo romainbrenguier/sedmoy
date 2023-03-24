@@ -6,6 +6,7 @@ import com.google.common.collect.ListMultimap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 public class Place {
     PlaceType type;
@@ -45,5 +46,9 @@ public class Place {
             builder.append(" (" + i + ") ").append(rooms.get(i));
         }
         return builder.toString();
+    }
+
+    public Function<Integer, String> roomFormatter() {
+        return roomIndex -> rooms.get(roomIndex).toString();
     }
 }

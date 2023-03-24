@@ -46,7 +46,7 @@ public class Reporter {
                 .filter(timedAction -> timedAction.action.actors().contains(character))
                 .collect(Collectors.toList());
         final List<TimedAction> mergedActions = mergeActions(hideCrimeAction(filtered));
-        final Function<Integer, String> roomFormatter = roomIndex -> scene.setup.place.rooms.get(roomIndex).toString();
+        final Function<Integer, String> roomFormatter = scene.setup.place.roomFormatter();
         return mergedActions.stream()
                 .map(action -> reportFromPointOfView(action, character, roomFormatter))
                 .collect(Collectors.joining("\n"));

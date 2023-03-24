@@ -92,7 +92,7 @@ public class Scene {
             talk.talking = charactersInRoom;
             return talk;
         }
-        if (charactersInRoom.size() == 2 && r.nextInt(10) >= 5) {
+        if (charactersInRoom.size() == 2 && r.nextInt(10) >= 7) {
             final Action.Kill kill = new Action.Kill();
             kill.by = character;
             kill.target = charactersInRoom.stream().filter(c -> c != character).findAny().get();
