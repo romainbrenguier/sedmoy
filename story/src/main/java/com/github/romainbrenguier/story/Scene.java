@@ -6,7 +6,6 @@ package com.github.romainbrenguier.story;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -108,11 +107,11 @@ public class Scene {
     }
 
     private static void setTimeOfDay(TimedAction timedAction, Calendar day, int hours, int minutes) {
-        timedAction.time = Calendar.getInstance();
-        timedAction.time.set(day.get(Calendar.YEAR), day.get(Calendar.MONTH),
+        timedAction.timeStart = Calendar.getInstance();
+        timedAction.timeStart.set(day.get(Calendar.YEAR), day.get(Calendar.MONTH),
                 day.get(Calendar.DAY_OF_MONTH));
-        timedAction.time.set(Calendar.HOUR, hours);
-        timedAction.time.set(Calendar.MINUTE, minutes);
+        timedAction.timeStart.set(Calendar.HOUR, hours);
+        timedAction.timeStart.set(Calendar.MINUTE, minutes);
     }
 
     @Override
@@ -126,10 +125,4 @@ public class Scene {
                 .collect(Collectors.joining("\n"));
     }
 
-    public String reportFromPointOfView(Character character) {
-        return actions.stream()
-                .filter(action -> action.action.actors().contains(character))
-                .map(action -> action.format(roomIndex -> setup.place.rooms.get(roomIndex).toString()))
-                .collect(Collectors.joining("\n"));
-    }
 }

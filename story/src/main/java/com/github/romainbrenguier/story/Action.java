@@ -5,6 +5,7 @@ import com.github.romainbrenguier.story.places.Room;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,19 @@ public interface Action {
         public List<Character> actors() {
             return Collections.singletonList(character);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Arrive arrive = (Arrive) o;
+            return character.equals(arrive.character) && inRoom.equals(arrive.inRoom);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(character, inRoom);
+        }
     }
 
     class Move implements Action {
@@ -54,6 +68,19 @@ public interface Action {
         public List<Character> actors() {
             return Collections.singletonList(character);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Move move = (Move) o;
+            return character.equals(move.character) && fromRoom.equals(move.fromRoom) && toRoom.equals(move.toRoom);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(character, fromRoom, toRoom);
+        }
     }
 
     class Talk implements Action {
@@ -70,7 +97,18 @@ public interface Action {
             return talking;
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Talk talk = (Talk) o;
+            return talking.equals(talk.talking);
+        }
 
+        @Override
+        public int hashCode() {
+            return Objects.hash(talking);
+        }
     }
 
     class Kill implements Action {
@@ -86,6 +124,19 @@ public interface Action {
         public List<Character> actors() {
             return Arrays.asList(by, target);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Kill kill = (Kill) o;
+            return Objects.equals(by, kill.by) && Objects.equals(target, kill.target);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(by, target);
+        }
     }
 
     class Shout implements Action {
@@ -99,6 +150,19 @@ public interface Action {
         @Override
         public List<Character> actors() {
             return Collections.singletonList(by);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Shout shout = (Shout) o;
+            return by.equals(shout.by);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(by);
         }
     }
 }

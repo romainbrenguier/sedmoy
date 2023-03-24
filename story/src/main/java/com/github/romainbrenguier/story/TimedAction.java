@@ -2,6 +2,7 @@ package com.github.romainbrenguier.story;
 
 import com.github.romainbrenguier.story.places.Room;
 
+import javax.annotation.Nullable;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -9,7 +10,10 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class TimedAction {
-    Calendar time;
+    Calendar timeStart;
+    // null means 1 minute later or unknown
+    @Nullable
+    Calendar timeEnd;
     Action action;
 
     public static Calendar randomDate(Random r) {
@@ -20,12 +24,22 @@ public class TimedAction {
 
     @Override
     public String toString() {
-        return String.format("At %d:%02d, %s", time.get(Calendar.HOUR),
-                time.get(Calendar.MINUTE), action);
+        final int startHour = timeStart.get(Calendar.HOUR);
+        final int startMinute = timeStart.get(Calendar.MINUTE);
+        int endHour = timeEnd != null ? timeEnd.get(Calendar.HOUR) : startHour;
+        int endMinute = timeEnd != null ? timeEnd.get(Calendar.MINUTE) : startMinute;
+        return String.format("From %d:%02d to %d:%02d, %s", startHour,
+                startMinute, endHour, endMinute, action);
     }
 
     public String format(Function<Integer, String> roomFormatter) {
-        return String.format("At %d:%02d, %s", time.get(Calendar.HOUR),
-                time.get(Calendar.MINUTE), action.format(roomFormatter));
+        if (timeEnd == null) {
+            return String.format("At %d:%02d, %s", timeStart.get(Calendar.HOUR),
+                    timeStart.get(Calendar.MINUTE), action.format(roomFormatter));
+        }
+        return String.format("From %d:%02d to %d:%02d, %s", timeStart.get(Calendar.HOUR),
+                timeStart.get(Calendar.MINUTE), timeEnd.get(Calendar.HOUR),
+                timeEnd.get(Calendar.MINUTE), action.format(roomFormatter));
+
     }
 }
