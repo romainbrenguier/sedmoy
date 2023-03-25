@@ -7,7 +7,12 @@ import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
-        final Random random = new Random();
+        final long seed = args.length > 0
+                ? Long.parseLong(args[0])
+                : System.nanoTime() ^ 783497276652981L;
+        System.out.println("Seed: " + seed);
+        final Random random = new Random(seed);
+
         final Scene scene = Scene.make(random, 240, 4);
 //        System.out.println("Setup: " + scene.setup);
 
@@ -39,7 +44,8 @@ public class Main {
                 .filter(c -> !scene.endState.killed.contains(c))
                 .map(c -> reporter.reportFromPointOfView(scene, c))
                 .forEach(solver::analyzeReport);
-        System.out.println("Analysis:" + solver);
+        System.out.println("Analysis:" + solver.report(
+                scene.setup.place.roomFormatter()));
 
         System.out.println("Solution:");
         scene.actions.stream()

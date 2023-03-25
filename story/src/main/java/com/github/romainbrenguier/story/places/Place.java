@@ -49,6 +49,10 @@ public class Place {
     }
 
     public Function<Integer, String> roomFormatter() {
-        return roomIndex -> rooms.get(roomIndex).toString();
+        return roomIndex -> {
+            if (roomIndex == null) return "nowhere";
+            final Room room = rooms.get(roomIndex);
+            return room == null ? "nowhere" : room.toString();
+        };
     }
 }

@@ -2,6 +2,8 @@ package com.github.romainbrenguier.story;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,9 +52,46 @@ public class Reporter {
 
     public String reportAsText(Scene scene, Report report) {
         final Function<Integer, String> roomFormatter = scene.setup.place.roomFormatter();
-        return report.actions.stream()
-                .map(action -> reportFromPointOfView(action, report.character, roomFormatter))
+        final List<List<TimedAction>> actionGroups = groupSimilarActions(report.actions);
+        return actionGroups.stream()
+                .map(actionGroup ->
+                        reportOnGroupedActions(actionGroup, report.character, roomFormatter))
                 .collect(Collectors.joining("\n"));
+    }
+
+    List<List<TimedAction>> groupSimilarActions(List<TimedAction> timedActions) {
+        final List<List<TimedAction>> result = new ArrayList<>();
+        List<TimedAction> currentList = new ArrayList<>();
+        currentList.add(timedActions.get(0));
+        Class<? extends Action> lastClass = timedActions.get(0).action.getClass();
+        for (int i = 1; i < timedActions.size(); ++i) {
+            if (timedActions.get(i).action.getClass().equals(lastClass)) {
+                currentList.add(timedActions.get(i));
+            } else {
+                result.add(currentList);
+                currentList = new ArrayList<>();
+                currentList.add(timedActions.get(i));
+                lastClass = timedActions.get(i).action.getClass();
+            }
+        }
+        result.add(currentList);
+        return result;
+    }
+
+    String reportOnGroupedActions(
+            List<TimedAction> timedActions, Character character, Function<Integer, String> roomFormatter) {
+        if (timedActions.get(0).action instanceof Action.Move) {
+            final Integer endRoom = ((Action.Move) timedActions.get(timedActions.size() - 1).action).toRoom;
+            final Set<Integer> roomSet = timedActions.stream()
+                    .map(timedAction -> ((Action.Move) timedAction.action).toRoom)
+                    .filter(i -> !Objects.equals(i, endRoom))
+                    .collect(Collectors.toSet());
+            return String.format("I went through %s to %s.",
+                    roomSet.stream().map(roomFormatter).collect(Collectors.joining(", ")),
+                    roomFormatter.apply(endRoom));
+        }
+        return timedActions.stream().map(t -> reportFromPointOfView(t, character, roomFormatter))
+                .collect(Collectors.joining(" "));
     }
 
     String reportFromPointOfView(TimedAction timedAction, Character character, Function<Integer,
