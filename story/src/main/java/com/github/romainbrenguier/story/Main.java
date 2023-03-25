@@ -17,7 +17,8 @@ public class Main {
         for (Character c : scene.setup.characters) {
             if (!scene.endState.killed.contains(c)) {
                 System.out.println("Report from: " + c);
-                System.out.println(reporter.reportFromPointOfView(scene, c));
+                System.out.println(
+                        reporter.reportAsText(scene, reporter.reportFromPointOfView(scene, c)));
                 System.out.println("\n");
             }
         }
@@ -31,6 +32,16 @@ public class Main {
             throw new RuntimeException(e);
         }
 
+        final Solver solver = new Solver();
+        solver.deduceVictime(scene.endState);
+        solver.deduceTimeOfCrime(scene.actions);
+        scene.setup.characters.stream()
+                .filter(c -> !scene.endState.killed.contains(c))
+                .map(c -> reporter.reportFromPointOfView(scene, c))
+                .forEach(solver::analyzeReport);
+        System.out.println("Analysis:" + solver);
+
+        System.out.println("Solution:");
         scene.actions.stream()
                 .filter(timedAction -> timedAction.action instanceof Action.Kill)
                 .map(timedAction -> timedAction.format(scene.setup.place.roomFormatter()))

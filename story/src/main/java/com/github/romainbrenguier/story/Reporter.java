@@ -41,14 +41,17 @@ public class Reporter {
         return result;
     }
 
-    public String reportFromPointOfView(Scene scene, Character character) {
+    public Report reportFromPointOfView(Scene scene, Character character) {
         final List<TimedAction> filtered = scene.actions.stream()
                 .filter(timedAction -> timedAction.action.actors().contains(character))
                 .collect(Collectors.toList());
-        final List<TimedAction> mergedActions = mergeActions(hideCrimeAction(filtered));
+        return new Report(character, mergeActions(hideCrimeAction(filtered)));
+    }
+
+    public String reportAsText(Scene scene, Report report) {
         final Function<Integer, String> roomFormatter = scene.setup.place.roomFormatter();
-        return mergedActions.stream()
-                .map(action -> reportFromPointOfView(action, character, roomFormatter))
+        return report.actions.stream()
+                .map(action -> reportFromPointOfView(action, report.character, roomFormatter))
                 .collect(Collectors.joining("\n"));
     }
 
