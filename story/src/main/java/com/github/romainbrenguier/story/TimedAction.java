@@ -1,11 +1,7 @@
 package com.github.romainbrenguier.story;
 
-import com.github.romainbrenguier.story.places.Room;
-
 import javax.annotation.Nullable;
-import java.text.DateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Random;
 import java.util.function.Function;
 
@@ -13,13 +9,21 @@ public class TimedAction {
     Calendar timeStart;
     // null means 1 minute later or unknown
     @Nullable
-    Calendar timeEnd;
+    private Calendar timeEnd;
     Action action;
 
     public static Calendar randomDate(Random r) {
         final Calendar calendar = Calendar.getInstance();
         calendar.set(1850, r.nextInt(12), r.nextInt(28));
         return calendar;
+    }
+
+    public Calendar getEndTime() {
+        return timeEnd != null ? timeEnd : timeStart;
+    }
+
+    public void setEndTime(Calendar time) {
+        timeEnd = time;
     }
 
     public static String formatTime(Calendar calendar) {

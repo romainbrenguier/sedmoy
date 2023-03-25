@@ -1,6 +1,7 @@
 package com.github.romainbrenguier.story;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -15,39 +16,71 @@ public class Reporter {
         TimedAction newTimedAction = new TimedAction();
         newTimedAction.action = actions.get(0).action;
         newTimedAction.timeStart = actions.get(0).timeStart;
-        newTimedAction.timeEnd = actions.get(0).timeEnd;
+        newTimedAction.setEndTime(actions.get(0).getEndTime());
         for (TimedAction timedAction : actions.stream().skip(1).collect(Collectors.toList())) {
             if (timedAction.action.equals(newTimedAction.action)) {
-                newTimedAction.timeEnd = timedAction.timeEnd;
+                newTimedAction.setEndTime(timedAction.getEndTime());
             } else {
                 result.add(newTimedAction);
                 newTimedAction = new TimedAction();
                 newTimedAction.action = timedAction.action;
                 newTimedAction.timeStart = timedAction.timeStart;
-                newTimedAction.timeEnd = timedAction.timeEnd;
+                newTimedAction.setEndTime(timedAction.getEndTime());
             }
         }
         result.add(newTimedAction);
         return result;
     }
 
-    List<TimedAction> hideCrimeAction(List<TimedAction> timedActions) {
+    List<TimedAction> hideCrimeAction(Character victim, List<TimedAction> timedActions) {
+        Calendar lastSeenBeforeCrime = lastSeenBeforeCrime(timedActions, victim);
+        Calendar firstSeenAfterCrime = firstSeenAfterCrime(timedActions);
+        if (lastSeenBeforeCrime == null && firstSeenAfterCrime == null) {
+            return timedActions;
+        }
+
         final ArrayList<TimedAction> result = new ArrayList<>();
         for (int i = 0; i < timedActions.size(); ++i) {
-            if (!(timedActions.get(i).action instanceof Action.Kill
-                    || (i > 0 && timedActions.get(i - 1).action instanceof Action.Kill)
-                    || (i < timedActions.size() - 1 && timedActions.get(i + 1).action instanceof Action.Kill))) {
-                result.add(timedActions.get(i));
+            final TimedAction timedAction = timedActions.get(i);
+            if (!lastSeenBeforeCrime.before(timedAction.timeStart) &&
+                    firstSeenAfterCrime.after(timedAction.getEndTime())) {
+                result.add(timedAction);
             }
         }
         return result;
+    }
+
+    private static Calendar lastSeenBeforeCrime(List<TimedAction> timedActions, Character victim) {
+        Calendar lastSeenBeforeCrime = null;
+        for (TimedAction timedAction : timedActions) {
+            if (timedAction.action instanceof Action.Talk &&
+                    (!((Action.Talk)timedAction.action).talking.contains(victim)
+                            || ((Action.Talk)timedAction.action).talking.size() > 2))
+                lastSeenBeforeCrime = timedAction.getEndTime();
+            if (timedAction.action instanceof Action.Kill)
+                return lastSeenBeforeCrime;
+        }
+        return null;
+    }
+
+    private static Calendar firstSeenAfterCrime(List<TimedAction> timedActions) {
+        boolean crimePassed = false;
+        for (TimedAction timedAction : timedActions) {
+            if (crimePassed && timedAction.action instanceof Action.Talk)
+                return timedAction.timeStart;
+            if (timedAction.action instanceof Action.Kill)
+                crimePassed = true;
+        }
+        return null;
     }
 
     public Report reportFromPointOfView(Scene scene, Character character) {
         final List<TimedAction> filtered = scene.actions.stream()
                 .filter(timedAction -> timedAction.action.actors().contains(character))
                 .collect(Collectors.toList());
-        return new Report(character, mergeActions(hideCrimeAction(filtered)));
+        // TODO assumes one victim
+        return new Report(character, mergeActions(hideCrimeAction(scene.endState.killed.get(0),
+                filtered)));
     }
 
     public String reportAsText(Scene scene, Report report) {

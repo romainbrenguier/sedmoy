@@ -60,8 +60,7 @@ public class Solver {
                 .filter(c -> !c.equals(reportingCharacter))
                 .forEach(c -> {
                     markSeen(c, timedAction.timeStart, currentRoom);
-                    if (timedAction.timeEnd != null)
-                        markSeen(c, timedAction.timeEnd, currentRoom);
+                    markSeen(c, timedAction.getEndTime(), currentRoom);
                 });
     }
 
@@ -79,8 +78,8 @@ public class Solver {
                         .map(entry ->
                                 "    - " + entry.getKey().toString() + " at "
                                         + TimedAction.formatTime(entry.getValue())
-                        + " in " + roomFormatter.apply(
-                                lastPlaceSeenBeforeCrime.get(entry.getKey())))
+                                        + " in " + roomFormatter.apply(
+                                        lastPlaceSeenBeforeCrime.get(entry.getKey())))
                         .collect(Collectors.joining("\n"));
     }
 }
