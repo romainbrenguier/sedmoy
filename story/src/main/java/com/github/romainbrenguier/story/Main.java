@@ -13,7 +13,7 @@ public class Main {
         System.out.println("Seed: " + seed);
         final Random random = new Random(seed);
 
-        final Scene scene = Scene.make(random, 240, 4);
+        final Scene scene = Scene.make(random, 240, 5);
 //        System.out.println("Setup: " + scene.setup);
 
         System.out.println(String.format("%s was killed\n", scene.endState.killed));
