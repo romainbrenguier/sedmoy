@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 public class Solver {
     Calendar timeOfCrime;
+    Integer roomOfCrime;
     Character victime;
 
     Map<Character, Calendar> lastTimeSeenBeforeCrime = new HashMap<>();
@@ -34,6 +35,12 @@ public class Solver {
         // TODO generalize
         victime = endState.killed.get(0);
         return true;
+    }
+
+    Integer deducePlaceOfCrime(SceneState endState) {
+        assert victime != null : "must first deduce victime";
+        roomOfCrime = endState.getPositionIndex(victime);
+        return roomOfCrime;
     }
 
     void markSeen(Character c, Calendar atTime, @Nullable Integer inRoom) {
@@ -82,8 +89,10 @@ public class Solver {
         return "Solver report:\n" +
                 "  - time of crime: " + TimedAction.formatTime(timeOfCrime) +
                 "\n  - victime: " + victime +
-                "\n  - seen during crime:\n" +
-                seenDuringCrime.stream().map(c -> c.toString()).collect(Collectors.joining(", ")) + "\n" +
+                "\n  - place: " + roomFormatter.apply(roomOfCrime) +
+                "\n  - seen during crime:" +
+                "\n      " + seenDuringCrime.stream().map(Character::toString)
+                .collect(Collectors.joining(", ")) + "\n" +
                 "\n  - last time seen before crime:\n" +
                 lastTimeSeenBeforeCrime.entrySet().stream()
                         .map(entry ->

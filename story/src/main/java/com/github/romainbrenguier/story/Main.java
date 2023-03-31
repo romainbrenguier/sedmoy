@@ -39,6 +39,7 @@ public class Main {
 
         final Solver solver = new Solver();
         solver.deduceVictime(scene.endState);
+        solver.deducePlaceOfCrime(scene.endState);
         solver.deduceTimeOfCrime(scene.actions);
         scene.setup.characters.stream()
                 .filter(c -> !scene.endState.killed.contains(c))
