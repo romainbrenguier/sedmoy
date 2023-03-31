@@ -35,7 +35,7 @@ public class Reporter {
     List<TimedAction> hideCrimeAction(Character victim, List<TimedAction> timedActions) {
         Calendar lastSeenBeforeCrime = lastSeenBeforeCrime(timedActions, victim);
         Calendar firstSeenAfterCrime = firstSeenAfterCrime(timedActions);
-        if (lastSeenBeforeCrime == null && firstSeenAfterCrime == null) {
+        if (lastSeenBeforeCrime == null || firstSeenAfterCrime == null) {
             return timedActions;
         }
 

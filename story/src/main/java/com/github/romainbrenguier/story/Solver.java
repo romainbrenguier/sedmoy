@@ -3,9 +3,11 @@ package com.github.romainbrenguier.story;
 import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,7 @@ public class Solver {
 
     Map<Character, Calendar> lastTimeSeenBeforeCrime = new HashMap<>();
     Map<Character, Integer> lastPlaceSeenBeforeCrime = new HashMap<>();
+    Set<Character> seenDuringCrime = new HashSet<>();
 
     boolean deduceTimeOfCrime(List<TimedAction> actions) {
         final Optional<Calendar> time = actions.stream()
@@ -62,6 +65,12 @@ public class Solver {
                     markSeen(c, timedAction.timeStart, currentRoom);
                     markSeen(c, timedAction.getEndTime(), currentRoom);
                 });
+        if (timedAction.timeStart.before(timeOfCrime) &&
+                timedAction.getEndTime().after(timeOfCrime)) {
+            talk.talking.stream()
+                    .filter(c -> !c.equals(reportingCharacter))
+                    .forEach(c -> seenDuringCrime.add(c));
+        }
     }
 
     @Override
@@ -73,6 +82,8 @@ public class Solver {
         return "Solver report:\n" +
                 "  - time of crime: " + TimedAction.formatTime(timeOfCrime) +
                 "\n  - victime: " + victime +
+                "\n  - seen during crime:\n" +
+                seenDuringCrime.stream().map(c -> c.toString()).collect(Collectors.joining(", ")) + "\n" +
                 "\n  - last time seen before crime:\n" +
                 lastTimeSeenBeforeCrime.entrySet().stream()
                         .map(entry ->

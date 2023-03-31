@@ -43,7 +43,7 @@ public class TimedAction {
         if (timeEnd == null) {
             return String.format("At %s, %s", formatTime(timeStart), action.format(roomFormatter));
         }
-        return String.format("From %d:%02d to %d:%02d, %s",
+        return String.format("From %s to %s, %s",
                 formatTime(timeStart), formatTime(timeEnd), action.format(roomFormatter));
 
     }
