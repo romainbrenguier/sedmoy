@@ -65,7 +65,8 @@ public class RoomPlacer {
     public static String formatTableMap(
             Integer[][] table,
             Function<Integer, List<Integer>> connections,
-            Function<Integer, String> cellFormat) {
+            Function<Integer, String> cellFormat,
+            List<Integer> entrances) {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < table.length; ++i) {
             String offset = " ".repeat(10).repeat(i);
@@ -75,7 +76,7 @@ public class RoomPlacer {
                 else {
                     final boolean hasLeftDoor = i > 0 && connections.apply(table[i][j]).contains(table[i - 1][j]);
                     final boolean hasRightDoor = i > 0 && j < table[i - 1].length - 1 && connections.apply(table[i][j]).contains(table[i - 1][j + 1]);
-                    builder.append(formatWall(hasLeftDoor, hasRightDoor));
+                    builder.append(formatWall(hasLeftDoor, hasRightDoor, entrances.contains(table[i][j])));
                 }
             }
             builder.append("\n");
@@ -99,7 +100,7 @@ public class RoomPlacer {
                                     connections.apply(table[i][j]).contains(table[i + 1][j - 1]);
                     final boolean hasRightDoor = i < table.length -1
                             && connections.apply(table[i][j]).contains(table[i + 1][j]);
-                    builder.append(formatWall(hasLeftDoor, hasRightDoor));
+                    builder.append(formatWall(hasLeftDoor, hasRightDoor, false));
                 }
             }
             builder.append("\n");
@@ -125,7 +126,7 @@ public class RoomPlacer {
         return builder.toString();
     }
 
-    private static String formatWall(boolean leftDoor, boolean rightDoor) {
+    private static String formatWall(boolean leftDoor, boolean rightDoor, boolean mainEntrance) {
         StringBuilder builder = new StringBuilder();
         builder.append("+").append("-".repeat(3));
         if (leftDoor) {
@@ -133,7 +134,10 @@ public class RoomPlacer {
         } else {
             builder.append("-");
         }
-        builder.append("-".repeat(9));
+        builder.append("-".repeat(3));
+        if (mainEntrance) builder.append("[ ]");
+        else builder.append("-".repeat(3));
+        builder.append("-".repeat(3));
         if (rightDoor) {
             builder.append(" ");
         } else {
@@ -153,8 +157,8 @@ public class RoomPlacer {
         }
 
         public static CoordinateVar make(Model model, String prefix) {
-            return new CoordinateVar(model.intVar(prefix + "x", 1, 6),
-                    model.intVar(prefix + "y", 1, 6));
+            return new CoordinateVar(model.intVar(prefix + "x", 0, 5),
+                    model.intVar(prefix + "y", 0, 5));
         }
 
         public ReExpression ne(CoordinateVar other) {
@@ -189,11 +193,19 @@ public class RoomPlacer {
             }
         }
 
+        // Entrance constraint
+        for (int roomIndex : place.entrances) {
+            roomVar.get(roomIndex).varX.eq(0).post();
+        }
+
+        // Neighboor constraints
         for (int roomIndex = 0; roomIndex < limit && roomIndex < place.rooms.size(); ++roomIndex) {
             for (int otherRoom : place.connectedFrom(roomIndex))
                 if (otherRoom > roomIndex)
                     roomVar.get(roomIndex).hexNeighboor(roomVar.get(otherRoom)).post();
         }
+
+        // Get solution
         Solution solution = model.getSolver().findSolution();
         if (solution == null) return null;
 

@@ -20,7 +20,8 @@ public class RoomPlacerTest {
         assert coordinates.containsKey(place.entrances.get(0));
         final Integer[][] table = placeInTable(coordinates);
         assert table.length > 0;
-        System.out.println(formatTableMap(table, place::connectedFrom, place.roomFormatter()));
+        System.out.println(formatTableMap(table, place::connectedFrom, place.roomFormatter(),
+                place.entrances));
     }
 
     @Test
@@ -40,7 +41,8 @@ public class RoomPlacerTest {
                 return;
             } else {
                 final Integer[][] table = placeInTable(coordinates);
-                System.out.println(formatTableMap(table, place::connectedFrom, roomFormatter));
+                System.out.println(formatTableMap(table, place::connectedFrom, roomFormatter,
+                        place.entrances));
             }
         }
     }

@@ -28,7 +28,7 @@ public class Mansion {
         addConnectionIfPresent(mansion, RoomType.Foyer, RoomType.LivingRoom);
         addConnectionIfPresent(mansion, RoomType.Foyer, RoomType.DiningRoom);
         addConnectionIfPresent(mansion, RoomType.Foyer, RoomType.Study);
-        addConnectionIfPresent(mansion, RoomType.Foyer, RoomType.UpperFloor);
+        mansion.connectByStairs(roomIndex.get(RoomType.Foyer), roomIndex.get(RoomType.UpperFloor));
         addConnectionIfPresent(mansion, RoomType.Foyer, RoomType.Ballroom);
         addConnectionIfPresent(mansion, RoomType.LivingRoom, RoomType.DrawingRoom);
         addConnectionIfPresent(mansion, RoomType.LivingRoom, RoomType.Hallway);

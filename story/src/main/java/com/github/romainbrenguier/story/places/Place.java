@@ -5,7 +5,9 @@ import com.google.common.collect.ListMultimap;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class Place {
@@ -15,6 +17,9 @@ public class Place {
     /** Correspond to indexes in {@link #rooms} */
     public List<Integer> entrances = Collections.singletonList(0);
     ListMultimap<Integer, Integer> connections = ArrayListMultimap.create();
+    Map<Integer, Integer> stairsUp = new HashMap<>();
+    Map<Integer, Integer> stairsDown = new HashMap<>();
+
 
     Place(PlaceType type) {
         this.type = type;
@@ -28,6 +33,11 @@ public class Place {
     void connect(int roomIndex1, int roomIndex2) {
         connections.put(roomIndex1, roomIndex2);
         connections.put(roomIndex2, roomIndex1);
+    }
+
+    void connectByStairs(int roomBelow, int roomAbove) {
+        stairsUp.put(roomBelow, roomAbove);
+        stairsUp.put(roomAbove, roomBelow);
     }
 
     public boolean areConnected(int roomIndex1, int roomIndex2) {
