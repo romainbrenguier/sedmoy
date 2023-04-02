@@ -35,15 +35,15 @@ public class Reporter {
     List<TimedAction> hideCrimeAction(Character victim, List<TimedAction> timedActions) {
         Calendar lastSeenBeforeCrime = lastSeenBeforeCrime(timedActions, victim);
         Calendar firstSeenAfterCrime = firstSeenAfterCrime(timedActions);
-        if (lastSeenBeforeCrime == null || firstSeenAfterCrime == null) {
+        if (lastSeenBeforeCrime == null && firstSeenAfterCrime == null) {
             return timedActions;
         }
 
         final ArrayList<TimedAction> result = new ArrayList<>();
         for (int i = 0; i < timedActions.size(); ++i) {
             final TimedAction timedAction = timedActions.get(i);
-            if (!lastSeenBeforeCrime.before(timedAction.timeStart) &&
-                    firstSeenAfterCrime.after(timedAction.getEndTime())) {
+            if (!(lastSeenBeforeCrime.before(timedAction.timeStart) &&
+                    (firstSeenAfterCrime == null || firstSeenAfterCrime.after(timedAction.getEndTime())))) {
                 result.add(timedAction);
             }
         }

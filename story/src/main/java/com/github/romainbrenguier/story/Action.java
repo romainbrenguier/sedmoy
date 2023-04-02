@@ -109,6 +109,12 @@ public interface Action {
         public int hashCode() {
             return Objects.hash(talking);
         }
+
+        @Override
+        public String toString() {
+            return talking.stream().map(Character::toString)
+                    .collect(Collectors.joining(", ")) + " are talking";
+        }
     }
 
     class Kill implements Action {
@@ -137,6 +143,11 @@ public interface Action {
         public int hashCode() {
             return Objects.hash(by, target);
         }
+
+        @Override
+        public String toString() {
+            return by.toString() + " kills " + target.toString();
+        }
     }
 
     class Shout implements Action {
@@ -163,6 +174,11 @@ public interface Action {
         @Override
         public int hashCode() {
             return Objects.hash(by);
+        }
+
+        @Override
+        public String toString() {
+            return by.toString() + " shouts";
         }
     }
 }
