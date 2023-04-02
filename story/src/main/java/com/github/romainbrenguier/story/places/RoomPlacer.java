@@ -87,7 +87,7 @@ public class RoomPlacer {
             builder.append(offset)
                     .append(formatVerticalWall(currentRow,
                             j -> currentRow[j] != -1 ? cellFormat.apply(currentRow[j]) : "",
-                            j -> j < currentRow.length - 1 && connections.apply(currentRow[j]).contains(currentRow[j+1])))
+                            j -> j < currentRow.length - 1 && connections.apply(currentRow[j]).contains(currentRow[j + 1])))
                     .append("\n");
             builder.append(offset)
                     .append(formatVerticalWall(currentRow, j -> "", j -> false)).append("\n");
@@ -98,7 +98,7 @@ public class RoomPlacer {
                     final boolean hasLeftDoor =
                             i < table.length - 1 && j > 0 &&
                                     connections.apply(table[i][j]).contains(table[i + 1][j - 1]);
-                    final boolean hasRightDoor = i < table.length -1
+                    final boolean hasRightDoor = i < table.length - 1
                             && connections.apply(table[i][j]).contains(table[i + 1][j]);
                     builder.append(formatWall(hasLeftDoor, hasRightDoor, false));
                 }
@@ -214,6 +214,13 @@ public class RoomPlacer {
             coordinates.put(roomIndex, roomVar.get(roomIndex).get(solution));
         }
         return coordinates;
+    }
+
+    public static String makeMap(Place place) {
+        return RoomPlacer.formatTableMap(
+                RoomPlacer.placeInTable(RoomPlacer.solveConstraints(place, place.rooms.size())),
+                place::connectedFrom,
+                place.roomFormatter(), place.entrances);
     }
 }
 
