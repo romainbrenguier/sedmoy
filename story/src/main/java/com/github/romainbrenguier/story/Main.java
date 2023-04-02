@@ -1,8 +1,12 @@
 package com.github.romainbrenguier.story;
 
+import com.github.romainbrenguier.story.places.RoomPlacer;
+
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.Random;
 
 public class Main {
@@ -14,7 +18,7 @@ public class Main {
         final Random random = new Random(seed);
 
         final Scene scene = Scene.make(random, 240, 5);
-//        System.out.println("Setup: " + scene.setup);
+        System.out.println("Crime scene:\n" + RoomPlacer.makeMap(scene.setup.place));
 
         System.out.println(String.format("%s was killed\n", scene.endState.killed));
 
