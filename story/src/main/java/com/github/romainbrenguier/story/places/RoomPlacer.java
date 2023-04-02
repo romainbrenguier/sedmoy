@@ -2,7 +2,6 @@ package com.github.romainbrenguier.story.places;
 
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solution;
-import org.chocosolver.solver.Solver;
 import org.chocosolver.solver.expression.discrete.relational.ReExpression;
 import org.chocosolver.solver.variables.IntVar;
 
@@ -11,10 +10,12 @@ import java.awt.Point;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class RoomPlacer {
     public static Map<Integer, Point> placeRooms(Place place) {
@@ -61,23 +62,84 @@ public class RoomPlacer {
         return table;
     }
 
-    public static String formatTableMap(Integer[][] table, Function<Integer, String> cellFormat) {
+    public static String formatTableMap(
+            Integer[][] table,
+            Function<Integer, List<Integer>> connections,
+            Function<Integer, String> cellFormat) {
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < table.length; ++i) {
+            String offset = " ".repeat(10).repeat(i);
+            builder.append(offset);
             for (int j = 0; j < table[i].length; ++j) {
-                builder.append("+------------------+");
+                if (table[i][j] == -1) builder.append(" ".repeat(20));
+                else {
+                    final boolean hasLeftDoor = i > 0 && connections.apply(table[i][j]).contains(table[i - 1][j]);
+                    final boolean hasRightDoor = i > 0 && j < table[i - 1].length - 1 && connections.apply(table[i][j]).contains(table[i - 1][j + 1]);
+                    builder.append(formatWall(hasLeftDoor, hasRightDoor));
+                }
             }
             builder.append("\n");
+            final Integer[] currentRow = table[i];
+            builder.append(offset)
+                    .append(formatVerticalWall(currentRow, j -> "", j -> false))
+                    .append("\n");
+            builder.append(offset)
+                    .append(formatVerticalWall(currentRow,
+                            j -> currentRow[j] != -1 ? cellFormat.apply(currentRow[j]) : "",
+                            j -> j < currentRow.length - 1 && connections.apply(currentRow[j]).contains(currentRow[j+1])))
+                    .append("\n");
+            builder.append(offset)
+                    .append(formatVerticalWall(currentRow, j -> "", j -> false)).append("\n");
+            builder.append(offset);
             for (int j = 0; j < table[i].length; ++j) {
-                if (table[i][j] == -1) builder.append("++++++++++++++++++++");
-                else builder.append(String.format("| %16s |", cellFormat.apply(table[i][j])));
-            }
-            builder.append("\n");
-            for (int j = 0; j < table[i].length; ++j) {
-                builder.append("+------------------+");
+                if (table[i][j] == -1) builder.append(" ".repeat(20));
+                else {
+                    final boolean hasLeftDoor =
+                            i < table.length - 1 && j > 0 &&
+                                    connections.apply(table[i][j]).contains(table[i + 1][j - 1]);
+                    final boolean hasRightDoor = i < table.length -1
+                            && connections.apply(table[i][j]).contains(table[i + 1][j]);
+                    builder.append(formatWall(hasLeftDoor, hasRightDoor));
+                }
             }
             builder.append("\n");
         }
+        return builder.toString();
+    }
+
+    private static String formatVerticalWall(
+            Integer[] roomArray,
+            Function<Integer, String> text,
+            Predicate<Integer> doorRight) {
+        StringBuilder builder = new StringBuilder();
+        for (int j = 0; j < roomArray.length; ++j) {
+            if (roomArray[j] == -1) builder.append(" ".repeat(20));
+            else {
+                if (j > 0 && doorRight.test(j - 1)) builder.append("_");
+                else builder.append("|");
+                builder.append(String.format(" %16s ", text.apply(j)));
+                if (doorRight.test(j)) builder.append("_");
+                else builder.append("|");
+            }
+        }
+        return builder.toString();
+    }
+
+    private static String formatWall(boolean leftDoor, boolean rightDoor) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("+").append("-".repeat(3));
+        if (leftDoor) {
+            builder.append(" ");
+        } else {
+            builder.append("-");
+        }
+        builder.append("-".repeat(9));
+        if (rightDoor) {
+            builder.append(" ");
+        } else {
+            builder.append("-");
+        }
+        builder.append("-".repeat(4)).append("+");
         return builder.toString();
     }
 
