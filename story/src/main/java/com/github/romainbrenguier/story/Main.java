@@ -5,6 +5,7 @@ import com.github.romainbrenguier.story.places.RoomPlacer;
 import com.github.romainbrenguier.story.scene.Action;
 import com.github.romainbrenguier.story.scene.Reporter;
 import com.github.romainbrenguier.story.scene.Scene;
+import com.github.romainbrenguier.story.solver.Solver;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.solver;
 
 import com.github.romainbrenguier.story.character.Character;
 import com.github.romainbrenguier.story.scene.Action;
@@ -26,7 +26,7 @@ public class Solver {
     Map<Character, Integer> lastPlaceSeenBeforeCrime = new HashMap<>();
     Set<Character> seenDuringCrime = new HashSet<>();
 
-    boolean deduceTimeOfCrime(List<TimedAction> actions) {
+    public boolean deduceTimeOfCrime(List<TimedAction> actions) {
         final Optional<Calendar> time = actions.stream()
                 .filter(timedAction -> timedAction.getAction() instanceof Action.Kill)
                 .map(timedAction -> timedAction.getTimeStart())
@@ -36,14 +36,14 @@ public class Solver {
         return true;
     }
 
-    boolean deduceVictime(SceneState endState) {
+    public boolean deduceVictime(SceneState endState) {
         if (endState.killed.size() != 1) return false;
         // TODO generalize
         victime = endState.killed.get(0);
         return true;
     }
 
-    Integer deducePlaceOfCrime(SceneState endState) {
+    public Integer deducePlaceOfCrime(SceneState endState) {
         assert victime != null : "must first deduce victime";
         roomOfCrime = endState.getPositionIndex(victime);
         return roomOfCrime;
@@ -57,7 +57,7 @@ public class Solver {
         }
     }
 
-    void analyzeReport(Report report) {
+    public void analyzeReport(Report report) {
         Integer currentRoom = null;
         for (TimedAction timedAction : report.actions) {
             if (timedAction.getAction() instanceof Action.Talk) {
