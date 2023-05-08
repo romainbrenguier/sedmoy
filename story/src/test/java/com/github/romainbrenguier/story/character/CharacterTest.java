@@ -1,16 +1,14 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.character;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import org.junit.jupiter.api.Disabled;
+import com.github.romainbrenguier.story.character.Character;
 
+import com.github.romainbrenguier.story.character.Status;
 import org.junit.jupiter.api.Test;
 
 class CharacterTest {

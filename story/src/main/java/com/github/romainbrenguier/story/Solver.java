@@ -1,5 +1,11 @@
 package com.github.romainbrenguier.story;
 
+import com.github.romainbrenguier.story.character.Character;
+import com.github.romainbrenguier.story.scene.Action;
+import com.github.romainbrenguier.story.scene.Report;
+import com.github.romainbrenguier.story.scene.SceneState;
+import com.github.romainbrenguier.story.scene.TimedAction;
+
 import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -22,8 +28,8 @@ public class Solver {
 
     boolean deduceTimeOfCrime(List<TimedAction> actions) {
         final Optional<Calendar> time = actions.stream()
-                .filter(timedAction -> timedAction.action instanceof Action.Kill)
-                .map(timedAction -> timedAction.timeStart)
+                .filter(timedAction -> timedAction.getAction() instanceof Action.Kill)
+                .map(timedAction -> timedAction.getTimeStart())
                 .findFirst();
         if (time.isEmpty()) return false;
         timeOfCrime = time.get();
@@ -54,12 +60,12 @@ public class Solver {
     void analyzeReport(Report report) {
         Integer currentRoom = null;
         for (TimedAction timedAction : report.actions) {
-            if (timedAction.action instanceof Action.Talk) {
-                final Action.Talk talk = (Action.Talk) timedAction.action;
+            if (timedAction.getAction() instanceof Action.Talk) {
+                final Action.Talk talk = (Action.Talk) timedAction.getAction();
                 analyzeTalk(timedAction, talk, report.character, currentRoom);
             }
-            if (timedAction.action instanceof Action.Move) {
-                currentRoom = ((Action.Move) timedAction.action).toRoom;
+            if (timedAction.getAction() instanceof Action.Move) {
+                currentRoom = ((Action.Move) timedAction.getAction()).toRoom;
             }
         }
     }
@@ -69,10 +75,10 @@ public class Solver {
         talk.talking.stream()
                 .filter(c -> !c.equals(reportingCharacter))
                 .forEach(c -> {
-                    markSeen(c, timedAction.timeStart, currentRoom);
+                    markSeen(c, timedAction.getTimeStart(), currentRoom);
                     markSeen(c, timedAction.getEndTime(), currentRoom);
                 });
-        if (timedAction.timeStart.before(timeOfCrime) &&
+        if (timedAction.getTimeStart().before(timeOfCrime) &&
                 timedAction.getEndTime().after(timeOfCrime)) {
             talk.talking.stream()
                     .filter(c -> !c.equals(reportingCharacter))

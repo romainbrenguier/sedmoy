@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.character;
 
 public enum PersonalityTrait {
     /**

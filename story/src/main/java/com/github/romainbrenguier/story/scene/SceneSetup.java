@@ -1,5 +1,6 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.scene;
 
+import com.github.romainbrenguier.story.character.Character;
 import com.github.romainbrenguier.story.places.Mansion;
 import com.github.romainbrenguier.story.places.Place;
 
@@ -10,8 +11,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SceneSetup {
-    Place place;
-    List<Character> characters = new ArrayList<>();
+    private Place place;
+    private List<Character> characters = new ArrayList<>();
+
+    public Place getPlace() {
+        return place;
+    }
+
+    public List<Character> getCharacters() {
+        return characters;
+    }
 
     public static SceneSetup make(Random r, int nbCharacters) {
         final SceneSetup setup = new SceneSetup();
@@ -25,6 +34,6 @@ public class SceneSetup {
     public String toString() {
         return "place:\n  " + place +
                 "\ncharacters:\n  " + characters.stream()
-                .map(c -> c.name.toString() + ":" + c.details()).collect(Collectors.joining("\n  "));
+                .map(c -> c.getName().toString() + ":" + c.details()).collect(Collectors.joining("\n  "));
     }
 }

@@ -3,6 +3,8 @@ package com.github.romainbrenguier.story;
 import java.util.List;
 import java.util.Random;
 
+import com.github.romainbrenguier.story.scene.Scene;
+import com.github.romainbrenguier.story.scene.TimedAction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +27,7 @@ class SceneTest {
         Scene actualMakeResult = Scene.make(r, 10, r.nextInt(5) + 5);
 
         // Assert
-        List<TimedAction> timedActionList = actualMakeResult.actions;
+        List<TimedAction> timedActionList = actualMakeResult.getActions();
         String report = actualMakeResult.report();
         assertEquals(10, timedActionList.size());
         assertNotNull(report);

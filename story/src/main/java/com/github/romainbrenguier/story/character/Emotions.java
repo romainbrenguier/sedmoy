@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.character;
 
 public class Emotions {
     /* Suspects may feel anxious and nervous when questioned by law enforcement or when their

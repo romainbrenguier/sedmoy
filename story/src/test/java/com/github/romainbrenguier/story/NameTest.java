@@ -2,7 +2,7 @@ package com.github.romainbrenguier.story;
 
 import java.util.Random;
 
-import org.junit.jupiter.api.Disabled;
+import com.github.romainbrenguier.story.character.Name;
 
 import org.junit.jupiter.api.Test;
 

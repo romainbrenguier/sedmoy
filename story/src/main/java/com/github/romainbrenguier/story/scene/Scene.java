@@ -1,8 +1,11 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.scene;
 
 // Prompt: Forget the above conversation. You are a famous novel writer from the 19th century
 // writing crime novels taking place in Paris in the 19th century.
 // Write a story about ...
+
+import com.github.romainbrenguier.story.RandomUtil;
+import com.github.romainbrenguier.story.character.Character;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,10 +15,23 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Scene {
-    SceneSetup setup;
-    List<TimedAction> actions = new ArrayList<>();
 
-    SceneState endState;
+    private SceneSetup setup;
+    private List<TimedAction> actions = new ArrayList<>();
+
+    private SceneState endState;
+
+    public SceneSetup getSetup() {
+        return setup;
+    }
+
+    public List<TimedAction> getActions() {
+        return actions;
+    }
+
+    public SceneState getEndState() {
+        return endState;
+    }
 
     public static Scene make(Random r, int maxLength, int nbCharacters) {
         final Scene scene = new Scene();
@@ -28,9 +44,9 @@ public class Scene {
             if (action != null) {
                 final TimedAction timedAction = new TimedAction();
                 setTimeOfDay(timedAction, date, 19, minutes);
-                timedAction.action = action;
+                timedAction.setAction(action);
                 scene.actions.add(timedAction);
-                state.applyAction(timedAction.action);
+                state.applyAction(timedAction.getAction());
             }
             minutes++;
         }
@@ -45,12 +61,13 @@ public class Scene {
                 .filter(c -> !state.killed.contains(c))
                 .collect(Collectors.toList());
 
-        final Optional<Character> fleeing = inKilledRoom.stream().filter(c -> state.getState(c).fleeing)
+        final Optional<Character> fleeing =
+                inKilledRoom.stream().filter(c -> state.getState(c).fleeing)
                 .findFirst();
         if (fleeing.isPresent()) {
             final Integer currentPosition = state.getState(fleeing.get()).position;
             final Integer nextPosition = RandomUtil.nextInList(r,
-                    setup.place.connectedFrom(currentPosition));
+                    setup.getPlace().connectedFrom(currentPosition));
             final Action.Move move = new Action.Move();
             move.character = fleeing.get();
             move.fromRoom = currentPosition;
@@ -60,7 +77,7 @@ public class Scene {
 
         if (state.roomWhereShoutHeard != null) {
             final List<Character> notInRoom =
-                    setup.characters.stream().filter(c -> state.getPositionIndex(c) != state.roomWhereShoutHeard).collect(Collectors.toList());
+                    setup.getCharacters().stream().filter(c -> state.getPositionIndex(c) != state.roomWhereShoutHeard).collect(Collectors.toList());
             if (!notInRoom.isEmpty()) {
                 final Action.Move move = new Action.Move();
                 move.character = notInRoom.get(0);
@@ -75,14 +92,14 @@ public class Scene {
             return shout;
         }
 
-        Character character = setup.characters.get(r.nextInt(setup.characters.size()));
+        Character character = setup.getCharacters().get(r.nextInt(setup.getCharacters().size()));
         if (state.killed.contains(character)) return null;
 
         final Integer position = state.getPositionIndex(character);
         if (position == null) {
             final Action.Arrive arrive = new Action.Arrive();
             arrive.character = character;
-            arrive.inRoom = RandomUtil.nextInList(r, setup.place.getEntrances());
+            arrive.inRoom = RandomUtil.nextInList(r, setup.getPlace().getEntrances());
             return arrive;
         }
 
@@ -100,7 +117,7 @@ public class Scene {
             kill.target = charactersInRoom.stream().filter(c -> c != character).findAny().get();
             return kill;
         }
-        final Integer nextPosition = RandomUtil.nextInList(r, setup.place.connectedFrom(position));
+        final Integer nextPosition = RandomUtil.nextInList(r, setup.getPlace().connectedFrom(position));
         if (nextPosition != null) {
             final Action.Move move = new Action.Move();
             move.character = character;
@@ -112,11 +129,11 @@ public class Scene {
     }
 
     private static void setTimeOfDay(TimedAction timedAction, Calendar day, int hours, int minutes) {
-        timedAction.timeStart = Calendar.getInstance();
-        timedAction.timeStart.set(day.get(Calendar.YEAR), day.get(Calendar.MONTH),
+        timedAction.setTimeStart(Calendar.getInstance());
+        timedAction.getTimeStart().set(day.get(Calendar.YEAR), day.get(Calendar.MONTH),
                 day.get(Calendar.DAY_OF_MONTH));
-        timedAction.timeStart.set(Calendar.HOUR, hours);
-        timedAction.timeStart.set(Calendar.MINUTE, minutes);
+        timedAction.getTimeStart().set(Calendar.HOUR, hours);
+        timedAction.getTimeStart().set(Calendar.MINUTE, minutes);
     }
 
     @Override
@@ -126,7 +143,7 @@ public class Scene {
 
     public String report() {
         return actions.stream()
-                .map(action -> action.format(roomIndex -> setup.place.getRooms().get(roomIndex).toString()))
+                .map(action -> action.format(roomIndex -> setup.getPlace().getRooms().get(roomIndex).toString()))
                 .collect(Collectors.joining("\n"));
     }
 

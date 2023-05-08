@@ -1,4 +1,7 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.scene;
+
+import com.github.romainbrenguier.story.character.Character;
+import com.github.romainbrenguier.story.character.CharacterState;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

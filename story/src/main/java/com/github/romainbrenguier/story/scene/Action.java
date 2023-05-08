@@ -1,6 +1,6 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.scene;
 
-import com.github.romainbrenguier.story.places.Room;
+import com.github.romainbrenguier.story.character.Character;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -84,7 +84,7 @@ public interface Action {
     }
 
     class Talk implements Action {
-        List<Character> talking;
+        public List<Character> talking;
 
         @Override
         public String format(Function<Integer, String> roomToString) {

@@ -1,9 +1,9 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.stories;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.google.common.collect.ArrayListMultimap;
+import com.github.romainbrenguier.story.stories.EventTemplate;
 
 import java.util.List;
 

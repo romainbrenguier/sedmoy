@@ -1,10 +1,10 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.character;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Random;
 
-import org.junit.jupiter.api.Disabled;
+import com.github.romainbrenguier.story.character.Personality;
 
 import org.junit.jupiter.api.Test;
 

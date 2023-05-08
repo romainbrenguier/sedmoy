@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.stories;
 
 import java.util.List;
 

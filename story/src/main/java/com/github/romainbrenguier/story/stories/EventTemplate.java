@@ -1,6 +1,8 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.stories;
 
 
+import com.github.romainbrenguier.story.character.Condition;
+import com.github.romainbrenguier.story.character.Status;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 

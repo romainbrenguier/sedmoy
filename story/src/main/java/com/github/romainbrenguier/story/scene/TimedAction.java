@@ -1,4 +1,6 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.scene;
+
+import com.github.romainbrenguier.story.scene.Action;
 
 import javax.annotation.Nullable;
 import java.util.Calendar;
@@ -6,11 +8,27 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class TimedAction {
-    Calendar timeStart;
+    private Calendar timeStart;
     // null means 1 minute later or unknown
     @Nullable
     private Calendar timeEnd;
-    Action action;
+    private Action action;
+
+    public Action getAction() {
+        return action;
+    }
+
+    public Calendar getTimeStart() {
+        return timeStart;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public void setTimeStart(Calendar timeStart) {
+        this.timeStart = timeStart;
+    }
 
     public static Calendar randomDate(Random r) {
         final Calendar calendar = Calendar.getInstance();

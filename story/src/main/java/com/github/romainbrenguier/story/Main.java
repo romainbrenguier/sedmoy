@@ -1,12 +1,14 @@
 package com.github.romainbrenguier.story;
 
+import com.github.romainbrenguier.story.character.Character;
 import com.github.romainbrenguier.story.places.RoomPlacer;
+import com.github.romainbrenguier.story.scene.Action;
+import com.github.romainbrenguier.story.scene.Reporter;
+import com.github.romainbrenguier.story.scene.Scene;
 
-import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Map;
 import java.util.Random;
 
 public class Main {
@@ -18,13 +20,13 @@ public class Main {
         final Random random = new Random(seed);
 
         final Scene scene = Scene.make(random, 240, 5);
-        System.out.println("Crime scene:\n" + RoomPlacer.makeMap(scene.setup.place));
+        System.out.println("Crime scene:\n" + RoomPlacer.makeMap(scene.getSetup().getPlace()));
 
-        System.out.println(String.format("%s was killed\n", scene.endState.killed));
+        System.out.println(String.format("%s was killed\n", scene.getEndState().killed));
 
         Reporter reporter = new Reporter();
-        for (Character c : scene.setup.characters) {
-            if (!scene.endState.killed.contains(c)) {
+        for (Character c : scene.getSetup().getCharacters()) {
+            if (!scene.getEndState().killed.contains(c)) {
                 System.out.println("Report from: " + c);
                 System.out.println(
                         reporter.reportAsText(scene, reporter.reportFromPointOfView(scene, c)));
@@ -42,20 +44,20 @@ public class Main {
         }
 
         final Solver solver = new Solver();
-        solver.deduceVictime(scene.endState);
-        solver.deducePlaceOfCrime(scene.endState);
-        solver.deduceTimeOfCrime(scene.actions);
-        scene.setup.characters.stream()
-                .filter(c -> !scene.endState.killed.contains(c))
+        solver.deduceVictime(scene.getEndState());
+        solver.deducePlaceOfCrime(scene.getEndState());
+        solver.deduceTimeOfCrime(scene.getActions());
+        scene.getSetup().getCharacters().stream()
+                .filter(c -> !scene.getEndState().killed.contains(c))
                 .map(c -> reporter.reportFromPointOfView(scene, c))
                 .forEach(solver::analyzeReport);
         System.out.println("Analysis:" + solver.report(
-                scene.setup.place.roomFormatter()));
+                scene.getSetup().getPlace().roomFormatter()));
 
         System.out.println("Solution:");
-        scene.actions.stream()
-                .filter(timedAction -> timedAction.action instanceof Action.Kill)
-                .map(timedAction -> timedAction.format(scene.setup.place.roomFormatter()))
+        scene.getActions().stream()
+                .filter(timedAction -> timedAction.getAction() instanceof Action.Kill)
+                .map(timedAction -> timedAction.format(scene.getSetup().getPlace().roomFormatter()))
                 .forEach(System.out::println);
     }
 }

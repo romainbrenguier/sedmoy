@@ -1,4 +1,4 @@
-package com.github.romainbrenguier.story;
+package com.github.romainbrenguier.story.character;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -9,7 +9,11 @@ public class Character {
     int age;
     boolean isWoman;
 
-    Name name;
+    private Name name;
+
+    public Name getName() {
+        return name;
+    }
 
     public static Character random(Random r) {
         final Character character = new Character();
