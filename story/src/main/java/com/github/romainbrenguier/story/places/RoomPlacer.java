@@ -22,7 +22,7 @@ public class RoomPlacer {
         Map<Integer, Point> coordinates = new HashMap<>();
         Set<Integer> visited = new HashSet<>();
         Queue<Integer> queue = new LinkedList<>();
-        final Integer entrance = place.entrances.get(0);
+        final Integer entrance = place.getEntrances().get(0);
         queue.add(entrance);
         visited.add(entrance);
         Point origin = new Point(0, 0);
@@ -183,23 +183,23 @@ public class RoomPlacer {
     public static Map<Integer, Point> solveConstraints(Place place, int limit) {
         final Model model = new Model("Room placement");
         final Map<Integer, CoordinateVar> roomVar = new HashMap<>();
-        for (int i = 0; i < place.rooms.size(); ++i) {
+        for (int i = 0; i < place.getRooms().size(); ++i) {
             roomVar.put(i, CoordinateVar.make(model, "Room" + i));
         }
         // All rooms have different coordinates
-        for (int roomIndex = 0; roomIndex < place.rooms.size(); ++roomIndex) {
-            for (int otherRoom = roomIndex + 1; otherRoom < place.rooms.size(); ++otherRoom) {
+        for (int roomIndex = 0; roomIndex < place.getRooms().size(); ++roomIndex) {
+            for (int otherRoom = roomIndex + 1; otherRoom < place.getRooms().size(); ++otherRoom) {
                 roomVar.get(roomIndex).ne(roomVar.get(otherRoom)).post();
             }
         }
 
         // Entrance constraint
-        for (int roomIndex : place.entrances) {
+        for (int roomIndex : place.getEntrances()) {
             roomVar.get(roomIndex).varX.eq(0).post();
         }
 
         // Neighboor constraints
-        for (int roomIndex = 0; roomIndex < limit && roomIndex < place.rooms.size(); ++roomIndex) {
+        for (int roomIndex = 0; roomIndex < limit && roomIndex < place.getRooms().size(); ++roomIndex) {
             for (int otherRoom : place.connectedFrom(roomIndex))
                 if (otherRoom > roomIndex)
                     roomVar.get(roomIndex).hexNeighboor(roomVar.get(otherRoom)).post();
@@ -210,7 +210,7 @@ public class RoomPlacer {
         if (solution == null) return null;
 
         Map<Integer, Point> coordinates = new HashMap<>();
-        for (int roomIndex = 0; roomIndex < limit && roomIndex < place.rooms.size(); ++roomIndex) {
+        for (int roomIndex = 0; roomIndex < limit && roomIndex < place.getRooms().size(); ++roomIndex) {
             coordinates.put(roomIndex, roomVar.get(roomIndex).get(solution));
         }
         return coordinates;
@@ -218,9 +218,9 @@ public class RoomPlacer {
 
     public static String makeMap(Place place) {
         return RoomPlacer.formatTableMap(
-                RoomPlacer.placeInTable(RoomPlacer.solveConstraints(place, place.rooms.size())),
+                RoomPlacer.placeInTable(RoomPlacer.solveConstraints(place, place.getRooms().size())),
                 place::connectedFrom,
-                place.roomFormatter(), place.entrances);
+                place.roomFormatter(), place.getEntrances());
     }
 }
 

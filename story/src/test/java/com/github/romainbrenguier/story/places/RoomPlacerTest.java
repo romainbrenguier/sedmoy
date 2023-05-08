@@ -17,11 +17,11 @@ public class RoomPlacerTest {
     void testPlaceRooms() {
         final Place place = new Mansion().make(new Random(1));
         final Map<Integer, Point> coordinates = placeRooms(place);
-        assert coordinates.containsKey(place.entrances.get(0));
+        assert coordinates.containsKey(place.getEntrances().get(0));
         final Integer[][] table = placeInTable(coordinates);
         assert table.length > 0;
         System.out.println(formatTableMap(table, place::connectedFrom, place.roomFormatter(),
-                place.entrances));
+                place.getEntrances()));
     }
 
     @Test
@@ -31,7 +31,7 @@ public class RoomPlacerTest {
 //        for (int limit = 1; limit <= place.rooms.size(); ++limit)
         {
 //            int limit = 6;
-            int limit = place.rooms.size();
+            int limit = place.getRooms().size();
             System.out.println("Placing " + limit + " rooms");
             final Map<Integer, Point> coordinates = RoomPlacer.solveConstraints(place, limit);
             if (coordinates == null) {
@@ -42,7 +42,7 @@ public class RoomPlacerTest {
             } else {
                 final Integer[][] table = placeInTable(coordinates);
                 System.out.println(formatTableMap(table, place::connectedFrom, roomFormatter,
-                        place.entrances));
+                        place.getEntrances()));
             }
         }
     }

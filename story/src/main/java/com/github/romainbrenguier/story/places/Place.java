@@ -12,11 +12,10 @@ import java.util.function.Function;
 
 public class Place {
     PlaceType type;
-    public List<Room> rooms = new ArrayList<>();
+    private final List<Room> rooms = new ArrayList<>();
 
-    /** Correspond to indexes in {@link #rooms} */
-    public List<Integer> entrances = Collections.singletonList(0);
-    ListMultimap<Integer, Integer> connections = ArrayListMultimap.create();
+    private final List<Integer> entrances = Collections.singletonList(0);
+    private final ListMultimap<Integer, Integer> connections = ArrayListMultimap.create();
     Map<Integer, Integer> stairsUp = new HashMap<>();
     Map<Integer, Integer> stairsDown = new HashMap<>();
 
@@ -26,8 +25,8 @@ public class Place {
     }
 
     int addRoom(Room r) {
-        rooms.add(r);
-        return rooms.size() - 1;
+        getRooms().add(r);
+        return getRooms().size() - 1;
     }
 
     void connect(int roomIndex1, int roomIndex2) {
@@ -40,10 +39,6 @@ public class Place {
         stairsUp.put(roomAbove, roomBelow);
     }
 
-    public boolean areConnected(int roomIndex1, int roomIndex2) {
-        return connections.get(roomIndex1).contains(roomIndex2);
-    }
-
     public List<Integer> connectedFrom(int roomIndex) {
         return connections.get(roomIndex);
     }
@@ -51,9 +46,9 @@ public class Place {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("[->]").append(entrances);
-        for (int i = 0; i < rooms.size(); ++i) {
-            builder.append(" (" + i + ") ").append(rooms.get(i));
+        builder.append("[->]").append(getEntrances());
+        for (int i = 0; i < getRooms().size(); ++i) {
+            builder.append(" (" + i + ") ").append(getRooms().get(i));
         }
         return builder.toString();
     }
@@ -61,8 +56,17 @@ public class Place {
     public Function<Integer, String> roomFormatter() {
         return roomIndex -> {
             if (roomIndex == null) return "nowhere";
-            final Room room = rooms.get(roomIndex);
+            final Room room = getRooms().get(roomIndex);
             return room == null ? "nowhere" : room.toString();
         };
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    /** Correspond to indexes in {@link #rooms} */
+    public List<Integer> getEntrances() {
+        return entrances;
     }
 }

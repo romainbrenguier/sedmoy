@@ -82,7 +82,7 @@ public class Scene {
         if (position == null) {
             final Action.Arrive arrive = new Action.Arrive();
             arrive.character = character;
-            arrive.inRoom = RandomUtil.nextInList(r, setup.place.entrances);
+            arrive.inRoom = RandomUtil.nextInList(r, setup.place.getEntrances());
             return arrive;
         }
 
@@ -126,7 +126,7 @@ public class Scene {
 
     public String report() {
         return actions.stream()
-                .map(action -> action.format(roomIndex -> setup.place.rooms.get(roomIndex).toString()))
+                .map(action -> action.format(roomIndex -> setup.place.getRooms().get(roomIndex).toString()))
                 .collect(Collectors.joining("\n"));
     }
 
