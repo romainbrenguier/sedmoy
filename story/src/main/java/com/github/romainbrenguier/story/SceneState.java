@@ -49,7 +49,12 @@ public class SceneState {
     public void applyAction(Action action) {
         if (action instanceof Action.Move) {
             final Action.Move move = (Action.Move) action;
+            characterStates.get(move.character).positionKnownFromOthers =
+                    charactersInRoom(move.fromRoom).stream().anyMatch(c -> !c.equals(move.character));
             move(move.character, move.toRoom);
+        } else if (action instanceof Action.Talk) {
+            final Action.Talk talk = (Action.Talk) action;
+            talk.talking.forEach(c -> characterStates.get(c).positionKnownFromOthers = true);
         } else if (action instanceof Action.Arrive) {
             final Action.Arrive arrive = (Action.Arrive) action;
             final CharacterState newState = new CharacterState();
