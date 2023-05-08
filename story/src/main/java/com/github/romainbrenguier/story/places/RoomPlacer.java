@@ -128,22 +128,22 @@ public class RoomPlacer {
 
     private static String formatWall(boolean leftDoor, boolean rightDoor, boolean mainEntrance) {
         StringBuilder builder = new StringBuilder();
-        builder.append("+").append("-".repeat(3));
+        builder.append("+").append("-".repeat(2));
         if (leftDoor) {
-            builder.append(" ");
+            builder.append("| |");
         } else {
-            builder.append("-");
+            builder.append("---");
         }
-        builder.append("-".repeat(3));
+        builder.append("-".repeat(2));
         if (mainEntrance) builder.append("[ ]");
         else builder.append("-".repeat(3));
-        builder.append("-".repeat(3));
+        builder.append("-".repeat(2));
         if (rightDoor) {
-            builder.append(" ");
+            builder.append("| |");
         } else {
-            builder.append("-");
+            builder.append("---");
         }
-        builder.append("-".repeat(4)).append("+");
+        builder.append("-".repeat(3)).append("+");
         return builder.toString();
     }
 
