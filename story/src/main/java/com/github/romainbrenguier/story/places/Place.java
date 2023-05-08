@@ -1,5 +1,6 @@
 package com.github.romainbrenguier.story.places;
 
+import com.github.romainbrenguier.story.graph.Graph;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class Place {
+public class Place implements Graph {
     PlaceType type;
     private final List<Room> rooms = new ArrayList<>();
 
@@ -39,6 +40,12 @@ public class Place {
         stairsUp.put(roomAbove, roomBelow);
     }
 
+    @Override
+    public int size() {
+        return rooms.size();
+    }
+
+    @Override
     public List<Integer> connectedFrom(int roomIndex) {
         return connections.get(roomIndex);
     }
