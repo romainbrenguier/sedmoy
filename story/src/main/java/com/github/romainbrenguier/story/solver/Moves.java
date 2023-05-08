@@ -35,7 +35,7 @@ public class Moves {
     /**
      * Transform a sequence of moves into a sequence of states (position)
      */
-    List<State> stateSequenceFromMove(
+    public static List<State> stateSequenceFromMove(
             Map<Character, Integer> initial, Iterable<Action.Move> moves) {
         final ArrayList<State> result = new ArrayList<>();
         final State initialState = State.copy(initial);
@@ -54,18 +54,18 @@ public class Moves {
      * Set of states reachable at time i, without beeing seen by witness whose position at time i
      * is given in the list of states
      */
-    Set<Integer> reachableUnseen(
-            Graph graph, List<State> witnesses, Character character, Integer startPosition) {
-        final ArrayList<Set<Integer>> result = new ArrayList<>();
+    public static Set<Integer> reachableUnseen(
+            Graph graph, List<State> witnesses, Set<Character> excludedCharacters, Integer startPosition) {
         final List<Set<Integer>> toAvoid = witnesses.stream()
-                .map(state -> positionToAvoid(character, state)).collect(Collectors.toList());
-        return new GraphAnalysis().reachableAvoidingPaths(graph, toAvoid,
+                .map(state -> positionToAvoid(excludedCharacters, state)).collect(Collectors.toList());
+        return new GraphAnalysis().reachableAvoidingPaths(graph,
+                toAvoid,
                 Collections.singleton(startPosition));
     }
 
-    private static Set<Integer> positionToAvoid(Character character, State state) {
+    private static Set<Integer> positionToAvoid(Set<Character> excludedCharacters, State state) {
         return state.map.entrySet().stream()
-                .filter(entry -> !entry.getKey().equals(character))
+                .filter(entry -> !excludedCharacters.contains(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toSet());
     }

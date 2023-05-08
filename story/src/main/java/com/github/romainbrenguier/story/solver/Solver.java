@@ -1,6 +1,7 @@
 package com.github.romainbrenguier.story.solver;
 
 import com.github.romainbrenguier.story.character.Character;
+import com.github.romainbrenguier.story.places.Place;
 import com.github.romainbrenguier.story.scene.Action;
 import com.github.romainbrenguier.story.scene.Report;
 import com.github.romainbrenguier.story.scene.SceneState;
@@ -8,6 +9,7 @@ import com.github.romainbrenguier.story.scene.TimedAction;
 
 import javax.annotation.Nullable;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Solver {
     Calendar timeOfCrime;
@@ -70,6 +73,23 @@ public class Solver {
         }
     }
 
+    public boolean wasPlaceOfCrimeReachable(Place place, List<TimedAction> actions, Character suspect) {
+        final Calendar startTime = lastTimeSeenBeforeCrime.get(suspect);
+        final List<Action.Move> moveList = actions.stream()
+                .filter(timedAction -> !timedAction.getTimeStart().before(startTime))
+                .map(TimedAction::getAction)
+                .filter(action -> action instanceof Action.Move)
+                .map(action -> (Action.Move) action)
+                .collect(Collectors.toList());
+        final List<Moves.State> states = Moves.stateSequenceFromMove(lastPlaceSeenBeforeCrime, moveList);
+        Integer lastPlace = lastPlaceSeenBeforeCrime.getOrDefault(suspect, -1);
+        if (lastPlace == null) lastPlace = -1;
+        final Set<Integer> reachableUnseen = Moves.reachableUnseen(place, states,
+                Stream.of(suspect, victime).collect(Collectors.toSet()),
+                lastPlace);
+        return reachableUnseen.contains(roomOfCrime);
+    }
+
     private void analyzeTalk(TimedAction timedAction, Action.Talk talk,
                              Character reportingCharacter, @Nullable Integer currentRoom) {
         talk.talking.stream()
@@ -92,20 +112,23 @@ public class Solver {
     }
 
     public String report(Function<Integer, String> roomFormatter) {
-        return "Solver report:\n" +
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Solver report:\n" +
                 "  - time of crime: " + TimedAction.formatTime(timeOfCrime) +
                 "\n  - victime: " + victime +
                 "\n  - place: " + roomFormatter.apply(roomOfCrime) +
                 "\n  - seen during crime:" +
                 "\n      " + seenDuringCrime.stream().map(Character::toString)
                 .collect(Collectors.joining(", ")) + "\n" +
-                "\n  - last time seen before crime:\n" +
+                "\n  - last time seen before crime:\n");
+        builder.append(
                 lastTimeSeenBeforeCrime.entrySet().stream()
                         .map(entry ->
                                 "    - " + entry.getKey().toString() + " at "
                                         + TimedAction.formatTime(entry.getValue())
                                         + " in " + roomFormatter.apply(
                                         lastPlaceSeenBeforeCrime.get(entry.getKey())))
-                        .collect(Collectors.joining("\n"));
+                        .collect(Collectors.joining("\n")));
+        return builder.toString();
     }
 }

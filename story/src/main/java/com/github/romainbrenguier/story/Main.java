@@ -55,6 +55,10 @@ public class Main {
         System.out.println("GraphAnalysis:" + solver.report(
                 scene.getSetup().getPlace().roomFormatter()));
 
+        for (Character c : scene.getSetup().getCharacters()) {
+            final boolean reachable = solver.wasPlaceOfCrimeReachable(scene.getSetup().getPlace(), scene.getActions(), c);
+            System.out.println("Could " + c + " reach crime scene: " + reachable);
+        }
         System.out.println("Solution:");
         scene.getActions().stream()
                 .filter(timedAction -> timedAction.getAction() instanceof Action.Kill)

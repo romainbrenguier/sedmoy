@@ -2,6 +2,7 @@ package com.github.romainbrenguier.story.graph;
 
 import java.util.ArrayDeque;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +29,7 @@ public class GraphAnalysis {
      */
     public Set<Integer> reachableAvoidingPaths(
             Graph graph, List<Set<Integer>> avoids, Set<Integer> start) {
-        Set<Integer> currentPositions = start;
+        Set<Integer> currentPositions = new HashSet<>(start);
         for (Set<Integer> avoid : avoids) {
             currentPositions.removeAll(avoid);
             currentPositions = reachableFrom(graph, currentPositions, avoid);
