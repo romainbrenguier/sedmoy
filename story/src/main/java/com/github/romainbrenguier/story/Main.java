@@ -52,7 +52,7 @@ public class Main {
                 .filter(c -> !scene.getEndState().killed.contains(c))
                 .map(c -> reporter.reportFromPointOfView(scene, c))
                 .forEach(solver::analyzeReport);
-        System.out.println("Analysis:" + solver.report(
+        System.out.println("GraphAnalysis:" + solver.report(
                 scene.getSetup().getPlace().roomFormatter()));
 
         System.out.println("Solution:");

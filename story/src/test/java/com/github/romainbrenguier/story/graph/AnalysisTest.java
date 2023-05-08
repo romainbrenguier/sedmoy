@@ -3,30 +3,24 @@ package com.github.romainbrenguier.story.graph;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.junit.jupiter.api.Disabled;
 
 import org.junit.jupiter.api.Test;
 
 class AnalysisTest {
     /**
-     * Method under test: {@link Analysis#reachableFrom(Graph, Set, Set)}
+     * Method under test: {@link GraphAnalysis#reachableFrom(Graph, Set, Set)}
      */
     @Test
     void testReachableFrom() {
         // Arrange
-        Analysis analysis = new Analysis();
+        GraphAnalysis analysis = new GraphAnalysis();
         ListGraph graph = new ListGraph();
         graph.connect(0, 1);
         graph.connect(1, 2);
@@ -40,12 +34,12 @@ class AnalysisTest {
     }
 
     /**
-     * Method under test: {@link Analysis#reachableAvoidingPaths(Graph, List, Set)}
+     * Method under test: {@link GraphAnalysis#reachableAvoidingPaths(Graph, List, Set)}
      */
     @Test
     void testReachableAvoidingPaths() {
         // Arrange
-        Analysis analysis = new Analysis();
+        GraphAnalysis analysis = new GraphAnalysis();
 
         ListGraph listGraph = new ListGraph();
         listGraph.connect(0, 1);
